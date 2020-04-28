@@ -1,0 +1,334 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+#include "..\version.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Francés (Francia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+201                     ICON                    "renoir.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG_SETAPIKEY AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_COL AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG_SETAPIKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 143
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_DIALOG_COL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 116
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 181
+    END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 246
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_SETAPIKEY DIALOGEX 0, 0, 150, 125
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Enter Your Omdb Key"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Ok",IDOK,53,73,43,14
+    PUSHBUTTON      "Later",IDCANCEL,98,73,43,14
+    EDITTEXT        IDC_EDIT_APIKEY,32,55,108,14,ES_AUTOHSCROLL
+    LTEXT           "Please, enter your OMDB Key.",IDC_STATIC1,15,14,94,8
+    LTEXT           "If you don't have, request one at",IDC_STATIC2,15,26,116,8
+    LTEXT           "Key:",IDC_STATIC3,12,57,21,9
+    CONTROL         "<a>omdb</a>",IDC_SYSLINK_OMDB,"SysLink",WS_TABSTOP,14,36,129,14
+END
+
+IDD_DIALOG_COL DIALOGEX 0, 0, 123, 188
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Show Columns"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,62,161,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,10,161,50,14
+    CONTROL         "FsId",IDC_CHECK_FSID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,12,29,10
+    CONTROL         "Path",IDC_CHECK_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,24,30,10
+    CONTROL         "Filename",IDC_CHECK_FILENAME,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,36,44,10
+    CONTROL         "Date",IDC_CHECK_DATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,58,30,10
+    CONTROL         "Size",IDC_CHECK_SIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,69,28,10
+    CONTROL         "ImdbId",IDC_CHECK_IMDBID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,79,39,10
+    CONTROL         "ImdbRating",IDC_CHECK_RATING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,129,53,10
+    CONTROL         "FileExists",IDC_CHECK_FILEEXISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,47,44,10
+    CONTROL         "isSerie",IDC_CHECK_ISSERIE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,89,49,10
+    CONTROL         "isAnim",IDC_CHECK_ISANIM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,99,49,10
+    CONTROL         "isDoc",IDC_CHECK_ISDOC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,109,49,10
+    CONTROL         "isShort",IDC_CHECK_ISSHORT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,119,49,10
+END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 260, 253
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "DEBUG"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_LOG,7,7,246,239,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+END
+
+#endif    // Francés (Francia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Español (España, alfabetización internacional) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
+LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MODERN
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_omdbClient_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_omdbClient_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 701
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 337
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Acerca de omdbClient"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDM_RESETMOVIES,IDC_STATIC,14,14,21,20
+    LTEXT           "omdbClient, versiÃ³n 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2011",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "Aceptar",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_omdbClient_DIALOG DIALOGEX 0, 0, 708, 341
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Renoir - Movie Manager"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_MOVIE_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,9,413,240
+    EDITTEXT        IDC_EDIT_PLOT,427,213,270,56,ES_MULTILINE | ES_READONLY | WS_VSCROLL,WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT_FOLDER,205,254,175,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_RUNTIME,432,38,55,12,ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER | NOT WS_BORDER
+    EDITTEXT        IDC_EDIT_TITLE,427,17,119,18,ES_CENTER | ES_MULTILINE | ES_READONLY | NOT WS_BORDER
+    GROUPBOX        "",IDC_STATIC,419,10,282,262,0,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_EDIT_GENRES,496,37,50,46,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER | WS_VSCROLL
+    EDITTEXT        IDC_EDIT_ACTORS,430,160,118,44,ES_MULTILINE | ES_READONLY | ES_NUMBER | NOT WS_BORDER | WS_VSCROLL
+    EDITTEXT        IDC_EDIT_DIRECTOR,429,92,119,19,ES_MULTILINE | ES_READONLY | ES_NUMBER | NOT WS_BORDER | WS_VSCROLL
+    EDITTEXT        IDC_EDIT_WRITERS,429,122,118,16,ES_MULTILINE | ES_READONLY | ES_NUMBER | NOT WS_BORDER | WS_VSCROLL
+    LTEXT           "Actors",IDC_STATIC_ACTORS,432,148,20,8
+    LTEXT           "Writers",IDC_STATIC_WRITER,431,111,23,8
+    LTEXT           "Directors",IDC_STATIC_DIRECTOR,431,82,29,8
+    LTEXT           "Status",IDC_STATIC_STATUS_TEXT,431,324,54,9
+    COMBOBOX        IDC_COMBO_GENRES,22,301,63,30,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Show deleted",IDC_CHECK_SHOWDELETED,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,382,252,34,18
+    COMBOBOX        IDC_COMBO_DIRECTOR,101,301,95,30,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_ACTORS,101,322,95,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "",IDC_STATIC,126,247,76,33
+    LTEXT           "OMDB Requests",IDC_STATIC_APIKEY,128,253,72,9
+    CONTROL         "Force",IDC_CHECK_FORCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,165,263,31,10
+    LTEXT           "Actors",IDC_STATIC,103,314,27,8
+    LTEXT           "Genres",IDC_STATIC,16,292,28,8
+    LTEXT           "Directors",IDC_STATIC,102,292,35,8
+    GROUPBOX        "FILTERS",IDC_STATIC,8,282,402,55
+    LTEXT           "Write",IDC_STATIC_STATUS_DESC,487,323,212,10
+    CONTROL         "Auto",IDC_CHECK_AUTOOMDB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,263,31,10
+    COMBOBOX        IDC_COMBO_SERIES,206,301,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Series",IDC_STATIC_TYPE,208,292,31,8
+    GROUPBOX        "Update",IDC_STATIC,10,250,110,30
+    CONTROL         "Animation",IDC_CHECK_ANIM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,267,46,10
+    COMBOBOX        IDC_COMBO_ANIMS,206,322,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Animation",IDC_STATIC_ANIM,208,314,31,8
+    CONTROL         "Serie",IDC_CHECK_SERIE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,258,45,10
+    COMBOBOX        IDC_COMBO_YEARMIN,310,301,46,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Year min",IDC_STATIC_YEARMIN,315,292,31,8
+    COMBOBOX        IDC_COMBO_YEARMAX,310,322,46,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Year max",IDC_STATIC_YEARMAX,312,314,31,8
+    COMBOBOX        IDC_COMBO_IMDBRATINGMIN,360,301,46,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "ImdbRating min",IDC_STATIC_IMDBRATINGMIN,358,292,58,8
+    COMBOBOX        IDC_COMBO_IMDBRATINGMAX,360,322,46,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "ImdbRating max",IDC_STATIC_IMDBRATINGMAX,358,314,53,8
+    COMBOBOX        IDC_COMBO_DOCS,252,301,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Docs",IDC_STATIC_DOCS,253,292,39,8
+    COMBOBOX        IDC_COMBO_SHORTS,252,322,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Shorts",IDC_STATIC_SHORTS,254,314,31,8
+    CONTROL         "Short",IDC_CHECK_SHORT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,58,267,57,10
+    CONTROL         "Documentary",IDC_CHECK_DOC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,58,257,57,10
+    COMBOBOX        IDC_COMBO_GENRES2,22,322,63,30,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_PICTURE,552,13,149,196,WS_BORDER
+    PUSHBUTTON      "PLAY",IDC_BUTTON_PLAY,429,274,270,35
+    CONTROL         "",IDC_CHECK_GENRES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,303,9,10
+    CONTROL         "",IDC_CHECK_GENRES2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,324,9,10
+    CONTROL         "",IDC_CHECK_DIRECTORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,91,303,9,10
+    CONTROL         "",IDC_CHECK_ACTORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,91,323,9,10
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,429,309,269,14
+    PUSHBUTTON      "reset",IDC_BUTTON_RESET_ACTORS,177,314,19,8
+    PUSHBUTTON      "reset",IDC_BUTTON_RESET_DIRECTORS,177,293,19,8
+    COMBOBOX        IDC_COMBO_FOLDERS,204,271,211,30,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "#include ""..\\version.h""\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)\r\n"
+    "LANGUAGE 10, 3\r\n"
+    "#include ""omdbClient.rc""  // Recursos editados que no son de Microsoft Visual C++\r\n"
+    "#include ""l.ESN\\afxres.rc""      // Componentes estÃ¡ndar\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Español (España, alfabetización internacional) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
+LANGUAGE 10, 3
+#include "omdbClient.rc"  // Recursos editados que no son de Microsoft Visual C++
+#include "l.ESN\afxres.rc"      // Componentes estÃ¡ndar
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

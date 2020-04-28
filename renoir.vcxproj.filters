@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{c3904fe8-4187-40cf-a01b-086db398c5e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dialogs">
+      <UniqueIdentifier>{587becfa-6949-44d6-800b-92372540e9c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{46538a97-88ad-4d19-8d54-775860699b8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{a947098c-88af-41c3-9b7f-5dc4fdc08d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PictureControl">
+      <UniqueIdentifier>{12991d22-5bbd-44cd-97a4-ae51a671d691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{49e32899-ad9d-446f-9000-095357716a3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Utils\Log.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs\omdbClientDlg.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs\CAboutDlg.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs\omdbClientImdbIdEditDlg.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Convert.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\databaselite.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\exLog.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Mutex.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Xml.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Singleton.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Util.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Thread.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\fileSystem.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\manageXML.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Movie.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\omdb.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\readConfig.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\variables.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\definitions.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\renoir.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\movieFile.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs\resource.h" />
+    <ClInclude Include="version.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="setOmdbKey.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\warning.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowColumns.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs\omdbClientInfo.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="PictureControl\PictureCtrl.h">
+      <Filter>PictureControl</Filter>
+    </ClInclude>
+    <ClInclude Include="debugWindow.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\database.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\databaseSQL.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\dataBaseSQLLib.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase\databaseTabDef.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utils\Log.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\omdbClientDlg.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\CAboutDlg.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\omdbClientImdbIdEditDlg.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Convert.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\databaselite.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\exLog.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Mutex.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Xml.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Singleton.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Util.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Thread.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\fileSystem.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\manageXML.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Movie.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\omdb.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\readConfig.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\renoir.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\movieFile.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="setOmdbKey.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ShowColumns.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureControl\PictureCtrl.cpp">
+      <Filter>PictureControl</Filter>
+    </ClCompile>
+    <ClCompile Include="debugWindow.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBase\database.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dialogs\mainWindow.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\config.xml">
+      <Filter>Config</Filter>
+    </Xml>
+    <Xml Include="config\configDebug.xml">
+      <Filter>Config</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dialogs\renoir.ico">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+  <fspath>D:\Test</fspath>
+  <omdb>
+    <omdburl>http://www.omdbapi.com/</omdburl>
+    <apiRequest>apikey.aspx</apiRequest>
+    <type>xml</type>
+    <plot>full</plot>
+    <listseparator>,</listseparator>
+    <testmode>false</testmode>
+  </omdb>
+  <imdb>
+    <url>https://www.imdb.com/</url>
+    <title>title</title>
+    <find>find?q=</find>
+  </imdb>
+  <filesystem>
+    <autoreadfolder>false</autoreadfolder>
+    <autoreadxmlfile>true</autoreadxmlfile>
+    <extentions>
+      <extention>.mp4</extention>
+      <extention>.avi</extention>
+      <extention>.mkv</extention>
+    </extentions>
+    <types>
+      <searchtypes>true</searchtypes>
+      <serie>serie</serie>
+      <animation>anim</animation>
+      <documentary>doc</documentary>
+      <short>short</short>
+    </types>
+    <language>
+      <searchlanguage>true</searchlanguage>
+      <french>francais</french>
+      <spanish>espanol</spanish>
+      <english>english</english>
+      <italian>italian</italian>
+    </language>
+  </filesystem>
+  <database>
+    <dbpath>db\</dbpath>
+    <dbname>moviesDB.s3db</dbname>
+    <resetdb>false</resetdb>
+  </database>
+  <xml>
+    <xmlpath>xml\</xmlpath>
+    <xmlname>moviesDB</xmlname>
+  </xml>
+  <log>
+    <logPath>logs\</logPath>
+    <level DISABLED="0" ERROR="1" INFO="2" DB="3" XML="4" DEBUG="5" SQL="6">6</level>
+  </log>
+</config>

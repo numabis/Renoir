@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+  <fspath>C:\</fspath>
+  <omdb>
+    <apikey>--------</apikey>
+    <omdburl>http://www.omdbapi.com/</omdburl>
+    <apiRequest>apikey.aspx</apiRequest>
+    <type>xml</type>
+    <plot>full</plot>
+    <listseparator>,</listseparator>
+    <testmode>false</testmode>
+  </omdb>
+  <imdb>
+    <url>https://www.imdb.com/</url>
+    <title>title</title>
+    <find>find?q=</find>
+  </imdb>
+  <filesystem>
+    <autoreadfolder>false</autoreadfolder>
+    <autoreadxmlfile>true</autoreadxmlfile>
+    <extentions>
+      <extention>.mp4</extention>
+      <extention>.avi</extention>
+      <extention>.mkv</extention>
+    </extentions>
+    <types>
+      <searchtypes>true</searchtypes>
+      <serie>serie</serie>
+      <animation>anim</animation>
+      <documentary>doc</documentary>
+      <short>short</short>
+    </types>
+    <language>
+      <searchlanguage>true</searchlanguage>
+      <french>francais</french>
+      <spanish>espagnol</spanish>
+      <english>english</english>
+      <italian>italian</italian>
+    </language>
+  </filesystem>
+  <database>
+    <dbpath>./</dbpath>
+    <dbname>moviesDB.s3db</dbname>
+    <resetdb>false</resetdb>
+  </database>
+  <!--<xml>
+    <xmlpath></xmlpath>
+    <xmlname>moviesDB</xmlname>
+  </xml> -->
+  <log>
+    <logPath>.\</logPath>
+    <level>2</level>
+  </log>
+</config>

@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Demo|Win32">
+      <Configuration>Demo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Demo|x64">
+      <Configuration>Demo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E6367685-6B6C-4D68-880C-ED851D8B7EC0}</ProjectGuid>
+    <RootNamespace>renoir</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <ProjectName>renoir</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>.\Libs\sqlapi\3.8.3\vs2010\lib\sqlapid.lib;.\Libs\tinyxml\2.6.2\vs2010\Debugtinyxml\tinyxml.lib;.\Libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\curlcpp\lib\x86\curlcppd.lib;.\Libs\curl\build\lib\x86\libcurld.lib;advapi32.lib;comdlg32.lib;crypt32.lib;Crypt32.lib;dnsapi.lib;gdi32.lib;kernel32.lib;legacy_stdio_definitions.lib;netapi32.lib;odbc32.lib;odbccp32.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;uuid.lib;wininet.lib;winmm.lib;winspool.lib;wldap32.lib;ws2_32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <EnableUAC>false</EnableUAC>
+      <ManifestFile>$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Manifest>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <AdditionalManifestFiles>renoir.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NEWDIALOGS;NEW_ABOUT_DIALOG;NEW_CLIENT_DIALOG;NEW_IMDB_DIALOG;_DEBUG;_WINDOWS;WIN32;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\Libs\tinyxml\2.6.2\vs2010;.\Libs\sqlapi\3.8.3\include;.\Libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>.\Libs\sqlapi\3.8.3\vs2010\lib\sqlapid.lib;.\Libs\tinyxml\2.6.2\vs2010\Debugtinyxml\tinyxml.lib;.\Libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\curlcpp\lib\x64\curlcppd.lib;.\Libs\curl\build\lib\x64\libcurld.lib;advapi32.lib;comdlg32.lib;crypt32.lib;Crypt32.lib;dnsapi.lib;gdi32.lib;kernel32.lib;legacy_stdio_definitions.lib;netapi32.lib;odbc32.lib;odbccp32.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;uuid.lib;wininet.lib;winmm.lib;winspool.lib;wldap32.lib;ws2_32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>.\Libs\sqlapi\3.8.3\vs2010\lib\sqlapi.lib;.\Libs\tinyxml\2.6.2\vs2010\Debugtinyxml\tinyxml.lib;.\Libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\curlcpp\lib\x86\curlcpp.lib;.\Libs\curl\build\lib\x86\libcurl.lib;advapi32.lib;comdlg32.lib;crypt32.lib;dnsapi.lib;gdi32.lib;kernel32.lib;legacy_stdio_definitions.lib;netapi32.lib;odbc32.lib;odbccp32.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;uuid.lib;wininet.lib;winmm.lib;winspool.lib;wldap32.lib;ws2_32.lib;wsock32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NEWDIALOGS;NEW_ABOUT_DIALOG;NEW_CLIENT_DIALOG;NEW_IMDB_DIALOG;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\Libs\sqlapi\3.8.3\include;.\Libs\tinyxml\2.6.2\vs2010;.\Libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\curl-7.67.0-win32-mingw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>.\libs\sqlapi\3.8.3\vs2010\lib\sqlapi.lib;.\libs\tinyxml\2.6.2\vs2010\Debugtinyxml\tinyxml.lib;.\libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\curlcpp\lib\x86\curlcpp.lib;.\Libs\curl\build\lib\x86\libcurl.lib;advapi32.lib;comdlg32.lib;crypt32.lib;dnsapi.lib;gdi32.lib;kernel32.lib;legacy_stdio_definitions.lib;netapi32.lib;odbc32.lib;odbccp32.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;uuid.lib;wininet.lib;winmm.lib;winspool.lib;wldap32.lib;ws2_32.lib;wsock32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_DEMO;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>.\Libs\sqlapi\3.8.3\vs2010\lib\sqlapid.lib;.\Libs\tinyxml\2.6.2\vs2010\Debugtinyxml\tinyxml.lib;.\Libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\curlcpp\lib\x86\curlcpp.lib;.\Libs\curl\build\lib\x86\libcurld.lib;advapi32.lib;comdlg32.lib;crypt32.lib;Crypt32.lib;dnsapi.lib;gdi32.lib;kernel32.lib;legacy_stdio_definitions.lib;netapi32.lib;odbc32.lib;odbccp32.lib;ole32.lib;oleaut32.lib;shell32.lib;user32.lib;uuid.lib;wininet.lib;winmm.lib;winspool.lib;wldap32.lib;ws2_32.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Manifest>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <AdditionalManifestFiles>renoir.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <OutputManifestFile>$(IntDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
+    </Manifest>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <ManifestResourceCompile>
+      <ResourceOutputFileName>$(IntDir)$(TargetName)$(TargetExt).embed.manifest.res</ResourceOutputFileName>
+    </ManifestResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_DEMO;_WINDOWS;NDEBUG;WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\Libs\extras;.\Libs\chilkat\9.3.1\VC10\include;.\Libs\sqlapi\3.8.3\include;.\Libs\tinyxml\2.6.2\vs2010;.\Libs\gnu\sdl\1.2.14\include;.\Libs\gnu\sdl_image\1.2.10\include;.\Libs\gnu\sdl_mixer\1.2.11\include;.\Libs\gnu\sdl_ttf\2.0.9\include;.\Libs\gnu\zzip\0.0.0;.\Libs\juego;.\Libs\libGAME\release_GTXXI\GLX;.\Libs\libGAME\release_GTXXI\extras;.\Libs\zlib\1.2.7\vs2010\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>.\Libs\chilkat\9.3.1\VC10\libs\ChilkatReldll.lib;.\Libs\sqlapi\3.8.3\vs2010\lib\sqlapi.lib;.\Libs\tinyxml\2.6.2\vs2010\Releasetinyxml\tinyxml.lib;.\Libs\zlib\1.2.7\vs2010\lib\zlib.lib;.\Libs\GL\opengl32.lib;.\Libs\GL\glaux.lib;.\Libs\gnu\sdl\1.2.14\lib\sdl.lib;.\Libs\gnu\sdl\1.2.14\lib/sdlmain.lib;.\Libs\gnu\sdl_image\1.2.10\lib\sdl_image.lib;.\Libs\gnu\sdl_mixer\1.2.11\lib\sdl_mixer.lib;.\Libs\gnu\sdl_ttf\2.0.9\lib\sdl_ttf.lib;.\Libs\gnu\zzip\0.0.0\zzip-1.lib;.\Libs\juego\release\juego.lib;.\Libs\libGAME\release_GTXXI\release\glx.lib;wsock32.lib;netapi32.lib;winmm.lib;dnsapi.lib;crypt32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0c0a</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="DataBase\database.h" />
+    <ClInclude Include="DataBase\databaseSQL.h" />
+    <ClInclude Include="DataBase\dataBaseSQLLib.h" />
+    <ClInclude Include="DataBase\databaseTabDef.h" />
+    <ClInclude Include="debugWindow.h" />
+    <ClInclude Include="dialogs\CAboutDlg.h" />
+    <ClInclude Include="dialogs\OmdbClientInfo.h" />
+    <ClInclude Include="dialogs\OmdbClientDlg.h" />
+    <ClInclude Include="dialogs\OmdbClientImdbIdEditDlg.h" />
+    <ClInclude Include="dialogs\resource.h" />
+    <ClInclude Include="PictureControl\PictureCtrl.h" />
+    <ClInclude Include="setOmdbKey.h" />
+    <ClInclude Include="ShowColumns.h" />
+    <ClInclude Include="sources\definitions.h" />
+    <ClInclude Include="sources\fileSystem.h" />
+    <ClInclude Include="sources\manageXML.h" />
+    <ClInclude Include="sources\Movie.h" />
+    <ClInclude Include="sources\movieFile.h" />
+    <ClInclude Include="sources\omdb.h" />
+    <ClInclude Include="sources\renoir.h" />
+    <ClInclude Include="sources\readConfig.h" />
+    <ClInclude Include="sources\variables.h" />
+    <ClInclude Include="sources\warning.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Utils\Convert.h" />
+    <ClInclude Include="Utils\databaselite.h" />
+    <ClInclude Include="Utils\exLog.h" />
+    <ClInclude Include="Utils\Log.h" />
+    <ClInclude Include="Utils\Mutex.h" />
+    <ClInclude Include="Utils\Singleton.h" />
+    <ClInclude Include="Utils\Thread.h" />
+    <ClInclude Include="Utils\Util.h" />
+    <ClInclude Include="Utils\Xml.h" />
+    <ClInclude Include="version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DataBase\database.cpp" />
+    <ClCompile Include="debugWindow.cpp" />
+    <ClCompile Include="dialogs\CAboutDlg.cpp" />
+    <ClCompile Include="dialogs\OmdbClientDlg.cpp" />
+    <ClCompile Include="dialogs\OmdbClientImdbIdEditDlg.cpp" />
+    <ClCompile Include="PictureControl\PictureCtrl.cpp" />
+    <ClCompile Include="setOmdbKey.cpp" />
+    <ClCompile Include="ShowColumns.cpp" />
+    <ClCompile Include="sources\fileSystem.cpp" />
+    <ClCompile Include="sources\manageXML.cpp" />
+    <ClCompile Include="sources\Movie.cpp" />
+    <ClCompile Include="sources\movieFile.cpp" />
+    <ClCompile Include="sources\omdb.cpp" />
+    <ClCompile Include="sources\renoir.cpp" />
+    <ClCompile Include="sources\readConfig.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utils\Convert.cpp" />
+    <ClCompile Include="Utils\databaselite.cpp" />
+    <ClCompile Include="Utils\exLog.cpp" />
+    <ClCompile Include="Utils\Log.cpp" />
+    <ClCompile Include="Utils\Mutex.cpp" />
+    <ClCompile Include="Utils\Singleton.cpp" />
+    <ClCompile Include="Utils\Thread.cpp" />
+    <ClCompile Include="Utils\Util.cpp" />
+    <ClCompile Include="Utils\Xml.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dialogs\mainWindow.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\config.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+    <Xml Include="config\configDebug.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dialogs\renoir.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

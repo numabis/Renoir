@@ -1,0 +1,16 @@
+.vs/*
+Debug/*
+Release/*
+Demo/*
+dialogs/RC*
+config/movieDB.*
+*.bak
+*.ilk
+*.log
+log*.txt
+*.obj
+*.opendb
+*.tlog
+*.idb
+*.db
+*.jpg
