@@ -18,7 +18,9 @@ namespace BUTIL
 	exLog::exLog()
 	{
 		LOG_path = "./";
-		logLevel = exLOG_DISABLED;
+        logDisable = exLOG_SQL;
+        logLevel = &logDisable;
+
 	}
 
 	/**
@@ -62,12 +64,12 @@ namespace BUTIL
 	 *      
 	 * @param _estado true para activar la escritura fisica.
 	 */
-	void exLog::setLogLevel( int level )
+	void exLog::setLogLevel( int *level )
 	{
-		if(level >= exLOG_DISABLED && level < exLOG_MAX)
+		if(*level >= exLOG_DISABLED && *level < exLOG_MAX)
 			logLevel = level;
 		else
-			logLevel = exLOG_DISABLED;
+			logLevel = &logDisable;
 	}
 
 	/**
@@ -100,12 +102,12 @@ namespace BUTIL
 		std::ofstream fil;
 
 		// Se comprueba si el log esta activo
-		if(logLevel == exLOG_DISABLED)
+		if(*logLevel == exLOG_DISABLED)
 			return;
 
 		// Se comprueba si se debe escribir por nivel.
 		//if((level == exLOG_DEBUG || level == exLOG_INFO) && level != logLevel)
-        if (level > logLevel)
+        if (level > *logLevel)
 			return;
 
 		lock();
@@ -181,11 +183,11 @@ namespace BUTIL
 		std::ofstream fil;
 	
 		// Se comprueba si el log esta activo
-		if(logLevel == exLOG_DISABLED)
+		if(*logLevel == exLOG_DISABLED)
 			return;
 	
 		// Se comprueba si se debe escribir por nivel.
-		if((level == exLOG_DEBUG || level == exLOG_INFO) && level != logLevel)
+		if((level == exLOG_DEBUG || level == exLOG_INFO) && level != *logLevel)
 			return;
 	
 		lock();

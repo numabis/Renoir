@@ -23,16 +23,22 @@ ManageXML::~ManageXML(void)
 {
 }
 
-void ManageXML::init(std::string* _config, std::string _separator)
+//void ManageXML::init(std::string* _config, std::string _separator)
+//{
+//    xmlConfig = _config;
+//    omdbSeparator = _separator;
+//}
+
+void ManageXML::init(std::string _path)
 {
-    xmlConfig = _config;
-    omdbSeparator = _separator;
+    xmlpath = _path;
 }
 
-std::string ManageXML::getXmlLocalFullPath()
-{
-    return xmlConfig[XML_LOCAL_SAVE_PATH] + "\\" + xmlConfig[XML_LOCAL_SAVE_NAME] + "." + xmlConfig[XML_LOCAL_SAVE_EXT];
-}
+
+//std::string ManageXML::getXmlLocalFullPath()
+//{
+//    return xmlConfig[XML_LOCAL_SAVE_PATH] + "\\" + xmlConfig[XML_LOCAL_SAVE_NAME] + "." + xmlConfig[XML_LOCAL_SAVE_EXT];
+//}
 
 void ManageXML::clearMovieVector()
 {
@@ -206,7 +212,7 @@ int ManageXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file, Movie *_mo
 
 HANDLE ManageXML::saveMoviesToXml(std::string _path, bool _compress)
 {
-    saveXmlpath = _path;
+    xmlpath = _path;
     saveXmlCompress = _compress;
     DWORD  hThreadIdArray;
     return  CreateThread(NULL, 0, saveMoviesToXmlThread, (void*) this, 0, &hThreadIdArray);
@@ -235,7 +241,7 @@ bool ManageXML::saveMoviesToXmlStart()
         }
         std::string xml = BUTIL::Xml::createRoot(str.str(), true);
 
-        ret = BUTIL::Xml::saveZ(saveXmlpath, xml);
+        ret = BUTIL::Xml::saveZ(xmlpath, xml);
 
     }
     else
@@ -266,7 +272,7 @@ bool ManageXML::saveMoviesToXmlStart()
         }
         std::string xml = BUTIL::Xml::createRoot(str.str(), true);
 
-        ret = BUTIL::Xml::save(saveXmlpath, xml);
+        ret = BUTIL::Xml::save(xmlpath, xml);
     }
     return ret;
 }
@@ -339,10 +345,9 @@ int ManageXML::loadOmdbFileStart()
     MovieFile file;
     file.exists = false;
 
-    std::string pathXml = getXmlLocalFullPath();
     TiXmlDocument docOmdbXml;
 
-    TiXmlElement *nodeRoot = BUTIL::Xml::load(docOmdbXml, pathXml);
+    TiXmlElement *nodeRoot = BUTIL::Xml::load(docOmdbXml, xmlpath);
 
     if (nodeRoot)
         return readOmdbXml(nodeRoot, &file);

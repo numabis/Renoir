@@ -26,12 +26,6 @@ typedef struct {
     std::string description;
 } dbVersion;
 
-typedef struct {
-    std::string variable;
-    std::string value;
-    std::string description;
-} dbConfiguration;
-
 dbVersion valuesDbVersions[] = { DBCHANGELOG };
 dbConfiguration dbConf[] = { DBCONFFIELDS };
 
@@ -92,6 +86,7 @@ DataBase::DataBase()
         tabStruct[tab] = ptr_tabNames[tab];
     }
     filters.folderFilterId = -1;
+    ptr_dbConfig = &dbConfig;
 }
 DataBase::~DataBase(void)
 {
@@ -105,20 +100,27 @@ bool DataBase::isConnected(void)
 {
     return connected;
 }
+bool DataBase::setDB(std::string _path)
+{
+    exLOGDEBUG("");
+
+    dbConfig.dbPath = _path;
+    dbConfig.dbName = DBNAME;
+    return setDB(&dbConfig);
+
+}
 bool DataBase::setDB(DB_CONFIG* _dbConfig)
 {
     exLOGDEBUG("");
     DWORD success = false;
     DWORD error = ERROR_BAD_PATHNAME;
-    dbConfig = _dbConfig;
+    ptr_dbConfig = _dbConfig;
     std::string file;
 
+    if (ptr_dbConfig->dbPath.empty() == false)
+        file = ptr_dbConfig->dbPath;
 
-
-    if (dbConfig->dbPath.empty() == false)
-        file = dbConfig->dbPath;
-
-    if (dbConfig->dbPath.empty() == false)
+    if (ptr_dbConfig->dbPath.empty() == false)
     {
         if ((file.compare(file.size() - 1, 1, "/") != 0) && (file.compare(file.size() - 1, 1, "\\") != 0))
             file += "\\";
@@ -142,35 +144,29 @@ bool DataBase::setDB(DB_CONFIG* _dbConfig)
 
     if (error != ERROR_ALREADY_EXISTS && error != ERROR_SUCCESS) {
         exLOGDEBUG("Error");
-            
-        //wchar_t wmsg[256];
-        //char* msg = BUTIL::Util::GetLastErrorAsString(error);
-        //_swprintf(wmsg, L"%s config.xml : <fspath>%s</fspath>", BUTIL::Convert::charToWchar(msg), BUTIL::Convert::charToWchar((LPSTR)file.c_str()));
-        //std::ostringstream ostr;
-        //ostr << msg << " config.xml : <fspath>" << file << "</fspath>";
-        ERRORMBOX(BUTIL::Util::GetLastErrorAsString(error) + std::string(" config.xml : <fspath>") + file + std::string("</fspath>"));
-        exLOGERROR("config.xml : <fspath>%s</fspath>", file.c_str());
+        ERRORMBOX(BUTIL::Util::GetLastErrorAsString(error) + std::string("path") + file);
+        exLOGERROR("path", file.c_str());
         connected = false;
         return connected;
     }
 
-    file += dbConfig->dbName;
+    file += ptr_dbConfig->dbName;
 
     exLOGINFO("DB set in %s", file.c_str());
 
     connected = false;
     //if (setDBFile(file,"OFF","OFF"))
     if (setDBFile(file, "PERSIST", "NORMAL"))
-        connected = initDB();
+        connected = initDB(false);
 
     return connected;
 }
-bool DataBase::initDB()
+bool DataBase::initDB(bool _resetDB)
 {
     exLOGDEBUG("");
     bool success = true;
     for (int tab = 0; tab<MAXTABLES; tab++)
-        if (dbConfig->resetDB || !tabExists(TABLE(tab)))
+        if (_resetDB || !tabExists(TABLE(tab)))
         {
             exLOGDEBUG("Creating tables");
             if (initTable(tab) == false)
@@ -184,11 +180,11 @@ bool DataBase::initDB()
                 exLOGINFO("Created tab [%s]", tabNames[tab].c_str());
 
             if (tab == TAB_ROLES)
-                populateRolesTab();
+                ROLES_populate();
             if (tab == TAB_DBVERSIONS)
-                populateVersionsTab();
+                DBVERSIONS_populate();
             if (tab == TAB_CONFIGURATION)
-                populateConfigurationTab();
+                CONFIGURATION_populate();
         }
 
     DBVERSIONS_getVersion();
@@ -276,11 +272,11 @@ void DataBase::askUpdateDB(std::string _msg)
     if (MBOX(_msg, "Error", MB_ICONERROR | MB_YESNO) == IDYES)
     {
         update = true;
-        dbConfig->resetDB = true;
+        ptr_dbConfig->resetDB = true;
     }
 }
 
-bool DataBase::populateRolesTab()
+bool DataBase::ROLES_populate()
 {
     exLOGDEBUG("");
     bool ret = true;
@@ -298,7 +294,7 @@ bool DataBase::populateRolesTab()
     exLOGDB("DB insert to %s : %d", TABLE(TAB_ROLES).c_str(), role);
     return ret;
 }
-bool DataBase::populateVersionsTab(void)
+bool DataBase::DBVERSIONS_populate(void)
 {
     exLOGDEBUG("");
     bool ret = true;
@@ -323,29 +319,7 @@ bool DataBase::populateVersionsTab(void)
     }
     return ret;
 }
-bool DataBase::populateConfigurationTab(void)
-{
-    exLOGDEBUG("");
-    bool ret = true;
-    dbConfiguration* conf = dbConf;
-    std::string request;
 
-    while (conf->variable != "")
-    {
-        string request = INSERTINTO(TAB_CONFIGURATION);
-        request += INSERTCOLS(CONF_VAR, CONF_VALUE, CONF_DESCRIPTION);
-        request += INSERTVALS(conf->variable, conf->value, conf->description);
-
-        int tmpRet = execNolock(request);
-        if (tmpRet != ERROR_SUCCESS)
-            ret = false;
-
-        conf++;
-        exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
-    }
-    return ret;
-    
-}
 bool DataBase::getUpdate()
 {
     exLOGDEBUG("");
@@ -426,6 +400,98 @@ vector<string> DataBase::vColIdToCol(vector<short> _colId, bool _dot)
             colNames.push_back(COLNAME(*it));
     }
     return colNames;
+}
+#pragma endregion 
+
+#pragma region TAB_CONFIGURATION
+bool DataBase::CONFIGURATION_populate(void)
+{
+    exLOGDEBUG("");
+    bool ret = true;
+    dbConfiguration* conf = dbConf;
+    std::string request;
+
+    while (conf->variable != "")
+    {
+        string request = INSERTINTO(TAB_CONFIGURATION);
+        request += INSERTCOLS(CONF_INDEX, CONF_VAR, CONF_VALUE, CONF_DESCRIPTION);
+        request += INSERTVALS(STR(conf->index), conf->variable, conf->value, conf->description);
+
+        int tmpRet = execNolock(request);
+        if (tmpRet != ERROR_SUCCESS)
+            ret = false;
+
+        conf++;
+        exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
+    }
+    return ret;
+
+}
+bool DataBase::getConfiguration(std::vector<dbConfiguration> * configManager)
+{
+    return CONFIGURATION_get(configManager);
+}
+
+bool DataBase::setConfiguration(dbConfiguration * row)
+{
+    return CONFIGURATION_insertOrUpdate(row->index, row->variable, row->value);
+}
+
+bool DataBase::CONFIGURATION_get(std::vector<dbConfiguration> * _configManager)
+{
+    bool ret = false;
+    if (!connected)
+        return ret;
+
+    string request = SELECT(CONF_INDEX, CONF_VALUE) + FROM(TAB_CONFIGURATION);
+
+    try
+    {
+        SQLEXEC;
+
+        int row = CONF_CURRENTFOLDER;
+        int index;
+        
+        while (SQLFETCH)
+        {
+            ret = true;
+            index = SQLFIELD(CONF_INDEX).asShort();
+            _configManager->at(index).value = (std::string)SQLFIELD(CONF_VALUE).asString();
+        }
+        SQLCLOSE;
+    }
+    catch (SAException &e)
+    {
+        __debugbreak();
+        EXECPCIONMBOX(e);
+        exLOGERROR("SQL ko : %s", request.c_str());
+        exLOGERROR(e.ErrText());
+        return ret;
+    }
+    exLOGSQL("SQL ok : %s", request.c_str());
+    return ret;
+}
+bool DataBase::CONFIGURATION_insertOrUpdate(int _id, std::string _var, std::string _val)
+{
+    int ret = -1;
+
+    std::string request;
+
+    request = COUNTFROM(TAB_CONFIGURATION) + WHERE(EQUAL(CONF_INDEX, STR(_id)));
+    ret = execScalar(request);
+    if (ret >= 0)
+    { // UPDATE
+        request = UPDATE(TAB_CONFIGURATION);
+        request += SET(CONF_VALUE, _val);
+        request += WHERE(EQUAL(CONF_INDEX, STR(_id)));
+    }
+    else
+    { // INSERT
+        request = INSERTINTO(TAB_CONFIGURATION);
+        request += INSERTCOLS(CONF_INDEX, CONF_VAR, CONF_VALUE);
+        request += INSERTVALS(STR(_id), _var,  _val);
+    }
+    return (execNolock(request) == ERROR_SUCCESS);
 }
 #pragma endregion 
 
@@ -654,7 +720,7 @@ int DataBase::PATHFS_update(MovieFolder *_folder)
     exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
     return ret;
 }
-int  DataBase::loadFolders()
+int  DataBase::PATHFS_loadFolders()
 {
     if (!connected)
         return -1;
@@ -2070,7 +2136,6 @@ bool DataBase::PERSONS_getPerson(Movie *_movie)
     }
     return ret;
 }
-
 int DataBase::insertInDefTabs(int _table, std::string _value)
 {
     int ret = -1;

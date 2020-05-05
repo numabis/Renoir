@@ -23,6 +23,15 @@ enum ROLES_PERSONS { ROLES_DIRECTOR, ROLES_WRITER, ROLES_ACTOR, ROLES_MAX };
 
 enum typesValues { TYPE_UNSET = -1, TYPE_UNKNOWN = 1, TYPE_MOVIE = 2, TYPE_NOTMOVIE = 4, TYPE_ALL = 8 };
 
+enum appConfig { CONF_CURRENTFOLDER, CONF_VIDEOPLAYER, CONF_OMDB_APIKEY, CONF_OMDB_URL, CONF_OMDB_APIREQUEST, CONF_OMDB_TYPE, CONF_OMDB_PLOT, CONF_OMDB_LISTSEPARATOR, CONF_OMDB_TESTMODE, CONF_IMDB_URL, CONF_IMDB_TITLE, CONF_IMDB_FIND, CONF_FILTER_DIRECTORS, CONF_FILTER_WRITERS, CONF_FILTER_ACTORS, CONF_FILTER_GENRES, CONF_FILTER_GENRES2, CONF_FILTER_YEARMIN, CONF_FILTER_YEARMAX, CONF_FILTER_IMDBRATINGMIN, CONF_FILTER_IMDBRATINGMAX, CONF_FILTER_SERIE, CONF_FILTER_ANIM, CONF_FILTER_DOC, CONF_FILTER_SHORT, CONF_XMLTAG_SERIE, CONF_XMLTAG_ANIMATION, CONF_XMLTAG_DOCUMENTARY, CONF_XMLTAG_SHORT, CONF_MAX_VALUES };
+
+typedef struct {
+    int index;
+    std::string variable;
+    std::string value;
+    std::string description;
+} dbConfiguration;
+
 struct FS_CONFIG
 {
     std::string *path;
@@ -46,13 +55,6 @@ struct OMDB_CONFIG
 
 };
 
-//struct IMDB_CONFIG
-//{
-//    std::string imdbUrl;
-//    std::string imdbTitle;
-//    std::string imdbFind;
-//};
-
 struct DB_CONFIG
 {
     std::string dbPath;
@@ -64,7 +66,6 @@ struct LOG_CONFIG
 {
     std::string logPath;
     short logLevel;
-
 };
 
 struct DATA_CONFIG
@@ -77,7 +78,6 @@ struct DATA_CONFIG
     FS_CONFIG   fs;
     std::string xmlLocal[XML_LOCAL_MAX];
     std::string xmlLocalFilters[FILTERS_MAX];
-    //std::string xmlLocalFilters[XML_LOCAL_FILTER_MAX];
 };
 
 struct DATA_MOVIE
@@ -86,14 +86,5 @@ struct DATA_MOVIE
     std::string date;
     float rating;
 };
-
-//struct pathStruct 
-//{
-//    std::string path;
-//    short pathId;
-//    bool  isSub;
-//    bool  isHidden;
-//    bool  isRead;
-//} ;
 
 #endif // _VARIABLES

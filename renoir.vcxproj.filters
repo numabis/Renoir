@@ -123,6 +123,9 @@
     <ClInclude Include="DataBase\databaseTabDef.h">
       <Filter>DataBase</Filter>
     </ClInclude>
+    <ClInclude Include="sources\configManager.h">
+      <Filter>sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -197,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="DataBase\database.cpp">
       <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\configManager.cpp">
+      <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@
 #define C2WC(wc)            (wchar_t *)BUTIL::Convert::charToWchar((char*)wc)
 #define WC2C                BUTIL::Convert::wcharToChar
 
+#define STR2INT             BUTIL::Util::stringToInt
+
 #define MBOX                BUTIL::Util::msgBox
 
 #define DEFAULTSEP ", "

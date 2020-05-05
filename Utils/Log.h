@@ -29,6 +29,7 @@ public:
 	};
 
     void init(LOG_CONFIG *logConfig);
+    void init(std::string _path);
     void setPath(std::string);
     void setPath( std::wstring );
 	void setLogLevel( int = 0 );
@@ -43,6 +44,7 @@ public:
 
 private:
 
-    LOG_CONFIG *logConfig;
+    LOG_CONFIG *ptr_logConfig;
+    LOG_CONFIG logConfig;
 
 };

@@ -113,8 +113,8 @@ void Movie::initValues(std::string*_data)
     awards = _data[XML_AWARDS];
     poster = _data[XML_POSTER];
     metascore = atoi(_data[XML_METASCORE].c_str());
-    setImdbRating(BUTIL::Util::stringToInt(_data[XML_IMDBRATING], "."));
-    imdbVotes = BUTIL::Util::stringToInt(_data[XML_IMDBVOTES], ",");
+    setImdbRating(STR2INT(_data[XML_IMDBRATING], "."));
+    imdbVotes = STR2INT(_data[XML_IMDBVOTES], ",");
     imdbId = _data[XML_IMDBID];
     type = _data[XML_TYPE];
     setSerie();

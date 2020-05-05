@@ -74,14 +74,14 @@ public:
 
 	/// <summary>  </summary>
     bool             isFolderRead(MovieFolder *_folder);
+    bool             setDB(std::string path);
     bool             setDB(DB_CONFIG*);
-    bool             initDB();
+    bool             initDB(bool _resetDB);
     bool             getUpdate();
     int              execNolock(std::string);
     bool             initTable(int _tabId);
-    bool             populateRolesTab(void);
-    bool             populateVersionsTab(void);
-    bool             populateConfigurationTab(void);
+    bool             ROLES_populate(void);
+    bool             DBVERSIONS_populate(void);
     void             askUpdateDB(std::string _msg);
     int              getDefTableId(int, std::string);
     std::string      getDefTableValue(int, int);
@@ -92,12 +92,14 @@ public:
     std::string      buildComboFilter(filterTypes);
     std::string      buildJoinFilter(filterTypes);
     short            getTabColFilters(filterTypes);
-    int              loadFolders();
+    int              PATHFS_loadFolders();
     int              loadFilter(filterTypes);
 
     bool getData(MovieFile *_file);
     int  getId(MovieFolder *_file);
     int  getPathId(std::string _path);
+    bool getConfiguration(std::vector<dbConfiguration> *configManager);
+    bool setConfiguration(dbConfiguration *row);
 
     double DBVERSIONS_getVersion(void);
 
@@ -136,7 +138,9 @@ private:
     std::vector<std::string> buklInserts[MAXTABLES];
     std::vector<std::string> buklUpdates[MAXTABLES];
 
-    DB_CONFIG* dbConfig;
+    std::string *configManager[CONF_MAX_VALUES];
+    DB_CONFIG* ptr_dbConfig;
+    DB_CONFIG      dbConfig;
     double DBVersion;
     double DBLocalVersion;
     bool update;
@@ -155,7 +159,7 @@ private:
     int  insertPersonsInMovies(Movie *_movie);
     int  insertGenresInMovies(Movie *_movie);
 
-    int PATHFS_selectId(std::string _path);
+    int  PATHFS_selectId(std::string _path);
     bool PATHFS_selectId(MovieFolder *_file);
     int  PATHFS_getId(MovieFolder *_file);
     bool PATHFS_existsPath(MovieFolder *_folder);
@@ -182,6 +186,10 @@ private:
 
     int  PERSONINMOVIE_insert(int, int, int);
     bool PERSONINMOVIE_deleteAll(void);
+
+    bool CONFIGURATION_populate(void);
+    bool CONFIGURATION_get(std::vector<dbConfiguration> *);
+    bool CONFIGURATION_insertOrUpdate(int, std::string, std::string);
 
     void str2sql(std::string *_str);
     std::vector<std::string> vColIdToCol(std::vector<short> _colId, bool);

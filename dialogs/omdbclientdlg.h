@@ -3,6 +3,7 @@
 #include "renoir.h"
 #include "omdbClientInfo.h"
 #include "debugWindow.h"
+#include "configManager.h"
 #include "database.h"
 #include "omdb.h"
 #include "fileSystem.h"
@@ -210,9 +211,11 @@ private:
     MovieFile selectedFile;
     Omdb omdb;
     ManageXML xmlFiles;
-    ReadConfig xmlConfig;
+    //ReadConfig xmlConfig;
     fileSystem fs;
     Log log;
+    ConfigManager configManager;
+    int logLevel;
 
     HANDLE  hThreadReadFolder;
     HANDLE  hThreadReadXML;

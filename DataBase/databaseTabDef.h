@@ -117,41 +117,72 @@
     { 1.0f,     "2020-04-28", "Added tab Configuration to store the config instead of XML" }, \
     { 0.0f,     ""          , "Not a version, here to end table" }
 
-#define DBTABCONFIGURATION    { "variable",    E_DEF_STRING, "UNIQUE NOT NULL PRIMARY KEY" }, \
+#define DBTABCONFIGURATION    { "id",          E_DEF_INT,    "PRIMARY KEY" }, \
+                              { "variable",    E_DEF_STRING, "UNIQUE NOT NULL" }, \
                               { "value",       E_DEF_STRING, "" }, \
                               { "description", E_DEF_STRING, "" }, \
-                              { "",            E_END_TABLE,  "CONSTRAINT[VARIABLE] UNIQUE([variable])" }
+                              { "",            E_END_TABLE,  "" }
 
 #define DBCONFFIELDS \
-{ "selectedFolder", "", "Actual Folder"}, \
-{ "videoplayer", "", "Path to player"}, \
-{ "OMDB_apikey", "", "Omdb Key"}, \
-{ "OMDB_url", "http://www.omdbapi.com/", "Omdb URL"}, \
-{ "OMDB_apiRequest", "apikey.aspx", "Omdb page"}, \
-{ "OMDB_type", "xml", "data in XML or JSON"}, \
-{ "OMDB_plot", "full", "plot:full or short"}, \
-{ "OMDB_listseparator", ",", "Actual Folder"}, \
-{ "OMDB_testmode", "false", "Actual Folder"}, \
-{ "IMDB_url", "https://www.imdb.com/", "Imdb URL"}, \
-{ "IMDB_title", "title", "IMDB page"}, \
-{ "IMDB_find", "find?q=", "find sintax"}, \
-{ "Filter_directors", "", "Selected filter for director"}, \
-{ "Filter_writers", "", "Selected filter for writer"}, \
-{ "Filter_actors", "", "Selected filter for actor"}, \
-{ "Filter_genres", "", "Selected filter for genre1"}, \
-{ "Filter_genres2", "", "Selected filter for genre2"}, \
-{ "Filter_yearmin", "", "Selected filter for min year"}, \
-{ "Filter_yearmax", "", "Selected filter for max year"}, \
-{ "Filter_imdbratingmin", "", "Selected filter for min imdb rating"}, \
-{ "Filter_imdbratingmax", "", "Selected filter for max imdb rating"}, \
-{ "Filter_serie", "", "Selected filter for serie"}, \
-{ "Filter_anim", "", "Selected filter for anim"}, \
-{ "Filter_doc", "", "Selected filter for doc"}, \
-{ "Filter_short", "", "Selected filter for short"}, \
-{ "xmlTag_serie", "serie", "XML TAG for serie"}, \
-{ "xmlTag_animation", "animation", "XML TAG for animation"}, \
-{ "xmlTag_documentary", "documentary", "XML TAG for documentary"}, \
-{ "xmlTag_short", "short", "XML TAG for short"}, \
-{ "", "", "last value" }
+{  0, "FS_autoreadFolder",          "0", "AutoRead when app start" }, \
+{  1, "FS_extentions",              ".mp4,.avi,.mkv", "Movie files extentions"}, \
+{  2, "FS_searchTypes",             "1", "Guess movie type from folder" }, \
+{  3, "FS_typeSerie",               "serie", "" }, \
+{  4, "FS_typeAnim",                "anim", "" }, \
+{  5, "FS_typeDoc",                 "doc", "" }, \
+{  6, "FS_typeShort",               "short", "" }, \
+{  7, "FS_searchLanguage",          "1", ""}, \
+{  8, "FS_LangFrench",              "Francais", "" } , \
+{  9, "FS_LangSpanish",             "Espanol", "" } , \
+{ 10, "FS_LangEglish",              "English", "" } , \
+{ 11, "FS_LangItalian",             "Italia", "" } , \
+{ 12, "DB_Reset",                   "0", "" } , \
+{ 13, "LOG_logLevel",               "6", "DISABLED=0 ERROR=1 INFO=2 DB=3 XML=4 DEBUG=5 SQL=6" }, \
+{ 14, "APP_CurrentFolder",          "", "Actual Folder"}, \
+{ 15, "APP_Videoplayer",            "", "Path to player"}, \
+{ 16, "OMDB_apikey",                "", "Omdb Key"}, \
+{ 17, "OMDB_url",                   "http://www.omdbapi.com/", "Omdb URL"}, \
+{ 18, "OMDB_apiRequest",            "apikey.aspx", "Omdb page"}, \
+{ 19, "OMDB_type",                  "xml",           "data in XML or JSON"}, \
+{ 20, "OMDB_plot",                  "full",          "plot:full or short"}, \
+{ 20, "OMDB_listseparator",         ",", "Actual Folder"}, \
+{ 21, "OMDB_testmode",              "false", "Actual Folder"}, \
+{ 21, "IMDB_url",                   "https://www.imdb.com/", "Imdb URL"}, \
+{ 22, "IMDB_title",                 "title", "IMDB page"}, \
+{ 22, "IMDB_find",                  "find?q=", "find sintax"}, \
+{ 23, "FILTER_directors",           "", "Selected filter for director"}, \
+{ 23, "FILTER_USE_directors",       "0", "Selected filter for director"}, \
+{ 24, "FILTER_writers",             "", "Selected filter for writer"}, \
+{ 24, "FILTER_USE_writers",         "0", "Selected filter for writer"}, \
+{ 25, "FILTER_actors",              "", "Selected filter for actor"}, \
+{ 25, "FILTER_USE_actors",          "0", "Selected filter for actor"}, \
+{ 26, "FILTER_genres",              "", "Selected filter for genre1"}, \
+{ 26, "FILTER_USE_genres",          "0", "Selected filter for genre1"}, \
+{ 27, "FILTER_genres2",             "", "Selected filter for genre2"}, \
+{ 27, "FILTER_USE_genres2",         "0", "Selected filter for genre2"}, \
+{ 28, "FILTER_yearmin",             "", "Selected filter for min year"}, \
+{ 28, "FILTER_USE_yearmin",         "0", "Selected filter for min year"}, \
+{ 29, "FILTER_yearmax",             "", "Selected filter for max year"}, \
+{ 30, "FILTER_USE_yearmax",         "0", "Selected filter for max year"}, \
+{ 31, "FILTER_imdbratingmin",       "", "Selected filter for min imdb rating"}, \
+{ 32, "FILTER_USE_imdbratingmin",   "0", "Selected filter for min imdb rating"}, \
+{ 33, "FILTER_imdbratingmax",       "", "Selected filter for max imdb rating"}, \
+{ 34, "FILTER_USE_imdbratingmax",   "0", "Selected filter for max imdb rating"}, \
+{ 35, "FILTER_serie",               "", "Selected filter for serie"}, \
+{ 36, "FILTER_USE_serie",           "0", "Selected filter for serie"}, \
+{ 37, "FILTER_anim",                "", "Selected filter for anim"}, \
+{ 38, "FILTER_USE_anim",            "0", "Selected filter for anim"}, \
+{ 39, "FILTER_doc",                 "", "Selected filter for doc"}, \
+{ 40, "FILTER_USE_doc",             "0", "Selected filter for doc"}, \
+{ 41, "FILTER_short",               "", "Selected filter for short"}, \
+{ 42, "FILTER_USE_short",           "0", "Selected filter for short"}, \
+{ 43, "XML_Tag_serie",              "serie", "XML TAG for serie"}, \
+{ 44, "XML_Tag_animation",          "animation", "XML TAG for animation"}, \
+{ 45, "XML_Tag_documentary",        "documentary", "XML TAG for documentary"}, \
+{ 46, "XML_Tag_short",              "short", "XML TAG for short"}, \
+{ 47, "XML_Path",                   "", ""}, \
+{ 47, "XML_Filename",               "movieDB", ""}, \
+{ 47, "XML_FilenameExt",            "xml", ""}, \
+{ 48, "", "", "last value" }
 
 #endif // _DATABASETABDEF_

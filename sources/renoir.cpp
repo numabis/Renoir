@@ -38,7 +38,7 @@ bool renoirApp::initalChecks()
     sprintf(configPath, "%s", CONFIGFILE);
 #endif
 
-    BUTIL::exLog::getInstance().setLogLevel(BUTIL::exLog::exLOG_XML);
+    //BUTIL::exLog::getInstance().setLogLevel(BUTIL::exLog::exLOG_XML);
 
     // Configuración.
     file = fopen(configPath, "r");

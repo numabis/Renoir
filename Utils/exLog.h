@@ -49,7 +49,7 @@ namespace BUTIL
 //        void setConfig(LOG_CONFIG *logConfig);
         void setPath(std::string);
         void setPath( std::wstring );
-		void setLogLevel( int = 0 );
+        void setLogLevel(int * level = 0);
 
 		void exlog(int,  std::string );
 		void exlog2(int, const char *,...);
@@ -66,7 +66,8 @@ namespace BUTIL
 		std::string LOG_path;					/**< Ruta por defecto para los log */
 		
 		// Indicador del nivel de profundidad del log del log. (Se configura en config.xml)
-		int logLevel;
+		int *logLevel;
+        int logDisable;
 
 //        LOG_CONFIG *logConfig;
 

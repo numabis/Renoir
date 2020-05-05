@@ -31,7 +31,8 @@ public:
 
     ManageXML();
     ~ManageXML(void);
-    void init(std::string*, std::string);
+//    void init(std::string*, std::string);
+    void init(std::string _path);
     bool loadOmdbStr(MovieFile *_file);
     bool readOmdbError(MovieFile *_file);
     HANDLE loadOmdbFile();
@@ -52,7 +53,7 @@ public:
     std::vector<MovieFile> *getV_load();
     BUTIL::Mutex* getMtx_vLoad();
     void setProgressCounter(size_t *);
-    std::string getXmlLocalFullPath();
+    //std::string getXmlLocalFullPath();
 private:
 #ifdef USEJSON
     json j;
@@ -62,13 +63,13 @@ private:
     size_t *progressCounter;
     //int countXmlLoad[CNT_MAX_READ];
     //int countXmlSave[CNT_MAX_READ];
-    std::string saveXmlpath;
+    std::string xmlpath;
     bool saveXmlCompress;
     int readOmdbXml(TiXmlElement *nodeRoot, MovieFile *_file, Movie *_movie);
     int readOmdbXml(TiXmlElement *nodeRoot, MovieFile *_file);
     bool readJSON(std::string _xml);
 //    XML_CONFIG *xmlConfig;
-    std::string* xmlConfig;
+//    std::string* xmlConfig;
     std::string omdbSeparator;
     bool stopThreads;
 };

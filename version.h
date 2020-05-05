@@ -1,7 +1,7 @@
 #define APS_MAJORNUMBER          0
 #define APS_MINORNUMBER          9
 #define APS_BUILDNUMBER          0
-#define APS_MODIFICATIONNUMBER   0
+#define APS_MODIFICATIONNUMBER   1
 
 #define STR_HELPER(x) #x
 #define STRH(x) STR_HELPER(x)

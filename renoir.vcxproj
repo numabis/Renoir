@@ -337,6 +337,7 @@
     <ClInclude Include="PictureControl\PictureCtrl.h" />
     <ClInclude Include="setOmdbKey.h" />
     <ClInclude Include="ShowColumns.h" />
+    <ClInclude Include="sources\configManager.h" />
     <ClInclude Include="sources\definitions.h" />
     <ClInclude Include="sources\fileSystem.h" />
     <ClInclude Include="sources\manageXML.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="PictureControl\PictureCtrl.cpp" />
     <ClCompile Include="setOmdbKey.cpp" />
     <ClCompile Include="ShowColumns.cpp" />
+    <ClCompile Include="sources\configManager.cpp" />
     <ClCompile Include="sources\fileSystem.cpp" />
     <ClCompile Include="sources\manageXML.cpp" />
     <ClCompile Include="sources\Movie.cpp" />
