@@ -21,36 +21,36 @@ renoirApp::renoirApp()
 {
 	// admite Administrador de reinicio
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
-
 	// TODO: agregar aquí el código de construcción,
 	// Colocar toda la inicialización importante en InitInstance
 }
 
 bool renoirApp::initalChecks()
 {
-    FILE* file = NULL;
-    char configPath[PATHSIZE];
-    //char configLocalPath[PATHSIZE];
-
-#if defined(_DEBUG) || defined(_DEMO)
-    sprintf(configPath, "%s", DBGCONFIGFILE);
-#else
-    sprintf(configPath, "%s", CONFIGFILE);
-#endif
-
-    //BUTIL::exLog::getInstance().setLogLevel(BUTIL::exLog::exLOG_XML);
-
-    // Configuración.
-    file = fopen(configPath, "r");
-    if (file != NULL)
-        fclose(file);
-    else
-    {
-        std::ostringstream msg;
-        msg << "Missing " << configPath;
-        MBOX(msg.str(), "Error", MB_ICONERROR | MB_OK);
-        return false;
-    }
+//    FILE* file = NULL;
+//    char configPath[PATHSIZE];
+//    //char configLocalPath[PATHSIZE];
+//
+//#if defined(_DEBUG) || defined(_DEMO)
+//    sprintf(configPath, "%s", DBGCONFIGFILE);
+//#else
+//    sprintf(configPath, "%s", CONFIGFILE);
+//#endif
+//
+//    //BUTIL::exLog::getInstance().setLogLevel(BUTIL::exLog::exLOG_XML);
+//    wchar_t * cmdLine = GetCommandLine();
+//
+//    // Configuración.
+//    file = fopen(configPath, "r");
+//    if (file != NULL)
+//        fclose(file);
+//    else
+//    {
+//        std::ostringstream msg;
+//        msg << "Missing " << configPath;
+//        MBOX(msg.str(), "Error", MB_ICONERROR | MB_OK);
+//        return false;
+//    }
 
     return true;
 }
@@ -64,8 +64,8 @@ renoirApp theApp;
 
 BOOL renoirApp::InitInstance()
 {
-        if (initalChecks() == false)
-            return false;
+    if (initalChecks() == false)
+        return false;
 	// Windows XP requiere InitCommonControlsEx() si un manifiesto de
 	// aplicación especifica el uso de ComCtl32.dll versión 6 o posterior para habilitar
 	// estilos visuales. De lo contrario, se generará un error al crear ventanas.

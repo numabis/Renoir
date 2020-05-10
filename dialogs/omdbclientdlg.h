@@ -5,10 +5,10 @@
 #include "debugWindow.h"
 #include "configManager.h"
 #include "database.h"
+//#include "configManager.h"
 #include "omdb.h"
 #include "fileSystem.h"
 #include "manageXML.h"
-#include "readConfig.h"
 #include "log.h"
 #include "xml.h"
 #include "PictureControl\PictureCtrl.h"
@@ -175,6 +175,7 @@ public:
     int getOmdbAllStart(void);
     int onOmdbReadFinish(void);
     void CountOmdbAllStart(void);
+    void initFolder(void);
     void selectFolder(void);
 /*    bool selectFolder(bool _readfs = false);*/
     void showColumnSelector(void);
@@ -211,10 +212,10 @@ private:
     MovieFile selectedFile;
     Omdb omdb;
     ManageXML xmlFiles;
-    //ReadConfig xmlConfig;
+//    ReadConfig xmlConfig;
     fileSystem fs;
     Log log;
-    ConfigManager configManager;
+    //ConfigManager configManager;
     int logLevel;
 
     HANDLE  hThreadReadFolder;

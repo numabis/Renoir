@@ -1,8 +1,9 @@
 #include <string>
 #include "variables.h"
-#include "database.h"
+#include "singleton.h"
+#include "readConfig.h"
 
-class ConfigManager
+class ConfigManager: public BUTIL::Singleton<ConfigManager>
 {
 
 public:
@@ -10,19 +11,15 @@ public:
     ConfigManager(void);
     ~ConfigManager(void);
     bool init();
-    
+    bool readConfFile();
+    bool saveConfigToDB();
+
     std::string getHomeFolder();
-    std::string getConfigStr(appConfig);
     std::string getConfigStr(std::string);
-    int getConfigInt(appConfig);
     int getConfigInt(std::string);
-    bool setConfigValue(appConfig, std::string);
     bool setConfigValue(std::string, std::string);
-    bool setConfigValue(appConfig, int);
     bool setConfigValue(std::string, int);
     bool setConfigValue(filterTypes _filter, std::string);
-    bool saveConfigValue(appConfig);
-    bool saveConfigValue(std::string);
 
     std::string getFilter(filterTypes _var);
     std::string getFsType(int type);
@@ -36,19 +33,28 @@ public:
     std::string getImdb(XML_IMDB_TAGS);
     std::string getImdbTitleUrl(std::string);
     std::string getImdbFindUrl(std::string);
+    TiXmlDocument getConfXml();
 
 private:
+
+    ReadConfig xmlConfig;
+
+    friend class BUTIL::Singleton<ConfigManager>;
+
+    bool isDataLoaded;
 
     std::string homeFolder;
 
     //std::string configuration[CONF_MAX_VALUES];
-    std::vector<dbConfiguration> *dbConf; // [CONF_MAX_VALUES] = { DBCONFFIELDS };
+    //std::vector<dbConfiguration> *dbConf; // [CONF_MAX_VALUES] = { DBCONFFIELDS };
+    confMap dbConf;
     DATA_CONFIG oldConfig;
 
     bool readConfigFromDB();
-    bool saveConfigToDB(dbConfiguration *);
-    dbConfiguration *getConfigRow(appConfig);
+    bool saveConfigToDB(std::string _var);
+    //dbConfiguration *getConfigRow(appConfig);
     dbConfiguration *getConfigRow(std::string);
-    void separateValues(std::vector<std::string>*, std::string);
+    std::string *getConfigValue(std::string);
+    void separateValues(std::vector<std::string>* v_list, std::string _list, std::string _sep);
 
 };

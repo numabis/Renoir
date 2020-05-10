@@ -12,6 +12,7 @@ class Omdb
 public:
     Omdb();
     ~Omdb(void);
+    void init();
     void init(OMDB_CONFIG*);
     void searchByImdb(MovieFile *file);
     //    std::string string2url(std::string str);

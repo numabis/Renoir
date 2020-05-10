@@ -68,8 +68,9 @@ namespace BUTIL
         static std::string createRoot(std::string msg, bool);
         static std::wstring createRoot(std::wstring msg, bool);
         static std::string createConfig(std::string msg);
-        static std::string XML_nodo( std::string, std::string, bool=false );
-		static std::string XML_nodo( std::string, std::wstring, bool=false );
+        static std::string XML_node(std::string, std::string);
+        static std::string XML_nodo(std::string, std::string, bool = false);
+        static std::string XML_nodo( std::string, std::wstring, bool=false );
 
 		static std::string XML_nodo( std::string, int );
 		static std::string XML_nodo( std::string, unsigned int );

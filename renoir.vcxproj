@@ -325,6 +325,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DataBase\database.h" />
+    <ClInclude Include="DataBase\databaseConfDef.h" />
     <ClInclude Include="DataBase\databaseSQL.h" />
     <ClInclude Include="DataBase\dataBaseSQLLib.h" />
     <ClInclude Include="DataBase\databaseTabDef.h" />
@@ -390,6 +391,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dialogs\mainWindow.rc" />
+    <ResourceCompile Include="dialogs\renoir.rc" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="config\config.xml">

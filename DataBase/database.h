@@ -74,6 +74,7 @@ public:
 
 	/// <summary>  </summary>
     bool             isFolderRead(MovieFolder *_folder);
+    bool             setDB();
     bool             setDB(std::string path);
     bool             setDB(DB_CONFIG*);
     bool             initDB(bool _resetDB);
@@ -86,7 +87,8 @@ public:
     int              getDefTableId(int, std::string);
     std::string      getDefTableValue(int, int);
     std::string      AllMoviesFSGetFilter();
-    bool             isConnected(void);
+    inline bool             isConnected(void);
+    void             setConnected(bool);
     bool             getMovieData(Movie *movie);
     bool             getMovieData(MovieFile *movie);
     std::string      buildComboFilter(filterTypes);
@@ -98,8 +100,9 @@ public:
     bool getData(MovieFile *_file);
     int  getId(MovieFolder *_file);
     int  getPathId(std::string _path);
-    bool getConfiguration(std::vector<dbConfiguration> *configManager);
-    bool setConfiguration(dbConfiguration *row);
+    std::string getPath(int _id);
+    bool getConfiguration(confMap *_confMan);
+    bool setConfiguration(std::string _var, dbConfiguration _conf);
 
     double DBVERSIONS_getVersion(void);
 
@@ -138,13 +141,13 @@ private:
     std::vector<std::string> buklInserts[MAXTABLES];
     std::vector<std::string> buklUpdates[MAXTABLES];
 
-    std::string *configManager[CONF_MAX_VALUES];
+    //std::string *configManager[CONF_MAX_VALUES];
     DB_CONFIG* ptr_dbConfig;
     DB_CONFIG      dbConfig;
     double DBVersion;
     double DBLocalVersion;
     bool update;
-    bool connected;
+    //bool connected;
     moviesFSFilters filters;
     int RangeImdbRatings[2];
     dbTableDef * tabStruct[MAXTABLES];
@@ -160,6 +163,7 @@ private:
     int  insertGenresInMovies(Movie *_movie);
 
     int  PATHFS_selectId(std::string _path);
+    std::string PATHFS_getPath(int _id);
     bool PATHFS_selectId(MovieFolder *_file);
     int  PATHFS_getId(MovieFolder *_file);
     bool PATHFS_existsPath(MovieFolder *_folder);
@@ -188,8 +192,8 @@ private:
     bool PERSONINMOVIE_deleteAll(void);
 
     bool CONFIGURATION_populate(void);
-    bool CONFIGURATION_get(std::vector<dbConfiguration> *);
-    bool CONFIGURATION_insertOrUpdate(int, std::string, std::string);
+    bool CONFIGURATION_get(confMap *);
+    bool CONFIGURATION_insertOrUpdate(std::string, dbConfiguration _conf);
 
     void str2sql(std::string *_str);
     std::vector<std::string> vColIdToCol(std::vector<short> _colId, bool);

@@ -4,6 +4,7 @@
 #include "Convert.h"
 #include "util.h"
 #include "Mutex.h"
+#include "configManager.h"
 
 fileSystem::fileSystem()
 {
@@ -12,6 +13,11 @@ fileSystem::fileSystem()
 
 fileSystem::~fileSystem(void)
 {
+}
+
+void fileSystem::init()
+{
+    fsConfig = GETCM.getFsConfig();
 }
 
 void fileSystem::init(FS_CONFIG *_FsConfig)
@@ -77,7 +83,9 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
     progressCounter[CNT_TOTAL] = 0;
     progressCounter[CNT_MAX_READ] = 0;
 
-    for (const auto & entry : fs::recursive_directory_iterator(*fsConfig->path))
+    std::string currentFolder = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
+
+    for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
     {
         MovieFile file(fsConfig);
         if (file.fileIsMovie(entry.path().extension().string()))
@@ -87,14 +95,17 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
     }
 
     {
-        MovieFolder homeFolder(*fsConfig->path, true);
-        homeFolder.insertDB();
+        if (GETDB.getPathId(currentFolder) == -1)
+        {
+            MovieFolder homeFolder(currentFolder, true);
+            homeFolder.insertDB();
+        }
     }
 
     //GETDB.bulkInit(TAB_PATHFS);
     //GETDB.bulkInit(TAB_MOVIESFS);
     GETDB.TRANSACTION_begin();
-    for (const auto & entry : fs::recursive_directory_iterator(*fsConfig->path))
+    for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
     {
         if (stopThreads)
         {
@@ -106,7 +117,7 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
         {
             file.setFilename(entry.path().filename().string());
             file.setPath(entry.path().parent_path().string());
-            file.setIsSub(file.pathCompare(*fsConfig->path)!=0);
+            file.setIsSub(file.pathCompare(currentFolder)!=0);
             file.setIsRead(true);
             //file.insertDB();
             file.exists = true;
@@ -199,16 +210,16 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
     return progressCounter[CNT_READ];
 }
 
-std::string fileSystem::getFolderPath()
-{
-    return *fsConfig->path;
-}
+//std::string fileSystem::getFolderPath()
+//{
+//    return *fsConfig->path;
+//}
 
-void fileSystem::setFolderPath(std::string _path)
-{
-    *fsConfig->path = _path;
-//    BUTIL::Convert::toLower(&fsConfig->path);
-}
+//void fileSystem::setFolderPath(std::string _path)
+//{
+//    *fsConfig->path = _path;
+////    BUTIL::Convert::toLower(&fsConfig->path);
+//}
 
 //int *fileSystem::getReadFiles()
 void fileSystem::setProgressCounter(size_t * _progressCounter)

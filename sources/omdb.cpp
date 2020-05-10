@@ -1,7 +1,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-#include <map>
+//#include <map>
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
@@ -13,7 +13,7 @@
 
 #include "omdb.h"
 #include "Convert.h"
-
+#include "configManager.h"
 
 #define WOMDBKEY     L"apikey="
 #define WOMDBURL     L"http://www.omdbapi.com/?"
@@ -39,6 +39,11 @@ Omdb::Omdb()
 
 Omdb::~Omdb(void)
 {
+}
+
+void Omdb::init()
+{
+    omdbConfig = GETCM.getOmdbConfig();
 }
 
 void Omdb::init(OMDB_CONFIG *_config)
@@ -78,7 +83,7 @@ void Omdb::searchByImdb(MovieFile* _file)
     using namespace std::string_literals;
 
     std::string url = omdbConfig->omdbUrl;
-    url.append("?" + OMDBKEY + *omdbConfig->apikey);
+    url.append("?" + OMDBKEY + omdbConfig->apikey);
     url.append("&" + OMDBRET + omdbConfig->type);
     url.append("&" + OMDBIMDB + _file->imdbId);
 
@@ -154,7 +159,7 @@ void Omdb::searchByName(MovieFile *file)
     std::string url = omdbConfig->omdbUrl;
 
     if (omdbConfig->testmode == false)
-        url.append("?" + OMDBKEY + *omdbConfig->apikey);
+        url.append("?" + OMDBKEY + omdbConfig->apikey);
     else
         url.append("?" + OMDBKEY + "");
     url.append("&" + OMDBRET + omdbConfig->type);

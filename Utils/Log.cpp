@@ -1,5 +1,6 @@
 #include "Log.h"
 #include "Convert.h"
+#include "configManager.h"
 
 #include <time.h>
 #include <fstream>
@@ -14,6 +15,11 @@
     Log::~Log()
 	{
 	}
+
+    void Log::init()
+    {
+        logConfig.logPath = GETCM.getHomeFolder();
+    }
 
     void Log::init(LOG_CONFIG *_logConfig)
     {

@@ -31,10 +31,14 @@
 #define CNT_FIELD           3
 #define MIN             0
 #define MAX             1
-#define MIN_YEAR        1900
-#define MAX_YEAR        2099
-#define MIN_IMDBRATING  -100
-#define MAX_IMDBRATING  100
+//#define MIN_YEAR        1900
+//#define MAX_YEAR        2099
+//#define MIN_IMDBRATING  -100
+//#define MAX_IMDBRATING  100
+#define MIN_YEAR        0
+#define MAX_YEAR        0
+#define MIN_IMDBRATING  0
+#define MAX_IMDBRATING  0
 #define MIN_OCCURRENCES 1
 #define _MAX_LIST   10
 
@@ -68,9 +72,16 @@
 #define CAT(A, B)   A##B
 #define L(A)  CAT(L, #A)
 
+//#define GET_DB(_0, _1, _2, NAME, ...) NAME
+//#define GETDB(...) GET_DB(_0, ##__VA_ARGS__, FOO2, FOO1, FOO0)(__VA_ARGS__)
+
 #define STR std::to_string
 #define GETDB         DataBase::getInstance()
+#define GETCM         ConfigManager::getInstance()
+#define VARDB(var)    DataBase::var
 #define GETLOG        BUTIL::exLog::getInstance()
+
+#define CONF_DESC "description"
 
 //#define SERIES      "series"
 //#define EPISODE     "episode"

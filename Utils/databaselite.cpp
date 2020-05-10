@@ -155,17 +155,21 @@ namespace BUTIL
         if (!connected)
             return ERROR_BAD_DEVICE;
 
-		int ret = ERROR_SUCCESS;
+		//int ret = ERROR_SUCCESS;
+        errorCode = ERROR_SUCCESS;
 
 		try
 		{
 			SACommand cmd ( &conex, _cmd.c_str() , SA_CmdSQLStmtRaw);
 			cmd.Execute();
 			cmd.Close();
-			ret = ERROR_SUCCESS;
+			//ret = ERROR_SUCCESS;
+            errorCode = ERROR_SUCCESS;
 		}catch( SAException &e )
 		{
-            ret = e.ErrNativeCode();
+            //ret = e.ErrNativeCode();
+            errorCode = e.ErrNativeCode();
+            errorMsg = e.ErrText();
             //wchar_t msg[512];
             //std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
             //std::wstring wfile = BUTIL::Convert::string2wstring(_cmd);
@@ -174,11 +178,12 @@ namespace BUTIL
             //exLOGERROR();
             if (_cmd.size() > 255)
                 _cmd = _cmd.substr(0, 254);
+
             exLOGERROR("ERROR SQL   : %s", e.ErrText());
             exLOGERROR("ERROR QUERY : %s", _cmd.c_str());
 		}
 
-		return ret;
+		return errorCode;
 	}
 
 	/**

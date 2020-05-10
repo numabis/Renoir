@@ -7,14 +7,15 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 #define SysWord     "x86"
 #define SourceDir   "../"
-#define ExeName     "omdbClient.exe"
-#define AppName     "Omdb Client"
+#define ExeName     "Renoir.exe"
+#define Release     "Release"
+#define AppName     "Renoir"
 #define LibDir      SourceDir + "\Libs"
-#define BinDir      SourceDir + "\Release\"
+#define BinDir      SourceDir + "\" + Release + "\"
 #define configDir   SourceDir + "\Config\"
-#define AppVersion  GetFileVersion(SourceDir + "\Release\" + ExeName)
+#define AppVersion  GetFileVersion(SourceDir + "\" + Release + "\" + ExeName)
 #define Publisher   "NumaCorp"
-#define URL         "https://github.com/numabis/omdbClient"
+#define URL         "https://github.com/numabis/renoir"
   
 AppId={{0403370A-B8FF-4AC7-A8DE-1907B23BCB94}
 AppName={#AppName}
@@ -27,7 +28,7 @@ AppUpdatesURL={#URL}
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
 OutputDir={#SourceDir}\setup\{#AppVersion}
-OutputBaseFilename=setup_Omdb_Client_{#SysWord}_{#AppVersion}
+OutputBaseFilename=setup_renoir_{#SysWord}_{#AppVersion}
 Compression=lzma
 SolidCompression=yes
 
@@ -43,14 +44,14 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#BinDir}\{#ExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#configDir}\config.xml"; DestDir: "{app}\Config"; Flags: ignoreversion
 Source: "{#SourceDir}\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourceDir}\OmdbClient.pdf"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\Renoir.pdf"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "{#SourceDir}\sqlapi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourceDir}\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Omdb Client"; Filename: "{app}\{#ExeName}" ; WorkingDir: "{app}"
-Name: "{commondesktop}\Omdb Client"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
+Name: "{group}\Renoir"; Filename: "{app}\{#ExeName}" ; WorkingDir: "{app}"
+Name: "{commondesktop}\Renoir"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
 
 [Run]
 Filename: "{app}\readme.txt"; Description: "View the readme file"; Flags: nowait shellexec skipifsilent

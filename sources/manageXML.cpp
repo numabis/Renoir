@@ -4,6 +4,7 @@
 #include "database.h"
 #include "omdb.h"
 #include "Util.h"
+#include "configManager.h"
 
 #include <fstream>
 
@@ -28,6 +29,11 @@ ManageXML::~ManageXML(void)
 //    xmlConfig = _config;
 //    omdbSeparator = _separator;
 //}
+
+void ManageXML::init()
+{
+    xmlpath = GETCM.getConfigStr(CONF_XML_PATH);
+}
 
 void ManageXML::init(std::string _path)
 {

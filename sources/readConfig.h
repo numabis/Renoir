@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <string>
 #include <vector>
-#include <map>
+//#include <map>
 #include <sstream>      // std::stringstream
 #include "variables.h"
 #include "Xml.h"
@@ -94,7 +94,8 @@ public:
     std::string xmlTypes[TYPE_MAX] = { XMLVAL_TYPE_SERIE, XMLVAL_TYPE_ANIM, XMLVAL_TYPE_DOC, XMLVAL_TYPE_SHORT };
 
     int initLocalConfigFile();
-    int initConfigFile();
+    //int initConfigFile();
+    bool initConfigFile(confMap *_map);
     DATA_CONFIG *getGlobalConfig();
     FS_CONFIG *getFsConfig();
     OMDB_CONFIG *getOmdbConfig();
@@ -106,17 +107,17 @@ public:
     LOG_CONFIG *getLogConfig();
  //   XML_CONFIG *getXmlConfig();
 
-    std::string* getXmlLocalConfig();
-    std::string getXmlLocalConfig(XML_LOCAL_VARS);
+//    std::string* getXmlLocalConfig();
+//    std::string (XML_LOCAL_VARS);
     std::string getXmlLocalFilters(filterTypes);
-    std::string getXmlLocalFullPath();
-    void setXmlLocalConfig(XML_LOCAL_VARS, std::string);
+//    std::string getXmlLocalFullPath();
+//    void setXmlLocalConfig(XML_LOCAL_VARS, std::string);
     void setXmlLocalFilters(filterTypes, std::string);
 
-    int loadLocalConfigFile();
+//    int loadLocalConfigFile();
 
     bool readXML(wchar_t *, DATA_CONFIG *);
-    bool saveLocalConfigFile(bool);
+    //bool saveLocalConfigFile(bool);
 
 private:
 
@@ -125,6 +126,9 @@ private:
     std::string localConfigPath;
     DATA_CONFIG xmlConfig;
     std::string getVersionApp();
+    bool loadConfigFile(confMap* _map);
+    bool saveConfigFile();
+    void setConfigValue(confMap* _map, TiXmlElement* _element, std::string _var);
     int loadConfigFile();
     int readConfigFS(TiXmlElement *node);
     int readConfigOMDB(TiXmlElement *node);

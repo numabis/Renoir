@@ -1,53 +1,88 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" ?>
 <config>
-  <fspath>D:\Test</fspath>
-  <omdb>
-    <omdburl>http://www.omdbapi.com/</omdburl>
-    <apiRequest>apikey.aspx</apiRequest>
-    <type>xml</type>
-    <plot>full</plot>
-    <listseparator>,</listseparator>
-    <testmode>false</testmode>
-  </omdb>
-  <imdb>
-    <url>https://www.imdb.com/</url>
-    <title>title</title>
-    <find>find?q=</find>
-  </imdb>
-  <filesystem>
-    <autoreadfolder>false</autoreadfolder>
-    <autoreadxmlfile>true</autoreadxmlfile>
-    <extentions>
-      <extention>.mp4</extention>
-      <extention>.avi</extention>
-      <extention>.mkv</extention>
-    </extentions>
-    <types>
-      <searchtypes>true</searchtypes>
-      <serie>serie</serie>
-      <animation>anim</animation>
-      <documentary>doc</documentary>
-      <short>short</short>
-    </types>
-    <language>
-      <searchlanguage>true</searchlanguage>
-      <french>francais</french>
-      <spanish>espanol</spanish>
-      <english>english</english>
-      <italian>italian</italian>
-    </language>
-  </filesystem>
-  <database>
-    <dbpath>db\</dbpath>
-    <dbname>moviesDB.s3db</dbname>
-    <resetdb>false</resetdb>
-  </database>
-  <xml>
-    <xmlpath>xml\</xmlpath>
-    <xmlname>moviesDB</xmlname>
-  </xml>
-  <log>
-    <logPath>logs\</logPath>
-    <level DISABLED="0" ERROR="1" INFO="2" DB="3" XML="4" DEBUG="5" SQL="6">6</level>
-  </log>
+  <APP>
+    <currentfolder description="current folder">D:\movies\NEW</currentfolder>
+    <videoplayer description="Path to video player">C:\Program Files (x86)\VideoLAN\VLC\vlc.exe</videoplayer>
+  </APP>
+  <DB>
+    <dbname description="">moviesDB.s3db</dbname>
+    <dbpath description="">db\</dbpath>
+    <reset description="Reset database">false</reset>
+  </DB>
+  <FILTER>
+    <USE>
+      <actors description="">false</actors>
+      <anim description="">false</anim>
+      <directors description="">false</directors>
+      <doc description="">false</doc>
+      <genres description="">false</genres>
+      <genres2 description="">false</genres2>
+      <imdbratingmax description="">false</imdbratingmax>
+      <imdbratingmin description="">false</imdbratingmin>
+      <serie description="">false</serie>
+      <short description="">false</short>
+      <writers description="">false</writers>
+      <yearmax description="">false</yearmax>
+      <yearmin description="">false</yearmin>
+    </USE>
+  </FILTER>
+  <FS>
+    <EXT>
+      <extention description="">.mkv,.avi,.mp4</extention>
+    </EXT>
+    <LANG>
+      <english description="">english</english>
+      <french description="">francais</french>
+      <italian description="">italien</italian>
+      <searchlanguage description="">true</searchlanguage>
+      <spanish description="">espagnol</spanish>
+    </LANG>
+    <TYPES>
+      <animation description="">anim</animation>
+      <documentary description="">doc</documentary>
+      <searchtypes description="">true</searchtypes>
+      <serie description="">serie</serie>
+      <short description="">short</short>
+    </TYPES>
+    <TYPE>
+      <anim description="">anim</anim>
+      <doc description="">doc</doc>
+      <searchtypes description="">true</searchtypes>
+      <serie description="">serie</serie>
+      <short description="">short</short>
+    </TYPE>
+    <autoreadfolder description="">false</autoreadfolder>
+    <autoreadxmlfile description="">true</autoreadxmlfile>
+    <extentions description="">.mp4,.avi,.mkv</extentions>
+  </FS>
+  <IMDB>
+    <find description="">find?q=</find>
+    <title description="">title</title>
+    <url description="">https://www.imdb.com/</url>
+  </IMDB>
+  <LOG>
+    <level description="">6</level>
+    <logPath description="">logs\</logPath>
+    <loglevel description="">6</loglevel>
+  </LOG>
+  <OMDB>
+    <apirequest description="">apikey.aspx</apirequest>
+    <listseparator description="">,</listseparator>
+    <plot description="">full</plot>
+    <testmode description="">false</testmode>
+    <type description="">xml</type>
+    <url description="">http://www.omdbapi.com/</url>
+  </OMDB>
+  <XML>
+    <TAG>
+      <animation description="">animation</animation>
+      <documentary description="">documentary</documentary>
+      <serie description="">serie</serie>
+      <short description="">short</short>
+    </TAG>
+    <filename description="">movieDB</filename>
+    <filenameext description="">xml</filenameext>
+    <xmlname description="">moviesDB</xmlname>
+    <xmlpath description="">xml\</xmlpath>
+  </XML>
 </config>

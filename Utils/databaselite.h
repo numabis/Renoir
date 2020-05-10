@@ -24,6 +24,11 @@ namespace BUTIL
 		bool exec( std::string );
 		bool exec( const char *format, ... );
 
+        int  errorCode;
+        std::string errorMsg;
+
+
+//    private:
         bool connected;
 
         //int collate();

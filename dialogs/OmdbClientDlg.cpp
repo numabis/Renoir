@@ -7,7 +7,7 @@
 #include "ShowColumns.h"
 #include "variables.h"
 #include "renoir.h"
-#include "database.h"
+//#include "database.h"
 #include "Convert.h"
 #include "exLog.h"
 #include "util.h"
@@ -272,7 +272,7 @@ void omdbClientDlg::OnTimer(UINT_PTR _nIDEvent)
             threadSaveXmlIsRunning = false;
             SETTIMER(2000);
             std::ostringstream msg;
-            msg << "Saved " << progressCounter[CNT_READ] << " movie(s) to " << configManager.getConfigStr("xmlLocalFullPath"); //.getXmlLocalFullPath();
+            msg << "Saved " << progressCounter[CNT_READ] << " movie(s) to " << GETCM.getConfigStr("xmlLocalFullPath"); //.getXmlLocalFullPath();
             MBOX(msg.str(), "Info", MB_OK);
             progressCounter[CNT_READ] = 0;
             progressCounter[CNT_TOTAL] = 0;
@@ -288,7 +288,7 @@ void omdbClientDlg::OnTimer(UINT_PTR _nIDEvent)
             threadLoadXmlIsRunning = false;
             SETTIMER(2000);
             std::ostringstream msg;
-            msg << "Loaded " << progressCounter[CNT_READ] << " movie(s) from " << configManager.getConfigStr("xmlLocalFullPath"); //xmlConfig.getXmlLocalFullPath();
+            msg << "Loaded " << progressCounter[CNT_READ] << " movie(s) from " << GETCM.getConfigStr("xmlLocalFullPath"); //xmlConfig.getXmlLocalFullPath();
             MBOX(msg.str(), "Info", MB_OK);
             progressCounter[CNT_READ] = 0;
             progressCounter[CNT_TOTAL] = 0;
@@ -423,6 +423,7 @@ bool omdbClientDlg::FindMenuPos(CMenu *pBaseMenu, UINT myID, CMenu * & pMenu, in
 BOOL omdbClientDlg::OnInitDialog()
 {
     ST_SAVE(ST_INITIATING);
+
 //    consoleDBG.push_back(stNames[ST_INITIATING]);
     GETLOG.ptr_consoleDBG = ptr_consoleDBG;
     GETDB.ptr_consoleDBG = ptr_consoleDBG;
@@ -456,14 +457,14 @@ BOOL omdbClientDlg::OnInitDialog()
     srand((unsigned int)time(NULL));
     OnInitDialogVars();
 
-    //if (OnInitDialogConfig() == false)
-    //{
-    //    onExit();
-    //    return false;
-    //}
+    if (OnInitDialogConfig() == false)
+    {
+        onExit();
+        return false;
+    }
 
     //BUTIL::exLog::getInstance().setLogLevel(xmlConfig.getLogConfig()->logLevel);
-    logLevel = configManager.getConfigInt("LOG_logLevel");
+    logLevel = GETCM.getConfigInt(CONF_LOG_LOGLEVEL);
     if (logLevel == -1) logLevel = 0;
     BUTIL::exLog::getInstance().setLogLevel(&logLevel); //);
     
@@ -578,11 +579,19 @@ bool omdbClientDlg::OnInitDialogConfig()
 {
     LOGDEBUG("");
 
-    bool connected = GETDB.setDB(configManager.getHomeFolder());
+    std::wstring wcmdLine(GetCommandLine());
+    std::string cmdLine = WS2S(wcmdLine);
+    std::string readXML = "-readXML";
+    std::size_t found = cmdLine.find(readXML);
+
+    bool connected = GETDB.setDB();
+
+    if (found != string::npos)
+        GETCM.readConfFile();
 
     if (connected)
     {
-        configManager.init();
+        GETCM.init();
         if (GETDB.getUpdate())
         {
             saveXmlfile();
@@ -711,17 +720,16 @@ bool omdbClientDlg::OnInitDialogData()
 {
 
     threadOmdbAllIsRunning = false;
-    //log.init(xmlConfig.getLogConfig());
-    log.init(configManager.getHomeFolder());
-    omdb.init(configManager.getOmdbConfig());
 
-    fs.init(configManager.getFsConfig());
+    log.init();
+    omdb.init();
+    fs.init();
     v_FsFiles = fs.getVfiles();
     mtx_readfiles = fs.getMutex();
     fs.setProgressCounter(progressCounter);
     xmlFiles.setProgressCounter(progressCounter);
 
-    xmlFiles.init(configManager.getConfigStr("XML_Path"));
+    xmlFiles.init();
     v_XmlLoad = xmlFiles.getV_load();
     mtx_vLoad = xmlFiles.getMtx_vLoad();
 
@@ -730,18 +738,18 @@ bool omdbClientDlg::OnInitDialogData()
     forceOmdb = (btnOmdb[CHK_OMDB_FORCE]->GetCheck() == 1);
     autoOmdb = (btnOmdb[CHK_OMDB_AUTO]->GetCheck() == 1);
 
-    if (configManager.getConfigStr("APP_CurrentFolder").empty() == true)
-        selectFolder();
+    if (GETCM.getConfigStr(CONF_APP_CURRENTFOLDER).empty() == true)
+        initFolder();
+    else
+        GETDB.PATHFS_insert(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER));
 
-   GETDB.PATHFS_insert(configManager.getConfigStr("APP_CurrentFolder"));
-
-    CString tmp;
-    tmp.Format(L"%s", BUTIL::Convert::string2wstring(fs.getFolderPath()).c_str());
+    //CString tmp;
+    //tmp.Format(L"%s", BUTIL::Convert::string2wstring(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER)).c_str());
     //editFolderPath->SetWindowTextW(tmp);
 
     CString cs_loaded;
 
-    if (configManager.getConfigInt("FS_autoreadFolder") == 1)
+    if (GETCM.getConfigInt(CONF_FS_AUTOREADFOLDER) == 1)
     {
         GETDB.MOVIESFS_setPhysical(false);
         hThreadReadFolder = fs.readFolder();
@@ -753,14 +761,14 @@ bool omdbClientDlg::OnInitDialogData()
     progressCounter[CNT_ERROR] = 0;
     
     //filters->folderFilter = xmlConfig.getGlobalConfig()->fsPath;
-    int folderId = GETDB.getPathId(configManager.getConfigStr("APP_CurrentFolder"));
+    int folderId = GETDB.getPathId(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER));
     if (folderId != -1)
         filters->folderFilterId = folderId;
 
     resetColumnSize();
     setSavedFilters();
     loadDatabase();
-    isApiKeySet = !configManager.getConfigStr("OMDB_apikey").empty();
+    isApiKeySet = !GETCM.getConfigStr(CONF_OMDB_APIKEY).empty();
     showApiKey();
 
     return true;
@@ -843,7 +851,7 @@ void omdbClientDlg::setSavedFilters()
     for (int f = FILTERS_DIRECTORS; f < FILTERS_MAX; f++)
     {
         filterTypes filter = (filterTypes)f;
-        std::string savedValue = configManager.getFilter(filter);
+        std::string savedValue = GETCM.getFilter(filter);
         if (savedValue.empty() == false)
             GETDB.setFilterSelectedValue(filter, savedValue);
     }
@@ -855,7 +863,7 @@ void omdbClientDlg::loadDatabase(bool _readfolder)
     //loadMoviesFS();
     comboFilters[FILTERS_YEARMIN]->SetCurSel(0);
     comboFilters[FILTERS_YEARMAX]->SetCurSel(0);
-    //loadAllCombosExcept();
+    loadAllCombosExcept();
     readFolderIfEmpty(_readfolder);
     loadFolders();
 }
@@ -871,7 +879,7 @@ void omdbClientDlg::loadFolders()
     int nbTypes = GETDB.loadFilter(_filter);
     if (nbTypes >= 0)
     {
-        filters->v_combos[_filter][0] = BUTIL::Util::format("%s (%d)", ALL, progressCounter[CNT_READ]);
+        filters->v_combos[_filter][0] = BUTIL::Util::format("%s (%d)", ALL, 0);
         rebuildCombo(_filter);
     }
     return nbTypes;
@@ -981,7 +989,7 @@ void omdbClientDlg::loadDatabaseToVector(void)
     Movie movie;
 
     ST_SAVE(ST_READING_DB);
-    progressCounter[CNT_TOTAL] = GETDB.MOVIES_iniAll(configManager.getConfigStr("OMDB_listseparator"));
+    progressCounter[CNT_TOTAL] = GETDB.MOVIES_iniAll(GETCM.getConfigStr(CONF_OMDB_LISTSEPARATOR));
     xmlFiles.clearMovieVector();
     progressCounter[CNT_READ] = 1;
     while (GETDB.MOVIES_getAll(&movie))
@@ -1032,7 +1040,7 @@ void omdbClientDlg::readFolderIfEmpty(bool _readfolder)
         std::string currentFolder = selectedFile.getPath();
         if (currentFolder.empty() == true)
             //currentFolder = *(filters->folderFilter);
-            currentFolder = configManager.getConfigStr("APP_CurrentFolder");
+            currentFolder = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
         if (currentFolder.empty() == false)
         {
             folder.setPath(currentFolder);
@@ -1080,9 +1088,9 @@ void omdbClientDlg::loadXmlfile(void)
 {
     LOGDEBUG("");
 //    btnXmlFile[BTN_XMLFILE_READ]->EnableWindow(false);
-    CString defaultPath(configManager.getConfigStr("XML_Path").c_str());
-    CString defaultName(configManager.getConfigStr("XML_Filename").c_str());
-    CString defaultExtension(configManager.getConfigStr("XML_FilenameExt").c_str());
+    CString defaultPath(GETCM.getConfigStr(CONF_XML_PATH).c_str());
+    CString defaultName(GETCM.getConfigStr(CONF_XML_FILENAME).c_str());
+    CString defaultExtension(GETCM.getConfigStr(CONF_XML_FILENAMEEXT).c_str());
     std::string fullPath, path, name, extention;
     size_t foundName, foundDot;
     bool compressXmlFile = false;
@@ -1109,9 +1117,9 @@ void omdbClientDlg::loadXmlfile(void)
         name = fullPath.substr(foundName + 1, foundDot - foundName - 1);
         extention = fullPath.substr(foundDot + 1, string::npos);
 
-        configManager.setConfigValue("XML_Path", path);
-        configManager.setConfigValue("XML_Filename", name);
-        configManager.setConfigValue("XML_FilenameExt", extention);
+        GETCM.setConfigValue(CONF_XML_PATH, path);
+        GETCM.setConfigValue(CONF_XML_FILENAME, name);
+        GETCM.setConfigValue(CONF_XML_FILENAMEEXT, extention);
 //        xmlConfig.saveLocalConfigFile(false);
         hThreadReadXML = xmlFiles.loadOmdbFile();
         threadLoadXmlIsRunning = true;
@@ -1120,9 +1128,9 @@ void omdbClientDlg::loadXmlfile(void)
 void omdbClientDlg::saveXmlfile(void)
 {
     LOGDEBUG("");
-    CString defaultPath(configManager.getConfigStr("XML_Path").c_str());
-    CString defaultName(configManager.getConfigStr("XML_Filename").c_str());
-    CString defaultExtension(configManager.getConfigStr("XML_FilenameExt").c_str());
+    CString defaultPath(GETCM.getConfigStr(CONF_XML_PATH).c_str());
+    CString defaultName(GETCM.getConfigStr(CONF_XML_FILENAME).c_str());
+    CString defaultExtension(GETCM.getConfigStr(CONF_XML_FILENAMEEXT).c_str());
 
     std::string fullPath, path, name, extention;
     size_t foundName, foundDot;
@@ -1156,9 +1164,9 @@ void omdbClientDlg::saveXmlfile(void)
         name = fullPath.substr(foundName + 1, foundDot-foundName-1);
         extention = fullPath.substr(foundDot + 1, string::npos);
 
-        configManager.setConfigValue("XML_Path", path);
-        configManager.setConfigValue("XML_Filename", name);
-        configManager.setConfigValue("XML_FilenameExt", extention);
+        GETCM.setConfigValue(CONF_XML_PATH, path);
+        GETCM.setConfigValue(CONF_XML_FILENAME, name);
+        GETCM.setConfigValue(CONF_XML_FILENAMEEXT, extention);
         //xmlConfig.saveLocalConfigFile(false);
 
         loadDatabaseToVector();
@@ -1258,7 +1266,7 @@ void omdbClientDlg::getFile(int _position)
         }
     }
     
-    if (configManager.getConfigInt("FS_searchTypes") == 1)
+    if (GETCM.getConfigInt(CONF_FS_SEARCHTYPES) == 1)
     {
         bool fields[FS_MAX_FIELDS - FS_ID];
         short fieldsCount = 0;
@@ -1267,7 +1275,7 @@ void omdbClientDlg::getFile(int _position)
 
         for (short type = 0; type < TYPE_MAX; type++)
         {
-            if (selectedFile.typeIs[type] == TYPE_UNKNOWN && selectedFile.guessType(configManager.getFsType(type)))
+            if (selectedFile.typeIs[type] == TYPE_UNKNOWN && selectedFile.guessType(GETCM.getFsType(type)))
             {
                 fields[FS_SERIE - FS_ID + type] = true;
                 selectedFile.typeIs[type] = TYPE_NOTMOVIE;
@@ -1721,11 +1729,11 @@ void omdbClientDlg::rebuildComboFolder()
 
     if (filters->folders.size() == 0)
     {
-        comboFolderPath->AddString(CString(configManager.getConfigStr("APP_CurrentFolder").c_str()));
+        comboFolderPath->AddString(CString(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER).c_str()));
         pos = 0;
     }
     else
-        pos = comboFolderPath->FindString(-1, CString(configManager.getConfigStr("APP_CurrentFolder").c_str()));
+        pos = comboFolderPath->FindString(-1, CString(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER).c_str()));
 
     comboFolderPath->SetCurSel(pos);
 }
@@ -1887,7 +1895,7 @@ void omdbClientDlg::openImdbWeb(void)
 {
     string url;
     if (selectedFile.isImdbId())
-        url = configManager.getImdbTitleUrl(selectedFile.imdbId);
+        url = GETCM.getImdbTitleUrl(selectedFile.imdbId);
     else
     {
         string title = selectedFile.title;
@@ -1896,7 +1904,7 @@ void omdbClientDlg::openImdbWeb(void)
         dlgEditTitle.setValue(&title);
         dlgEditTitle.setTexts(texts);
         dlgEditTitle.DoModal();
-        url = configManager.getImdbFindUrl(title);
+        url = GETCM.getImdbFindUrl(title);
     }
     wchar_t *wurl = C2WC(url.c_str());
 
@@ -2188,7 +2196,7 @@ void omdbClientDlg::showApiKey()
         std::stringstream ss;
         if (isApiKeySet)
         {
-            ss << "Omdb Key : " << configManager.getConfigStr("OMDB_apikey");
+            ss << "Omdb Key : " << GETCM.getConfigStr(CONF_OMDB_APIKEY);
         }
         else
         {
@@ -2207,18 +2215,18 @@ bool omdbClientDlg::OmdbSetkey()
     LOGDEBUG("");
     setOmdbKey dlgOmdbKey;
     string texts[3] = { "Please, enter your OMDB Key.", "If you don't have, request one at", "Key :" };
-    string tmpApikey = configManager.getConfigStr("OMDB_apikey");
+    string tmpApikey = GETCM.getConfigStr(CONF_OMDB_APIKEY);
     string newApikey = tmpApikey;
     dlgOmdbKey.setValue(&newApikey);
     dlgOmdbKey.setTexts(texts);
     //std::string url = xmlConfig.getOmdbConfig()->omdbUrl + xmlConfig.getOmdbConfig()->apiRequestUrl;
-    std::string url = configManager.getConfigStr("OMDB_url") + configManager.getConfigStr("OMDB_listseparator");
+    std::string url = GETCM.getConfigStr(CONF_OMDB_URL) + GETCM.getConfigStr(CONF_OMDB_LISTSEPARATOR);
     //LPCWSTR LPCWSTRurl = C2WC(url.c_str());
     wchar_t * wurl = C2WC(url.c_str());
     dlgOmdbKey.setURL(wurl);
     dlgOmdbKey.DoModal();
     //xmlConfig.setXmlLocalConfig(XML_LOCAL_APIKEY, newApikey);
-    configManager.setConfigValue("OMDB_apikey", newApikey);
+    GETCM.setConfigValue(CONF_OMDB_APIKEY, newApikey);
     LOGINFO("Omdb Key set to [%s]", newApikey.c_str());
     isApiKeySet = !newApikey.empty();
     setStaticText(STATIC_DESC, "");
@@ -2262,7 +2270,7 @@ string omdbClientDlg::changeCombo(filterTypes _filter)
     GETDB.setFilterSelectedValue(_filter, SelectedValue);
     if (ftypeSave[_filter] == true)
     {
-        configManager.setConfigValue(_filter, filters->nameSelected[_filter]);
+        GETCM.setConfigValue(_filter, filters->nameSelected[_filter]);
     }
     loadMoviesFS();
     loadAllCombosExcept(_filter);
@@ -2284,8 +2292,8 @@ string omdbClientDlg::changeComboFolders()
 
     std::wstring w_c_text((LPCTSTR)c_text);
     std::string SelectedValue = WS2S(w_c_text);
-    std::string actualValue = configManager.getConfigStr("APP_CurrentFolder");
-    configManager.setConfigValue("APP_CurrentFolder", SelectedValue);
+    std::string actualValue = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
+    GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, SelectedValue);
 
     if (ST_PREDIFF(ST_INITIATING))
     {
@@ -2442,6 +2450,14 @@ bool omdbClientDlg::isRunning(HANDLE  _hThread)
 #pragma endregion threads
 
 #pragma region config
+void omdbClientDlg::initFolder()
+{
+    std::string path = GETDB.getPath(1);
+    if (path.empty() == false)
+        GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, path);
+    else
+        selectFolder();
+}
 void omdbClientDlg::selectFolder()
 {
     ST_SAVE(ST_SELECT_FOLDER);
@@ -2457,21 +2473,21 @@ void omdbClientDlg::selectFolder()
         {
             std::string path = CStringToString(dlgFolder.GetPathName()) + "\\";
             LOGDEBUG("Folder: [%s]", path.c_str());
-            if (ST_PREDIFF(ST_INITIATING))
-            {
+            //if (ST_PREDIFF(ST_INITIATING))
+            //{
                 GETDB.PATHFS_insert(path);
-            }
+            //}
 
             //editFolderPath->SetWindowTextW(CString(path.c_str()));
-            configManager.setConfigValue("APP_CurrentFolder", path);
+            GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, path);
             //xmlConfig.setXmlLocalConfig(XML_LOCAL_PATH, path);
             //xmlConfig.saveLocalConfigFile(false);
             
-            if (ST_PREDIFF(ST_INITIATING))
-            {
+            //if (ST_PREDIFF(ST_INITIATING))
+            //{
                 LOGDEBUG("loading Folders");
                 loadFolders();
-            }
+            //}
             exit = true;
 
         }
@@ -2526,7 +2542,7 @@ void omdbClientDlg::selectVideoPlayer()
     if (result == IDOK)
     {
         LOGINFO("VLC:%s", CStringToString(dlg.GetPathName()).c_str());
-        configManager.setConfigValue("APP_Videoplayer", CStringToString(dlg.GetPathName()));
+        GETCM.setConfigValue(CONF_APP_VIDEOPLAYER, CStringToString(dlg.GetPathName()));
         //xmlConfig.setXmlLocalConfig(XML_LOCAL_VIDEOPLAYER, CStringToString(dlg.GetPathName()));
         //xmlConfig.saveLocalConfigFile(false);
     }
@@ -2710,7 +2726,7 @@ void omdbClientDlg::OnBnClickedButtonPlay()
         return;
 
     //string videoPlayer = xmlConfig.getXmlLocalConfig(XML_LOCAL_VIDEOPLAYER);
-    string videoPlayer = configManager.getConfigStr("APP_Videoplayer");
+    string videoPlayer = GETCM.getConfigStr(CONF_APP_VIDEOPLAYER);
     
     if (videoPlayer.empty())
     {

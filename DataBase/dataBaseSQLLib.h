@@ -22,7 +22,7 @@ std::string SQL_SELECT = "SELECT ";
 #define NOCASE                   "COLLATE NOCASE "
 #define SELECT(...)              FORMATCSV(string("SELECT "), COLUMNS(__VA_ARGS__)) + " "
 #define SELECTALL                SQL_SELECT + " * "
-#define COUNTFROM(tab)           SQL_SELECT + " * FROM " + TABLE(tab) + " "
+#define COUNTFROM(tab)           SQL_SELECT + " COUNT(*) FROM " + TABLE(tab) + " "
 #define FROM(tab)                "FROM " + TABLE(tab) + " "
 #define JOINUSING(tab,col)       "LEFT JOIN " + TABLE(tab) + " USING(" + COLNAME(col) + ") "
 #define WHERE(filter)            "WHERE " + filter + " "

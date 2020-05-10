@@ -32,6 +32,7 @@ public:
     ManageXML();
     ~ManageXML(void);
 //    void init(std::string*, std::string);
+    void init();
     void init(std::string _path);
     bool loadOmdbStr(MovieFile *_file);
     bool readOmdbError(MovieFile *_file);

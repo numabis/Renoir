@@ -1,0 +1,46 @@
+//
+// omdbClient.RC2; los recursos de Microsoft Visual C++ no se editan directamente
+//
+#include "..\version.h"
+
+#ifdef APSTUDIO_INVOKED
+#error este archivo no es editable por Microsoft Visual C++
+#endif //APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+// Agregar aquí los recursos editados manualmente...
+
+/////////////////////////////////////////////////////////////////////////////
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION MY_FILE_VERSION
+ PRODUCTVERSION MY_PRODUCT_FILE_VERSION
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "0c0a04b0"
+        BEGIN
+            VALUE "CompanyName", "GNU"
+            VALUE "FileDescription", "Renoir"
+            VALUE "FileVersion", MY_FILE_VERSION
+            VALUE "InternalName", "renoir"
+            VALUE "LegalCopyright", "GNU-2019"
+            VALUE "OriginalFilename", "Renoir.exe"
+            VALUE "ProductName", "Renoir"
+            VALUE "ProductVersion", MY_FILE_VERSION2
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0xc0a, 1200
+    END
+END

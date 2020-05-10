@@ -52,7 +52,7 @@ Source: "{#SourceDir}\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourceDir}\msvcrtd.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Eenoir"; Filename: "{app}\{#ExeName}" ; WorkingDir: "{app}"
+Name: "{group}\Renoir"; Filename: "{app}\{#ExeName}" ; WorkingDir: "{app}"
 Name: "{commondesktop}\Renoir"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
 
 [Run]

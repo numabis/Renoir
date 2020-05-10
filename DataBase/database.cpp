@@ -1,15 +1,20 @@
 #include "database.h"
 
-#include <KnownFolders.h>
 #include "databaseTabDef.h"
+
+
 #include "databaseSQLLib.h"
 #include "exlog.h"
 #include "util.h"
 #include "xml.h"
 #include "Convert.h"
+#include "configManager.h"
+
+#include <KnownFolders.h>
 #include <sstream>
 #include <fstream>
 #include <functional>   // std::greater
+#include <map>
 
 #define EXECPCIONMBOX(EXCEPCION)    MBOX(std::string(__FUNCTION__) + std::string(":") + std::string(EXCEPCION.ErrText()), "Error", MB_ICONERROR | MB_OK);
 #define ERRORMBOX(MERROR)           MBOX(std::string(__FUNCTION__) + std::string(":") + MERROR, "Error", MB_ICONERROR | MB_OK);
@@ -27,7 +32,6 @@ typedef struct {
 } dbVersion;
 
 dbVersion valuesDbVersions[] = { DBCHANGELOG };
-dbConfiguration dbConf[] = { DBCONFFIELDS };
 
 vector<string>           tabNames = TABNAMELIST;
 std::string getSqlType[E_MAX_TYPES] = TABDATATYPES;
@@ -51,6 +55,8 @@ vector<dbTableDef *> ptr_tabNames = TABSCRUCTLIST;
 #pragma region CONTRUCTORS
 DataBase::DataBase()
 {
+    //setDB();
+
     update = false;
 
     filters.exists = true;
@@ -66,7 +72,7 @@ DataBase::DataBase()
         {
             filters.valueSelected[filter] = TYPE_ALL;
         }
-        filters.nameSelected[filter] = "All";
+        filters.nameSelected[filter] = ALL;
     }
 
     filters.valueSelected[FILTERS_YEARMIN] = MIN_YEAR;
@@ -98,7 +104,22 @@ DataBase::~DataBase(void)
 #pragma region INIT_DB
 bool DataBase::isConnected(void)
 {
+    if (connected == false)
+        setDB();
     return connected;
+}
+void DataBase::setConnected(bool _connected)
+{
+    connected = _connected;
+}
+bool DataBase::setDB()
+{
+    exLOGDEBUG("");
+
+    dbConfig.dbPath = GETCM.getHomeFolder();
+    dbConfig.dbName = DBNAME;
+    return setDB(&dbConfig);
+
 }
 bool DataBase::setDB(std::string _path)
 {
@@ -146,20 +167,20 @@ bool DataBase::setDB(DB_CONFIG* _dbConfig)
         exLOGDEBUG("Error");
         ERRORMBOX(BUTIL::Util::GetLastErrorAsString(error) + std::string("path") + file);
         exLOGERROR("path", file.c_str());
-        connected = false;
-        return connected;
+        setConnected(false);
+        return false;
     }
 
     file += ptr_dbConfig->dbName;
 
     exLOGINFO("DB set in %s", file.c_str());
 
-    connected = false;
+    setConnected(false);
     //if (setDBFile(file,"OFF","OFF"))
     if (setDBFile(file, "PERSIST", "NORMAL"))
-        connected = initDB(false);
+        initDB(false);
 
-    return connected;
+    return isConnected();
 }
 bool DataBase::initDB(bool _resetDB)
 {
@@ -188,6 +209,8 @@ bool DataBase::initDB(bool _resetDB)
         }
 
     DBVERSIONS_getVersion();
+    
+    setConnected(success);
 
     return success;
 }
@@ -275,7 +298,6 @@ void DataBase::askUpdateDB(std::string _msg)
         ptr_dbConfig->resetDB = true;
     }
 }
-
 bool DataBase::ROLES_populate()
 {
     exLOGDEBUG("");
@@ -319,7 +341,6 @@ bool DataBase::DBVERSIONS_populate(void)
     }
     return ret;
 }
-
 bool DataBase::getUpdate()
 {
     exLOGDEBUG("");
@@ -352,31 +373,26 @@ void DataBase::str2sql(std::string *_str)
         quote = _str->find_first_of("&", quote + 2);
     }
 }
-
 int DataBase::execNolock(std::string _request)
 {
-    int ret = execUnlock(_request);
-    if (ret == ERROR_SUCCESS)
+    if (isConnected() == false)
     {
-        return ERROR_SUCCESS;
+        errorCode = -1;
+        errorMsg = "No connected to DB";
+    }
+    else
+    {
+        execUnlock(_request);
+    }
+    if (errorCode != ERROR_SUCCESS)
+    {
+        //__debugbreak();
+        exLOGSQL("ERROR SQL %s : %s", errorMsg.c_str(), _request.c_str());
+        MBOX(errorMsg, "Error", MB_ICONERROR | MB_OK);
     }
 
-    std::string errorMsg = BUTIL::Util::GetLastErrorAsString(ret);
-    __debugbreak();
-    switch (ret)
-    {
-    case ERROR_ACCESS_DENIED:
-        errorMsg = "Error: database is locked";
-        break;
-    case ERROR_WRITE_PROTECT:
-        errorMsg = "columns are not unique";
-    }
-    exLOGSQL("ERROR SQL %s : %s", errorMsg.c_str(), _request.c_str());
-
-    MBOX(errorMsg, "Error", MB_ICONERROR | MB_OK);
-    return ret;
+    return errorCode;
 }
-
 void DataBase::TRANSACTION_begin(void)
 {
 	lock();
@@ -408,55 +424,63 @@ bool DataBase::CONFIGURATION_populate(void)
 {
     exLOGDEBUG("");
     bool ret = true;
-    dbConfiguration* conf = dbConf;
-    std::string request;
 
-    while (conf->variable != "")
-    {
-        string request = INSERTINTO(TAB_CONFIGURATION);
-        request += INSERTCOLS(CONF_INDEX, CONF_VAR, CONF_VALUE, CONF_DESCRIPTION);
-        request += INSERTVALS(STR(conf->index), conf->variable, conf->value, conf->description);
+    GETCM.readConfFile();
+    GETCM.saveConfigToDB();
+    //confMap dbConf = { DBCONFFIELDS };
+    //std::string request;
+    //
+    //confMap::iterator conf;
+    //
+    //for (conf = dbConf.begin(); conf != dbConf.end(); conf++)
+    //{
+    //    string request = INSERTINTO(TAB_CONFIGURATION);
+    //    request += INSERTCOLS(CONF_VAR, CONF_VALUE, CONF_MULTI, CONF_DESCRIPTION);
+    //    request += INSERTVALS(conf->first, conf->second.value, STR(conf->second.multi), conf->second.description);
+    //
+    //    int tmpRet = execNolock(request);
+    //    if (tmpRet != ERROR_SUCCESS)
+    //        ret = false;
+    //
+    //    exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
+    //}
 
-        int tmpRet = execNolock(request);
-        if (tmpRet != ERROR_SUCCESS)
-            ret = false;
-
-        conf++;
-        exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
-    }
     return ret;
 
 }
-bool DataBase::getConfiguration(std::vector<dbConfiguration> * configManager)
+bool DataBase::getConfiguration(confMap * _confMan)
 {
-    return CONFIGURATION_get(configManager);
+    return CONFIGURATION_get(_confMan);
 }
-
-bool DataBase::setConfiguration(dbConfiguration * row)
+bool DataBase::setConfiguration(std::string _var, dbConfiguration _conf)
 {
-    return CONFIGURATION_insertOrUpdate(row->index, row->variable, row->value);
+    return CONFIGURATION_insertOrUpdate(_var, _conf);
 }
-
-bool DataBase::CONFIGURATION_get(std::vector<dbConfiguration> * _configManager)
+bool DataBase::CONFIGURATION_get(confMap * _confMan)
 {
     bool ret = false;
-    if (!connected)
+    if (isConnected() == false)
         return ret;
 
-    string request = SELECT(CONF_INDEX, CONF_VALUE) + FROM(TAB_CONFIGURATION);
+    string request = SELECT(CONF_VAR,CONF_VALUE, CONF_MULTI, CONF_DESCRIPTION) + FROM(TAB_CONFIGURATION);
 
     try
     {
         SQLEXEC;
 
-        int row = CONF_CURRENTFOLDER;
-        int index;
+        //int row = CONF_CURRENTFOLDER;
+        std::string variable;
         
         while (SQLFETCH)
         {
             ret = true;
-            index = SQLFIELD(CONF_INDEX).asShort();
-            _configManager->at(index).value = (std::string)SQLFIELD(CONF_VALUE).asString();
+            variable = SQLFIELD(CONF_VAR).asString();
+            if (variable.empty() == false)
+            {
+                (*_confMan)[variable].value = (std::string)SQLFIELD(CONF_VALUE).asString();
+                (*_confMan)[variable].multi = (bool)SQLFIELD(CONF_MULTI).asBool();
+                (*_confMan)[variable].description = (std::string)SQLFIELD(CONF_DESCRIPTION).asString();
+            }
         }
         SQLCLOSE;
     }
@@ -471,25 +495,30 @@ bool DataBase::CONFIGURATION_get(std::vector<dbConfiguration> * _configManager)
     exLOGSQL("SQL ok : %s", request.c_str());
     return ret;
 }
-bool DataBase::CONFIGURATION_insertOrUpdate(int _id, std::string _var, std::string _val)
+bool DataBase::CONFIGURATION_insertOrUpdate(std::string _var, dbConfiguration _conf)
 {
     int ret = -1;
 
     std::string request;
 
-    request = COUNTFROM(TAB_CONFIGURATION) + WHERE(EQUAL(CONF_INDEX, STR(_id)));
+    request = COUNTFROM(TAB_CONFIGURATION) + WHERE(EQUAL(CONF_VAR, (_var)));
     ret = execScalar(request);
-    if (ret >= 0)
+    if (ret > 0)
     { // UPDATE
         request = UPDATE(TAB_CONFIGURATION);
-        request += SET(CONF_VALUE, _val);
-        request += WHERE(EQUAL(CONF_INDEX, STR(_id)));
+        request += SET(CONF_VALUE, _conf.value);
+        request += SET(CONF_MULTI, STR(_conf.multi));
+        request += SET(CONF_DESCRIPTION, _conf.description);
+        size_t sz = request.size();
+        if (request[sz - 1] == ',')
+            request[sz - 1] = ' ';
+        request += WHERE(EQUAL(CONF_VAR, (_var)));
     }
     else
     { // INSERT
         request = INSERTINTO(TAB_CONFIGURATION);
-        request += INSERTCOLS(CONF_INDEX, CONF_VAR, CONF_VALUE);
-        request += INSERTVALS(STR(_id), _var,  _val);
+        request += INSERTCOLS(CONF_VAR, CONF_VALUE, CONF_MULTI, CONF_DESCRIPTION);
+        request += INSERTVALS(_var, _conf.value, STR(_conf.multi), _conf.description);
     }
     return (execNolock(request) == ERROR_SUCCESS);
 }
@@ -504,6 +533,10 @@ int  DataBase::getPathId(std::string _path)
 {
     return PATHFS_selectId(_path);
 }
+std::string DataBase::getPath(int _id)
+{
+    return PATHFS_getPath(_id);
+}
 bool DataBase::isFolderRead(MovieFolder *_folder)
 {
     std::string request;
@@ -517,7 +550,7 @@ bool DataBase::isFolderRead(MovieFolder *_folder)
     if (_folder->getIdPath()>=0)
         request += WHERE(EQUAL(PATH_ID, STR(_folder->getIdPath())));
     else
-    request += WHERE(EQUAL(PATH_PATH, _folder->getPath())) + NOCASE;
+        request += WHERE(EQUAL(PATH_PATH, _folder->getPath())) + NOCASE;
 
     try
     {
@@ -555,6 +588,9 @@ bool DataBase::isFolderRead(MovieFolder *_folder)
      std::string request;
      str2sql(&_path);
 
+     if (_path[_path.size() - 1] != '\\')
+         _path += "\\";
+
      request = SELECT(PATH_ID);
      request += FROM(TAB_PATHFS);
      request += WHERE(EQUAL(PATH_PATH, _path)) + NOCASE;
@@ -578,7 +614,37 @@ bool DataBase::isFolderRead(MovieFolder *_folder)
 
      return ret;
  }
-bool DataBase::PATHFS_selectId(MovieFolder *_folder)
+std::string DataBase::PATHFS_getPath(int _id)
+ {
+     std::string path;
+     std::string request;
+
+     isConnected();
+
+     request = SELECT(PATH_PATH);
+     request += FROM(TAB_PATHFS);
+     request += WHERE(EQUAL(PATH_ID, STR(_id)));
+
+     try
+     {
+         SQLEXEC;
+         if (SQLFETCH)
+         {
+             path = SQLFIELD(PATH_PATH).asString();
+         }
+         SQLCLOSE;
+     }
+     catch (SAException &e)
+     {
+         __debugbreak();
+         EXECPCIONMBOX(e);
+         exLOGERROR(e.ErrText());
+         path = "";
+     }
+
+     return path;
+ }
+ bool DataBase::PATHFS_selectId(MovieFolder *_folder)
 {
     bool ret = false;
     std::string request;
@@ -653,9 +719,12 @@ int  DataBase::PATHFS_insert(MovieFolder *_folder)
 
     std::string path = _folder->getPath();
     str2sql(&path);
+
+    if (path[path.size() - 1] != '\\')
+        path += "\\";
     
     string request = INSERTINTO(TAB_PATHFS) + INSERTCOLS(PATH_PATH, PATH_ISREAD, PATH_ISSUB, PATH_HIDE) + INSERTVALS(path, STR(_folder->isRead()), STR(_folder->isSub()), STR(_folder->isHide()));
-
+    // GETDATE()
     ret = (execNolock(request) == ERROR_SUCCESS);
 
     if (ret)
@@ -722,7 +791,7 @@ int DataBase::PATHFS_update(MovieFolder *_folder)
 }
 int  DataBase::PATHFS_loadFolders()
 {
-    if (!connected)
+    if (isConnected() == false)
         return -1;
 
     std::string tmp;
@@ -885,7 +954,7 @@ string DataBase::AllMoviesFSGetFilter()
 bool   DataBase::MOVIESFS_iniAll()
 {
     int count = 0;
-    if (!connected)
+    if (isConnected() == false)
         return false;
     std::string request , conditions;
     try
@@ -934,7 +1003,7 @@ bool   DataBase::MOVIESFS_iniAll()
 }
 bool   DataBase::MOVIESFS_getAll(MovieFile *_file)
 {
-    if (!connected)
+    if (isConnected() == false)
         return false;
     static int count = 0;
     try
@@ -1750,14 +1819,14 @@ string DataBase::buildComboFilter(filterTypes _filterby)
     if ((_filterby != FILTERS_SHORT) && filters.valueSelected[FILTERS_SHORT]  < TYPE_ALL)
         comboFilter += AND(shortFilter);
 
-    if (_filterby != FILTERS_YEARMIN && filters.valueSelected[FILTERS_YEARMIN] >= 0)
+    if (_filterby != FILTERS_YEARMIN && filters.valueSelected[FILTERS_YEARMIN] > 0)
         comboFilter += AND(yearMin);
-    if (_filterby != FILTERS_YEARMAX && filters.valueSelected[FILTERS_YEARMAX] >= 0)
+    if (_filterby != FILTERS_YEARMAX && filters.valueSelected[FILTERS_YEARMAX] > 0)
         comboFilter += AND(yearMax);
 
-    if (_filterby != FILTERS_IMDBRATINGMIN && filters.valueSelected[FILTERS_IMDBRATINGMIN] >= 0)
+    if (_filterby != FILTERS_IMDBRATINGMIN && filters.valueSelected[FILTERS_IMDBRATINGMIN] > 0)
         comboFilter += AND(imdbRatingMin);
-    if (_filterby != FILTERS_IMDBRATINGMAX && filters.valueSelected[FILTERS_IMDBRATINGMAX] >= 0)
+    if (_filterby != FILTERS_IMDBRATINGMAX && filters.valueSelected[FILTERS_IMDBRATINGMAX] > 0)
         comboFilter += AND(imdbRatingMax);
 
 
@@ -1822,7 +1891,7 @@ short DataBase::getTabColFilters(filterTypes _filterby)
 }
 int  DataBase::loadFilter(filterTypes _filterby)
 {
-    if (!connected)
+    if (isConnected() == false)
         return -1;
 
     enum { TAB, COL, TABCOL };
@@ -1868,7 +1937,9 @@ int  DataBase::loadFilter(filterTypes _filterby)
     string folderFilter = INSELECT(FS_IDPATH, folderList);
     //string conditions = WHERE(folderFilter);
 
-    conditions = WHERE(imdbIdFilter) + AND(folderFilter) + buildComboFilter(_filterby);
+    conditions = WHERE(folderFilter) + buildComboFilter(_filterby);
+    if (ftype[_filterby] != GENRE_COMBOT)
+        conditions += AND(imdbIdFilter);
     if (filters.exists)
         conditions += AND(existsFilter);
     string order = filters.orderByAsc ? ORDERBYDSC : ORDERBYASC;
@@ -1938,7 +2009,7 @@ int  DataBase::loadFilter(filterTypes _filterby)
         return -1;
     }
     exLOGSQL("SQL ok : %s", request.c_str());
-    return count;
+    return aggregate;
 }
 int DataBase::GENRES_getId(std::string _genre)
 {// ret 0 if correct / GetLastError()

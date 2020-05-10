@@ -30,6 +30,7 @@ public:
 
     void init(LOG_CONFIG *logConfig);
     void init(std::string _path);
+    void init();
     void setPath(std::string);
     void setPath( std::wstring );
 	void setLogLevel( int = 0 );

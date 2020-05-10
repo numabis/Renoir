@@ -17,8 +17,9 @@ public:
 
     fileSystem();
     ~fileSystem(void);
+    void init();
     void init(FS_CONFIG*);
-//    HANDLE countFolder(void);
+    //    HANDLE countFolder(void);
     HANDLE readFolder(void);
 //    int countFolderStart(void);
     void terminateThreads();
@@ -26,8 +27,8 @@ public:
     //    bool isRunningCountFolderThread();
 //    int readFolder(ManageXML *_xmlFiles = NULL);
     int readFolderStart(ManageXML *_xmlFiles = NULL);
-    std::string getFolderPath();
-    void setFolderPath(std::string);
+//    std::string getFolderPath();
+//    void setFolderPath(std::string);
     void setProgressCounter(size_t *);
     BUTIL::Mutex* getMutex(void);
     std::vector<MovieFile> * getVfiles();

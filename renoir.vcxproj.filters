@@ -126,6 +126,9 @@
     <ClInclude Include="sources\configManager.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="DataBase\databaseConfDef.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -207,6 +210,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dialogs\mainWindow.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="dialogs\renoir.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>
