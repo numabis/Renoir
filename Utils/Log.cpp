@@ -9,31 +9,34 @@
 
     Log::Log()
 	{
-        ptr_logConfig = &logConfig;
+        //ptr_logConfig = &logConfig;
+        logPath = GETCM.getHomeFolder();
+        logLevel = GETCM.getConfigInt(CONF_LOG_LOGLEVEL);;
 	}
 
     Log::~Log()
 	{
 	}
 
-    void Log::init()
-    {
-        logConfig.logPath = GETCM.getHomeFolder();
-    }
-
-    void Log::init(LOG_CONFIG *_logConfig)
-    {
-        ptr_logConfig = _logConfig;
-    }
-
-    void Log::init(std::string _path)
-    {
-        logConfig.logPath = _path;
-    }
+//    void Log::init()
+//    {
+//        //logConfig.logPath = GETCM.getHomeFolder();
+//        logPath = GETCM.getHomeFolder();
+//    }
+//
+//    void Log::init(LOG_CONFIG *_logConfig)
+//    {
+//        //ptr_logConfig = _logConfig;
+//    }
+//
+//    void Log::init(std::string _path)
+//    {
+//        logPath = _path;
+//    }
 
     void Log::setPath( std::string _path )
 	{
-        ptr_logConfig->logPath = _path;
+        logPath = _path;
 	}
 
 	void Log::setPath( std::wstring _path )
@@ -44,9 +47,9 @@
 	void Log::setLogLevel( int level )
 	{
 		if(level >= LOG_DISABLED && level <= LOG_ERROR)
-            ptr_logConfig->logLevel = level;
+            logLevel = level;
 		else
-            ptr_logConfig->logLevel = LOG_DISABLED;
+            logLevel = LOG_DISABLED;
 	}
 
 	void Log::write(int level, const wchar_t *format, ...)
@@ -79,11 +82,11 @@
 		std::ofstream fil;
 
 		// Se comprueba si el log esta activo
-		if(ptr_logConfig->logLevel == LOG_DISABLED)
+		if(logLevel == LOG_DISABLED)
 			return;
 
 		// Se comprueba si se debe escribir por nivel.
-		if((level == LOG_DEBUG || level == LOG_INFO) && level != ptr_logConfig->logLevel)
+		if((level == LOG_DEBUG || level == LOG_INFO) && level != logLevel)
 			return;
 
 		_tzset();
@@ -97,7 +100,7 @@
 		else
 			sprintf_s( buf,sizeof(buf),"logXML_%04d_%02d_%02d.txt",tim.tm_year+1900,tim.tm_mon+1,tim.tm_hour<8?tim.tm_mday-1:tim.tm_mday);
 		//sprintf_s(logBuff,sizeof(logBuff)
-		std::string pathLog = ptr_logConfig->logPath + std::string( buf );
+		std::string pathLog = logPath + std::string( buf );
 		fil.open( pathLog.c_str(), std::ios::app );
 		if( fil )
 		{
@@ -140,11 +143,11 @@
 		std::ofstream fil;
 	
 		// Se comprueba si el log esta activo
-		if(ptr_logConfig->logLevel == LOG_DISABLED)
+		if(logLevel == LOG_DISABLED)
 			return;
 	
 		// Se comprueba si se debe escribir por nivel.
-		if((level == LOG_DEBUG || level == LOG_INFO) && level != ptr_logConfig->logLevel)
+		if((level == LOG_DEBUG || level == LOG_INFO) && level != logLevel)
 			return;
 	
 		_tzset();
@@ -154,7 +157,7 @@
 		localtime_s( &tim, &ltime );
 		sprintf_s( buf,sizeof(buf),"log_%04d_%02d_%02d_%02dh.txt",tim.tm_year+1900,tim.tm_mon+1,tim.tm_mday,tim.tm_hour);
 		//sprintf_s(logBuff,sizeof(logBuff)
-		std::string pathLog = ptr_logConfig->logPath + std::string( buf );
+		std::string pathLog = logPath + std::string( buf );
 		fil.open( pathLog.c_str(), std::ios::app );
 		if( fil )
 		{

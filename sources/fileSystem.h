@@ -18,7 +18,7 @@ public:
     fileSystem();
     ~fileSystem(void);
     void init();
-    void init(FS_CONFIG*);
+    //void init(FS_CONFIG*);
     //    HANDLE countFolder(void);
     HANDLE readFolder(void);
 //    int countFolderStart(void);
@@ -37,7 +37,8 @@ private:
     HANDLE  hThreadReadFolder;
     bool stopThreads;
     size_t *progressCounter;
-    FS_CONFIG *fsConfig;
+    //FS_CONFIG fsConfig;
+
     std::vector<MovieFile> v_files;
     BUTIL::Mutex mtx_readfiles;
 //    HANDLE  hThread;

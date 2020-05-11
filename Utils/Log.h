@@ -28,9 +28,9 @@ public:
         LOG_DEBUG
 	};
 
-    void init(LOG_CONFIG *logConfig);
-    void init(std::string _path);
-    void init();
+    //void init(LOG_CONFIG *logConfig);
+    //void init(std::string _path);
+    //void init();
     void setPath(std::string);
     void setPath( std::wstring );
 	void setLogLevel( int = 0 );
@@ -45,7 +45,9 @@ public:
 
 private:
 
-    LOG_CONFIG *ptr_logConfig;
-    LOG_CONFIG logConfig;
+    //LOG_CONFIG *ptr_logConfig;
+    //LOG_CONFIG logConfig;
+    std::string logPath;
+    short logLevel;
 
 };

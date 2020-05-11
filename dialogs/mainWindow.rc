@@ -153,7 +153,7 @@ LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MODERN
 // AFX_DIALOG_LAYOUT
 //
 
-IDD_omdbClient_DIALOG AFX_DIALOG_LAYOUT
+IDD_RENOIR_DIALOG AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -175,7 +175,7 @@ BEGIN
         BOTTOMMARGIN, 55
     END
 
-    IDD_omdbClient_DIALOG, DIALOG
+    IDD_RENOIR_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 701
@@ -202,13 +202,13 @@ BEGIN
     DEFPUSHBUTTON   "Aceptar",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_omdbClient_DIALOG DIALOGEX 0, 0, 708, 341
+IDD_RENOIR_DIALOG DIALOGEX 0, 0, 708, 341
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Renoir - Movie Manager"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_MOVIE_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,9,413,240
+    CONTROL         "",IDC_MOVIE_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,27,413,222
     EDITTEXT        IDC_EDIT_PLOT,427,213,270,56,ES_MULTILINE | ES_READONLY | WS_VSCROLL,WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
     EDITTEXT        IDC_EDIT_FOLDER,205,254,175,14,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_EDIT_RUNTIME,432,38,55,12,ES_AUTOHSCROLL | ES_READONLY | ES_NUMBER | NOT WS_BORDER
@@ -267,6 +267,7 @@ BEGIN
     PUSHBUTTON      "reset",IDC_BUTTON_RESET_ACTORS,177,314,19,8
     PUSHBUTTON      "reset",IDC_BUTTON_RESET_DIRECTORS,177,293,19,8
     COMBOBOX        IDC_COMBO_FOLDERS,204,271,211,30,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_SEARCH,6,7,190,14,ES_AUTOHSCROLL
 END
 
 
@@ -300,7 +301,7 @@ BEGIN
     "\r\n"
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)\r\n"
     "LANGUAGE 10, 3\r\n"
-    "#include ""omdbClient.rc""  // Recursos editados que no son de Microsoft Visual C++\r\n"
+    "#include ""Renoir.rc""  // Recursos editados que no son de Microsoft Visual C++\r\n"
     "#include ""l.ESN\\afxres.rc""      // Componentes estándar\r\n"
     "#endif\r\n"
     "\0"
@@ -325,7 +326,7 @@ END
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
 LANGUAGE 10, 3
-#include "renoir.rc"  // Recursos editados que no son de Microsoft Visual C++
+#include "Renoir.rc"  // Recursos editados que no son de Microsoft Visual C++
 #include "l.ESN\afxres.rc"      // Componentes estándar
 #endif
 

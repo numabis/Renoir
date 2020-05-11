@@ -17,13 +17,17 @@ fileSystem::~fileSystem(void)
 
 void fileSystem::init()
 {
-    fsConfig = GETCM.getFsConfig();
+    //fsConfig = GETCM.getFsConfig();
+    //fsConfig.autoReadFolder = GETCM.getConfigBool(CONF_FS_AUTOREADFOLDER);
+    //fsConfig.extentions = GETCM.getConfigVect(CONF_FS_EXTENTIONS, ",");
+    //fsConfig.searchTypes = GETCM.getConfigBool(CONF_FS_SEARCHTYPES);
+
 }
 
-void fileSystem::init(FS_CONFIG *_FsConfig)
-{
-    fsConfig = _FsConfig;
-}
+//void fileSystem::init(FS_CONFIG *_FsConfig)
+//{
+//    fsConfig = _FsConfig;
+//}
 
 static DWORD WINAPI readFolderThread(void* Param)
 {
@@ -77,7 +81,12 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
     WIN32_FILE_ATTRIBUTE_DATA fInfo;
     SYSTEMTIME        stSystemTime;
     FILETIME* min;
-    std::vector<std::string> *extList = &fsConfig->extentions;
+    std::vector<std::string> extList = GETCM.getConfigVect(CONF_FS_EXTENTIONS, ",");
+    std::string strType[TYPE_MAX];
+    strType[TYPE_SERIE] = GETCM.getConfigStr(CONF_FS_TYPESERIE);
+    strType[TYPE_ANIM] = GETCM.getConfigStr(CONF_FS_TYPEANIM);
+    strType[TYPE_DOC] = GETCM.getConfigStr(CONF_FS_TYPEDOC);
+    strType[TYPE_SHORT] = GETCM.getConfigStr(CONF_FS_TYPESHORT);
     //filetype file;
     progressCounter[CNT_READ] = 0;
     progressCounter[CNT_TOTAL] = 0;
@@ -87,8 +96,9 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
 
     for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
     {
-        MovieFile file(fsConfig);
-        if (file.fileIsMovie(entry.path().extension().string()))
+        //MovieFile file;
+        if (std::find(extList.begin(), extList.end(), entry.path().extension().string()) != extList.end())
+        //if (file.fileIsMovie(entry.path().extension().string()))
         {
             progressCounter[CNT_TOTAL]++;
         }
@@ -112,9 +122,10 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
             stopThreads = false;
             break;
         }
-        MovieFile file(fsConfig);
-        if (file.fileIsMovie(entry.path().extension().string()))
+        
+        if (std::find(extList.begin(), extList.end(), entry.path().extension().string()) != extList.end())
         {
+            MovieFile file;
             file.setFilename(entry.path().filename().string());
             file.setPath(entry.path().parent_path().string());
             file.setIsSub(file.pathCompare(currentFolder)!=0);
@@ -146,11 +157,11 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
 
             //std::vector<std::string>::iterator it;
 
-            if (fsConfig->searchTypes)
+            if (GETCM.getConfigBool(CONF_FS_SEARCHTYPES))
             {
                 for (short type = 0; type < TYPE_MAX; type++)
                 {
-                    if(file.guessType(fsConfig->strType[type]))
+                    if(file.guessType(strType[type]))
                         file.typeIs[type] = TYPE_NOTMOVIE;
                 }
             }

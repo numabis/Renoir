@@ -342,6 +342,7 @@
     <ClInclude Include="sources\definitions.h" />
     <ClInclude Include="sources\fileSystem.h" />
     <ClInclude Include="sources\manageXML.h" />
+    <ClInclude Include="sources\menus.h" />
     <ClInclude Include="sources\Movie.h" />
     <ClInclude Include="sources\movieFile.h" />
     <ClInclude Include="sources\omdb.h" />

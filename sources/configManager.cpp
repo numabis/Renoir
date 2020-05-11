@@ -4,13 +4,14 @@
 #include "database.h"
 #include <map>
 
+
 //confMap dbConfTmp = { DBCONFFIELDS } ;
 
 #define HOMEFOLDER "\\Renoir\\"
 
 ConfigManager::ConfigManager(void)
 {
-    //dbConf = { DBCONFFIELDS };
+    dbConf = { DBCONFFIELDS };
     wchar_t* pathRoamingAppData = NULL;
     SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &pathRoamingAppData);
     std::wstring wPathRoamingAppData(pathRoamingAppData);
@@ -23,16 +24,43 @@ ConfigManager::~ConfigManager(void)
 
 bool ConfigManager::init()
 {
-    return readConfigFromDB();
+    if (readConfigFromDB() == false)
+        return false;
+    return (checkConfig() == -1);
 }
-
-bool ConfigManager::readConfFile()
+int ConfigManager::checkConfig()
 {
-    bool ret = xmlConfig.initConfigFile(&dbConf);
-    GETCM.saveConfigToDB();
+    int ret = -1;
+    for (int c = 0; c < CONFIGMAX; c++)
+    {
+        configMinTest[c] = true;
+        if (dbConf[configMin[c]].value.empty())
+        {
+            configMinTest[c] = false;
+            ret = c;
+        }
+    }
     return ret;
 }
-
+std::string ConfigManager::getErrorConfig()
+{
+    for (int c = 0; c < CONFIGMAX; c++)
+    {
+        if (configMinTest[c] == false)
+        {
+            return configMin[c];
+        }
+    }
+    return std::string();
+}
+bool ConfigManager::loadConfFile()
+{
+    return xmlConfig.initConfigFile(&fileConf);
+}
+bool ConfigManager::resetDBConfig()
+{
+    return GETDB.resetConfiguration();
+}
 std::string ConfigManager::getHomeFolder()
 {
     return homeFolder;
@@ -47,6 +75,20 @@ std::string ConfigManager::getConfigStr(std::string _variable)
     return std::string();
 }
 
+std::vector<std::string> ConfigManager::getConfigVect(std::string _variable, std::string _sep)
+{
+    std::string value;
+    dbConfiguration * row = getConfigRow(_variable);
+    if (row != nullptr)
+    {
+        value = row->value;
+        std::vector<std::string> v_list;
+        separateValues(&v_list, value, _sep);
+        return v_list;
+    }
+    return std::vector<std::string>();
+}
+
 int ConfigManager::getConfigInt(std::string _variable)
 {
     dbConfiguration * row = getConfigRow(_variable);
@@ -58,6 +100,20 @@ int ConfigManager::getConfigInt(std::string _variable)
     }
 
     return -1;
+}
+
+bool ConfigManager::getConfigBool(std::string _variable)
+{
+    bool ret = false;
+    dbConfiguration * row = getConfigRow(_variable);
+    if (row != nullptr)
+    {
+        std::string val = row->value;
+        if (val.empty() == false)
+            ret = BUTIL::Convert::stob(val);
+    }
+
+    return ret;
 }
 
 bool ConfigManager::setConfigValue(std::string _variable, std::string _value)
@@ -96,16 +152,16 @@ std::string ConfigManager::getFsType(int _type)
     switch (_type)
     {
     case TYPE_SERIE:
-        return getConfigStr("FS_typeSerie");
+        return getConfigStr(CONF_FS_TYPESERIE);
         break;
     case TYPE_ANIM:
-        return getConfigStr("FS_typeAnim");
+        return getConfigStr(CONF_FS_TYPEANIM);
         break;
     case TYPE_DOC:
-        return getConfigStr("FS_typeDoc");
+        return getConfigStr(CONF_FS_TYPEDOC);
         break;
     case TYPE_SHORT:
-        return getConfigStr("FS_typeShort");
+        return getConfigStr(CONF_FS_TYPESHORT);
         break;
     }
     return std::string();
@@ -114,6 +170,17 @@ std::string ConfigManager::getFsType(int _type)
 bool ConfigManager::readConfigFromDB()
 {
     return GETDB.getConfiguration(&dbConf);
+}
+
+bool ConfigManager::configFile2configDB()
+{
+    dbConf.clear();
+    confMap::iterator conf;
+    for (conf = fileConf.begin(); conf != fileConf.end(); conf++)
+    {
+        dbConf[conf->first] = conf->second;
+    }
+    return true;
 }
 
 bool ConfigManager::saveConfigToDB()
@@ -194,21 +261,21 @@ std::string * ConfigManager::getConfigValue(std::string _variable)
     return &dbConf[_variable].value;
 }
 
-FS_CONFIG   *ConfigManager::getFsConfig() {
-    oldConfig.fs.autoReadFolder = (getConfigInt("FS_autoreadFolder") == 1);
-    separateValues(&oldConfig.fs.extentions, getConfigStr("FS_extentions"), ",");
-    oldConfig.fs.searchTypes = (getConfigInt("FS_searchTypes") == 1);
-    oldConfig.fs.strType[TYPE_SERIE] = getConfigStr("FS_typeSerie");
-    oldConfig.fs.strType[TYPE_ANIM] = getConfigStr("FS_typeAnim");
-    oldConfig.fs.strType[TYPE_DOC] = getConfigStr("FS_typeDoc");
-    oldConfig.fs.strType[TYPE_SHORT] = getConfigStr("FS_typeShort");
-    return &oldConfig.fs;
-}
-OMDB_CONFIG *ConfigManager::getOmdbConfig() {
-
-    oldConfig.omdb.apikey = getConfigStr("FS_typeSerie");
-    return &oldConfig.omdb;
-}
+//FS_CONFIG   *ConfigManager::getFsConfig() {
+//    oldConfig.fs.autoReadFolder = (getConfigInt("FS_autoreadFolder") == 1);
+//    separateValues(&oldConfig.fs.extentions, getConfigStr("FS_extentions"), ",");
+//    oldConfig.fs.searchTypes = (getConfigInt("FS_searchTypes") == 1);
+//    oldConfig.fs.strType[TYPE_SERIE] = getConfigStr("FS_typeSerie");
+//    oldConfig.fs.strType[TYPE_ANIM] = getConfigStr("FS_typeAnim");
+//    oldConfig.fs.strType[TYPE_DOC] = getConfigStr("FS_typeDoc");
+//    oldConfig.fs.strType[TYPE_SHORT] = getConfigStr("FS_typeShort");
+//    return &oldConfig.fs;
+//}
+//OMDB_CONFIG *ConfigManager::getOmdbConfig() {
+//
+//    oldConfig.omdb.apikey = getConfigStr("FS_typeSerie");
+//    return &oldConfig.omdb;
+//}
 
 void ConfigManager::separateValues(std::vector<std::string> *v_list, std::string _list, std::string _sep) {
     v_list->clear();
@@ -239,13 +306,13 @@ void ConfigManager::separateValues(std::vector<std::string> *v_list, std::string
     v_list->push_back(_list.substr(0, list_end));
 }
 
-std::string ConfigManager::getImdbTitleUrl(std::string _imdbId)
-{
-    return getConfigStr("IMDB_url") + getConfigStr("IMDB_title") + "/" + _imdbId;
-}
+//std::string ConfigManager::getImdbTitleUrl(std::string _imdbId)
+//{
+//    return getConfigStr(CONF_IMDB_URL) + getConfigStr(CONF_IMDB_TITLE) + "/" + _imdbId;
+//}
 
-std::string ConfigManager::getImdbFindUrl(std::string _title)
-{
-    BUTIL::Convert::string2url(&_title);
-    return getConfigStr("IMDB_url") + getConfigStr("IMDB_find") + _title;
-}
+//std::string ConfigManager::getImdbFindUrl(std::string _title)
+//{
+//    BUTIL::Convert::string2url(&_title);
+//    return getConfigStr("IMDB_url") + getConfigStr("IMDB_find") + _title;
+//}

@@ -14,7 +14,7 @@
 #define WS2S                BUTIL::Convert::wstring2string
 #endif
 #define C2WC(wc)            (wchar_t *)BUTIL::Convert::charToWchar((char*)wc)
-#define WC2C                BUTIL::Convert::wcharToChar
+//#define WC2C                BUTIL::Convert::wcharToChar
 
 #define STR2INT             BUTIL::Util::stringToInt
 

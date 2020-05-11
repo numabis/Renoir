@@ -41,15 +41,24 @@ Omdb::~Omdb(void)
 {
 }
 
-void Omdb::init()
-{
-    omdbConfig = GETCM.getOmdbConfig();
-}
+//void Omdb::init()
+//{
+//    //omdbConfig = GETCM.getOmdbConfig();
+//    omdbConfig.apikey = GETCM.getConfigStr(CONF_OMDB_APIKEY);
+//    omdbConfig.omdbUrl = GETCM.getConfigStr(CONF_OMDB_URL);
+//    omdbConfig.apiRequestUrl = GETCM.getConfigStr(CONF_OMDB_APIREQUEST);
+//    omdbConfig.type = GETCM.getConfigStr(CONF_OMDB_TYPE);
+//    omdbConfig.plot = GETCM.getConfigStr(CONF_OMDB_PLOT);
+//    omdbConfig.separator = GETCM.getConfigStr(CONF_OMDB_LISTSEPARATOR);
+//    omdbConfig.testmode = (GETCM.getConfigInt(CONF_OMDB_TESTMODE) == 1);
+//    //omdbConfig.typeXml = GETCM.getConfigStr("CONF_OMDB_APIKEY");
+//    //omdbConfig.plotShort = GETCM.getConfigStr("CONF_OMDB_APIKEY");
+//}
 
-void Omdb::init(OMDB_CONFIG *_config)
-{
-    omdbConfig = _config;
-}
+//void Omdb::init(OMDB_CONFIG *_config)
+//{
+//    omdbConfig = _config;
+//}
 
 std::stringstream Omdb::get_response(std::wstring url)
 {
@@ -82,12 +91,12 @@ void Omdb::searchByImdb(MovieFile* _file)
 {
     using namespace std::string_literals;
 
-    std::string url = omdbConfig->omdbUrl;
-    url.append("?" + OMDBKEY + omdbConfig->apikey);
-    url.append("&" + OMDBRET + omdbConfig->type);
+    std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
+    url.append("?" + OMDBKEY + GETCM.getConfigStr(CONF_OMDB_APIKEY));
+    url.append("&" + OMDBRET + GETCM.getConfigStr(CONF_OMDB_TYPE));
     url.append("&" + OMDBIMDB + _file->imdbId);
 
-    if (omdbConfig->omdbUrl.empty())
+    if (GETCM.getConfigStr(CONF_OMDB_URL).empty())
     {
         wchar_t wmsg[256];
         //char* msg = BUTIL::Util::GetLastErrorAsString(error);
@@ -156,20 +165,20 @@ void Omdb::searchByName(MovieFile *file)
     //short _year;
 
     using namespace std::string_literals;
-    std::string url = omdbConfig->omdbUrl;
+    std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
 
-    if (omdbConfig->testmode == false)
-        url.append("?" + OMDBKEY + omdbConfig->apikey);
+    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE))
+        url.append("?" + OMDBKEY + GETCM.getConfigStr(CONF_OMDB_APIKEY));
     else
         url.append("?" + OMDBKEY + "");
-    url.append("&" + OMDBRET + omdbConfig->type);
+    url.append("&" + OMDBRET + GETCM.getConfigStr(CONF_OMDB_TYPE));
     BUTIL::Convert::string2url(&file->title);
     url.append("&" + OMDBTITLE + file->title);
     if (file->year != 0) {
         url.append("&" + OMDBYEAR + std::to_string(file->year));
     }
 
-    if (omdbConfig->omdbUrl.empty())
+    if (GETCM.getConfigStr(CONF_OMDB_URL).empty())
     {
         wchar_t wmsg[256];
         //char* msg = BUTIL::Util::GetLastErrorAsString(error);

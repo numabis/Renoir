@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <algorithm>
 #include "Convert.h"
+#include <sstream>
 
 namespace BUTIL
 {
@@ -236,23 +237,23 @@ namespace BUTIL
         _dest[i] = '\0';
     }
 
-    LPSTR Convert::wcharToChar(LPCWSTR _src)
-    {
-        LPSTR dest;
-        const wchar_t* pt;
-        //char buffer[255];
-        int i = 0, length;
-
-        pt = _src;
-        while (*pt) {
-            length = wctomb((char*)(dest + i), *pt);
-            if (length<1) break;
-            ++pt;
-            i++;
-        }
-        dest[i] = '\0';
-        return dest;
-    }
+    //LPSTR Convert::wcharToChar(LPCWSTR _src)
+    //{
+    //    LPSTR dest;
+    //    const wchar_t* pt;
+    //    //char buffer[255];
+    //    int i = 0, length;
+    //
+    //    pt = _src;
+    //    while (*pt) {
+    //        length = wctomb((char*)(dest + i), *pt);
+    //        if (length<1) break;
+    //        ++pt;
+    //        i++;
+    //    }
+    //    dest[i] = '\0';
+    //    return dest;
+    //}
 
     void Convert::toLower(std::string *_str)
     {
@@ -262,5 +263,27 @@ namespace BUTIL
                 (*_str)[i] += 32;
         }
     }
+    bool Convert::stob(std::string s, bool throw_on_error)
+    {
+        auto result = false;    // failure to assert is false
 
+        std::istringstream is(s);
+        // first try simple integer conversion
+        is >> result;
+
+        if (is.fail())
+        {
+            // simple integer failed; try boolean
+            is.clear();
+            is >> std::boolalpha >> result;
+        }
+
+        if (is.fail() && throw_on_error)
+        {
+            throw std::invalid_argument(s.append(" is not convertable to bool"));
+        }
+
+        return result;
+    }
 }
+

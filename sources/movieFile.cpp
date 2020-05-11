@@ -1,6 +1,7 @@
 #include "variables.h"
 #include "movieFile.h"
 #include "database.h"
+#include "configManager.h"
 #include "Util.h"
 
 #pragma region MovieFile
@@ -28,22 +29,23 @@ MovieFile::MovieFile(Movie _movie)
     setMovie(_movie);
 }
 
-MovieFile::MovieFile(FS_CONFIG *_config)
-{
-    resetFile();
-    fsConfig = _config;
-}
-
-void MovieFile::setFsConfig(FS_CONFIG *_config)
-{
-    fsConfig = _config;
-}
+//MovieFile::MovieFile(FS_CONFIG *_config)
+//{
+//    resetFile();
+//    fsConfig = _config;
+//}
+//
+//void MovieFile::setFsConfig(FS_CONFIG *_config)
+//{
+//    fsConfig = _config;
+//}
 
 bool MovieFile::fileIsMovie()
 {
     if (fsConfig == NULL)
         return false;
-    if (std::find(fsConfig->extentions.begin(), fsConfig->extentions.end(), ext) != fsConfig->extentions.end())
+    std::vector<std::string> extList = GETCM.getConfigVect(CONF_FS_EXTENTIONS, ",");
+    if (std::find(extList.begin(), extList.end(), ext) != extList.end())
         return true;
     return false;
 }
@@ -153,8 +155,10 @@ void MovieFile::fileNameToDetails()
         this->title = this->filename.substr(0, extPos);
         //this->title[extPos] = '\0';
     }
-
-    this->ext = this->filename.substr(extPos);
+    if (extPos >= 0)
+        this->ext = this->filename.substr(extPos);
+    else
+        this->ext = "";
     normalize(&(this->title));
     if (this->title[this->title.size()-1] == ' ')
         this->title.erase(this->title.size()-1);
@@ -180,8 +184,8 @@ int MovieFile::findYear(const std::string str, short* _year)
     //0         1         2         3         
     while (findYear != std::string::npos)
     {
-        std::size_t previous = str.find_last_of(".-_([{", findYear);
-        std::size_t next = str.find_first_of(".-_)]}", findYear);
+        std::size_t previous = str.find_last_of(".-_([{ ", findYear);
+        std::size_t next = str.find_first_of(".-_)]} ", findYear);
 
         if (findYear < 3 || previous != findYear - 1 || next != findYear + 4)
         {

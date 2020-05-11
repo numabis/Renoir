@@ -57,12 +57,13 @@ public:
         bool exists;
         short minOccurrences;
         short valueSelected[FILTERS_MAX];
+        std::string searchFilter;
         std::string nameSelected[FILTERS_MAX];
         std::vector<std::string> v_combos[FILTERS_MAX];
         bool invertFilters[INVERT_FILTERS_MAX];
         std::vector<pondStr> folders;
-        //std::string *folderFilter;
-        int folderFilterId;
+        std::string folderFilter;
+        //int folderFilterId;
     } moviesFSFilters;
 
     std::vector<std::string> *ptr_consoleDBG;
@@ -103,7 +104,7 @@ public:
     std::string getPath(int _id);
     bool getConfiguration(confMap *_confMan);
     bool setConfiguration(std::string _var, dbConfiguration _conf);
-
+    bool resetConfiguration();
     double DBVERSIONS_getVersion(void);
 
     int  MOVIES_iniAll(std::string _separator);
@@ -194,6 +195,7 @@ private:
     bool CONFIGURATION_populate(void);
     bool CONFIGURATION_get(confMap *);
     bool CONFIGURATION_insertOrUpdate(std::string, dbConfiguration _conf);
+    bool CONFIGURATION_deleteAll(void);
 
     void str2sql(std::string *_str);
     std::vector<std::string> vColIdToCol(std::vector<short> _colId, bool);

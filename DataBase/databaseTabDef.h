@@ -110,21 +110,21 @@
 
 
 #define DBCHANGELOG \
-    { 0.1f,     "2020-01-14", "test" }, \
-    { 0.2f,     "2020-01-15", "Version check" }, \
-    { 0.3f,     "2020-01-16", "Date added to version" }, \
-    { 0.4f,     "2020-01-21", "Date Ascii title to movies" }, \
-    { 0.5f,     "2020-01-22", "Added on cascade delete contraint" }, \
-    { 0.6f,     "2020-01-27", "COLLATE NOCASE in unique columns" }, \
-    { 0.7f,     "2020-02-01", "New Type definition" }, \
-    { 0.71f,    "2020-02-02", "minor corrections" }, \
-    { 0.8f,     "2020-02-03", "New Table FileTypes" }, \
-    { 0.81f,    "2020-02-03", "New Table FileTypes correction" }, \
-    { 0.82f,    "2020-02-06", "moviesFS new col:animation" }, \
-    { 0.83f,    "2020-02-18", "change type of anim-series columns" }, \
-    { 0.84f,    "2020-02-18", "new column in moviesFS doc,short" }, \
-    { 0.9f,     "2020-02-18", "Added tab PATH to store all path and added column idPath to moviesFS" }, \
-    { 1.0f,     "2020-04-28", "Added tab Configuration to store the config instead of XML" }, \
+    { 0.1f,     "2020-03-14", "test" }, \
+    { 0.2f,     "2020-03-15", "Version check" }, \
+    { 0.3f,     "2020-03-16", "Date added to version" }, \
+    { 0.4f,     "2020-03-21", "Date Ascii title to movies" }, \
+    { 0.5f,     "2020-03-22", "Added on cascade delete contraint" }, \
+    { 0.6f,     "2020-03-27", "COLLATE NOCASE in unique columns" }, \
+    { 0.7f,     "2020-04-01", "New Type definition" }, \
+    { 0.71f,    "2020-04-02", "minor corrections" }, \
+    { 0.8f,     "2020-04-03", "New Table FileTypes" }, \
+    { 0.81f,    "2020-04-03", "New Table FileTypes correction" }, \
+    { 0.82f,    "2020-04-06", "moviesFS new col:animation" }, \
+    { 0.83f,    "2020-04-18", "change type of anim-series columns" }, \
+    { 0.84f,    "2020-04-18", "new column in moviesFS doc,short" }, \
+    { 0.9f,     "2020-04-18", "Added tab PATH to store all path and added column idPath to moviesFS" }, \
+    { 1.0f,     "2020-05-05", "Added tab Configuration to store the config instead of XML" }, \
     { 0.0f,     ""          , "Not a version, here to end table" }
 
 #endif // _DATABASETABDEF_

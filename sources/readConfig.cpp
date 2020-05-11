@@ -41,7 +41,7 @@ bool ReadConfig::initConfigFile(confMap *_map)
     if (ret == false)
     {
         exLOGERROR("Error loading config file %s", configPath);
-        MessageBox(NULL, (LPCWSTR)L"Error loading config file", (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
+        //MessageBox(NULL, (LPCWSTR)L"Error loading config file", (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
         return ret;
     }
     //saveConfigFile();
@@ -88,6 +88,8 @@ bool  ReadConfig::loadConfigFile(confMap *_map)
 
         }
     }
+    else
+        ret = false;
 
     return ret;
 }
@@ -244,8 +246,8 @@ int  ReadConfig::readConfigOMDB(TiXmlElement *_node) {
     omdb->type = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_TYPE]);
     omdb->separator = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_SEP]);
     omdb->testmode = BUTIL::Xml::XML_bool(_node, xmlOmdbTags[XML_OMDB_TEST]);
-    omdb->plotShort = xmlConfig.omdb.plot == xmlOmdbTags[XML_OMDB_PLOT] ? true : false;
-    omdb->typeXml = xmlConfig.omdb.type == xmlOmdbTags[XML_OMDB_TYPE] ? true : false;
+//    omdb->plotShort = xmlConfig.omdb.plot == xmlOmdbTags[XML_OMDB_PLOT] ? true : false;
+//    omdb->typeXml = xmlConfig.omdb.type == xmlOmdbTags[XML_OMDB_TYPE] ? true : false;
     return ret;
 }
 int  ReadConfig::readConfigIMDB(TiXmlElement *_node) {

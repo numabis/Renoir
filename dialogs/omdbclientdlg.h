@@ -12,6 +12,7 @@
 #include "log.h"
 #include "xml.h"
 #include "PictureControl\PictureCtrl.h"
+#include "menus.h"
 
 #include <windows.h>
 #include <string>
@@ -21,21 +22,6 @@
 
 #define _REFRESH_UI_EVENT_	1000		// Timer de actualización del UI
 #define _REFRESH_UI_TIMER	1000		// Tiempo de actualización del UI em ms
-
-#define MENU_RELOAD_ALL             0x0240
-#define MENU_RELOAD_DIRECTORS       0x0250
-#define MENU_RELOAD_WRITERS         0x0260
-#define MENU_RELOAD_ACTORS          0x0270
-#define MENU_RELOAD_GENRE           0x0280
-#define MENU_RELOAD_GENRE2          0x0290
-#define MENU_RELOAD_YEARMIN         0x02A0
-#define MENU_RELOAD_YEARMAX         0x02B0
-#define MENU_RELOAD_IMDBRATINGMIN   0x02C0
-#define MENU_RELOAD_IMDBRATINGMAX   0x02D0
-#define MENU_RELOAD_SERIE           0x02E0
-#define MENU_RELOAD_ANIM            0x02F0
-#define MENU_RELOAD_DOC             0x0300
-#define MENU_RELOAD_SHORT           0x0310
 
 #define LOC_SYSMENU     0x0001
 #define LOC_BARMENU     0x0010
@@ -52,7 +38,7 @@ public:
 
     omdbClientDlg(CWnd* pParent = NULL);
     ~omdbClientDlg();
-    enum { IDD = IDD_omdbClient_DIALOG };
+    enum { IDD = IDD_RENOIR_DIALOG };
 
     size_t columnSizes   [DataBase::NUM_COLUMNS];
     char* columNames     [DataBase::NUM_COLUMNS] = { "FsId", "Path", "Name", "isDel", "Added", "Size", "ImdbID", "isSerie", "isAnim", "iDoc", "isShort", "Rating" };
@@ -67,7 +53,7 @@ public:
     enum STATIC_ALL { STATIC_TEXT, STATIC_DESC, STATIC_KEY, STATIC_ALL_MAX };
     enum SUBMENUFILTER  { SUBMENUFILTER_DIRECTORS, SUBMENUFILTER_D1, SUBMENUFILTER_D2, SUBMENUFILTER_D3, SUBMENUFILTER_D4, SUBMENUFILTER_ACTORS, SUBMENUFILTER_A1, SUBMENUFILTER_A2, SUBMENUFILTER_A3, SUBMENUFILTER_A4, SUBMENUFILTER_A5, SUBMENUFILTER_MAX };
 
-    bool ftypeSave[FILTERS_MAX] = { true, true, true, true, true, true, true, true, true, true, true, true, true };
+//    bool ftypeSave[FILTERS_MAX] = { true, true, true, true, true, true, true, true, true, true, true, true, true };
 
     short subMenuFilter[SUBMENUFILTER_MAX] = { IDC_BUTTON_FILTER_DIRECTORS, IDC_BUTTON_FILTER_DIRECTORS + 1, IDC_BUTTON_FILTER_DIRECTORS + 2, IDC_BUTTON_FILTER_DIRECTORS + 3, IDC_BUTTON_FILTER_DIRECTORS + 4, IDC_BUTTON_FILTER_ACTORS, IDC_BUTTON_FILTER_ACTORS + 1, IDC_BUTTON_FILTER_ACTORS + 2, IDC_BUTTON_FILTER_ACTORS + 3, IDC_BUTTON_FILTER_ACTORS + 4, IDC_BUTTON_FILTER_ACTORS + 5 };
 
@@ -97,75 +83,73 @@ public:
 
     std::vector <omdbClientDlg::structMenu> mySubMenus[SUBMENU_MAX] = {
         { // SUBMENU_FILE
-            { LOC_SYSMENU, MF_STRING, IDM_CHANGE_FOLDER, L"&Change Folder", &omdbClientDlg::selectFolder },
-            { LOC_SYSMENU, MF_STRING, IDM_READFOLDER, L"&Read Folder", &omdbClientDlg::readFolder },
-            { LOC_SYSMENU, MF_STRING, IDC_STOP_READFOLDER, L"&Stop Reading", &omdbClientDlg::stopReadFolder },
-            { LOC_SYSMENU, MF_STRING, (UINT_PTR)idcXmlFile[BTN_XMLFILE_WRITE], L"&Save data", &omdbClientDlg::saveXmlfile },
-            { LOC_SYSMENU, MF_STRING, (UINT_PTR)idcXmlFile[BTN_XMLFILE_READ], L"&Load data", &omdbClientDlg::loadXmlfile },
-            { LOC_SYSMENU, MF_STRING, IDM_EXIT, L"&Exit", &omdbClientDlg::onExit },
+            { LOC_SYSMENU, MENU_FOLDER },
+            { LOC_SYSMENU, MENU_READFS },
+            { LOC_SYSMENU, MENU_STOPREADFS },
+            { LOC_SYSMENU, MENU_SAVEDATA },
+            { LOC_SYSMENU, MENU_LOADDATA },
+            { LOC_SYSMENU, MENU_EXIT },
         },
         { // SUBMENU_FS
-            { LOC_SYSMENU, MF_STRING, IDM_CHANGE_FOLDER, L"Change &Folder", &omdbClientDlg::selectFolder },
-            { LOC_SYSMENU, MF_STRING, IDM_READFOLDER, L"&Read Folder", &omdbClientDlg::readFolder },
+            { LOC_SYSMENU, MENU_FOLDER },
+            { LOC_SYSMENU, MENU_READFS },
         },
         { // SUBMENU_OMDB
-            { LOC_SYSMENU, MF_STRING, IDM_DIALOG_SETKEY,L"&Change Omdb Key", &omdbClientDlg::changeOmdbKey },
-            { LOC_SYSMENU, MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SINGLE], L"&Single Request", &omdbClientDlg::omdbSingleRequest },
-            { LOC_SYSMENU, MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL], L"&All Request", &omdbClientDlg::omdbAllRequest },
-            { LOC_SYSMENU, MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL_STOP], L"&All Stop", &omdbClientDlg::omdbAllStop },
+            { LOC_SYSMENU, MENU_OMDBSETKEY },
+            { LOC_SYSMENU, MENU_OMDB1REQ },
+            { LOC_SYSMENU, MENU_OMDBXREQ },
+            { LOC_SYSMENU, MENU_OMDBSTOP },
         },
         { // SUBMENU_DB
-            { LOC_SYSMENU, MF_STRING, IDM_RESETFS, L"Reset &FS Table", &omdbClientDlg::dbClearMoviesFS },
-            { LOC_SYSMENU, MF_STRING, IDM_RESETMOVIES, L"Reset &Movies Table", &omdbClientDlg::dbClearMovies },
+            { LOC_SYSMENU, MENU_RESETTABFS },
+            { LOC_SYSMENU, MENU_RESETTABMOVIES },
         },
         { // SUBMENU_HELP
-            { LOC_SYSMENU, MF_STRING, ID_HELP_INDEX, L"Index" },
-            { LOC_SYSMENU, MF_STRING, ID_HELP_FINDER, L"Finder" },
-            { LOC_SYSMENU, MF_STRING, ID_HELP_USING, L"Using" },
-            { LOC_SYSMENU, MF_STRING, ID_APP_ABOUT, L"About", &omdbClientDlg::onAbout },
+            { LOC_SYSMENU,MENU_HELP_INDEX },
+            { LOC_SYSMENU,MENU_HELP_FINDER },
+            { LOC_SYSMENU,MENU_HELP_USING },
+            { LOC_SYSMENU,MENU_HELP_ABOUT },
         },
         { // SUBMENU_FILTERS
-            { LOC_CONMENU, MF_STRING, IDC_BUTTON_RESET_FILTERS, L"Reset Filters", &omdbClientDlg::resetFilters },
-            { LOC_CONMENU, MF_STRING, (UINT_PTR)subMenuFilter[SUBMENUFILTER_DIRECTORS], L"-- Directors --" },
-            { LOC_CONMENU, MF_STRING, (UINT_PTR)subMenuFilter[SUBMENUFILTER_ACTORS], L"-- Actors --" },
+            { LOC_CONMENU, MENU_FILTERS_RESET },
+            { LOC_CONMENU, MENU_FILTERS_DIRECTORS },
+            { LOC_CONMENU, MENU_FILTERS_ACTORS},
         },
         { // SUBMENU_COMBOS 
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_ALL, L"Reload All", &omdbClientDlg::loadAllCombos },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_DIRECTORS, L"Reload Directors", &omdbClientDlg::loadFilterDirectors },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_WRITERS, L"Reload Writers", &omdbClientDlg::loadFilterWriters },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_ACTORS, L"Reload Actors", &omdbClientDlg::loadFilterActors },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_GENRE, L"Reload Genres", &omdbClientDlg::loadFilterGenres },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_GENRE2, L"Reload Genres2", &omdbClientDlg::loadFilterGenres2 },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_YEARMIN, L"Reload YearMin", &omdbClientDlg::loadFilterYearMin },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_YEARMAX, L"Reload YearMax", &omdbClientDlg::loadFilterYearMax },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_IMDBRATINGMIN, L"Reload ImdbRatingMin", &omdbClientDlg::loadFilterImdbRatingMin },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_IMDBRATINGMAX, L"Reload ImdbRatingMax", &omdbClientDlg::loadFilterImdbRatingMax },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_SERIE, L"Reload Serie", &omdbClientDlg::loadFilterSerie },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_ANIM, L"Reload Anim", &omdbClientDlg::loadFilterAnim },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_DOC, L"Reload Doc", &omdbClientDlg::loadFilterDoc },
-            { LOC_SYSMENU, MF_STRING, MENU_RELOAD_SHORT, L"Reload Short", &omdbClientDlg::loadFilterShort },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_ALL  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_DIR  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_WRI  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_ACT  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_GEN  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_GE2  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_YMN  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_YMX  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_IRMN },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_IRMX },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_SERI },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_ANIM },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_DOC  },
+            { LOC_SYSMENU, MENU_COMBO_LOAD_SHOR },
         }
     };
 
     std::vector <omdbClientDlg::structMenu> myTopSysMenu = {
-        { LOC_CONMENU, MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SINGLE], L"Omdb Request:&Single", &omdbClientDlg::omdbSingleRequest },
-       // { LOC_CONMENU, MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL], L"Omdb Request:&All", &omdbClientDlg::omdbAllRequest },
-       // { LOC_CONMENU, MF_STRING, IDM_READFOLDER, L"&Read Folder", &omdbClientDlg::readFolder },
-        { LOC_CONMENU, MF_STRING, IDC_BUTTON_EDIT_IMDBID, L"&Edit ImdbId", &omdbClientDlg::editImdbId },
-        { LOC_CONMENU, MF_STRING, IDC_BUTTON_EDIT_FNAME, L"&Edit File Name", &omdbClientDlg::editFileName },
+        { LOC_CONMENU, MENU_OMDB1REQ },
+        { LOC_CONMENU, MENU_EDIT_IMDBID },
+        { LOC_CONMENU, MENU_EDIT_FILENAME },
         { LOC_SYSMENU|LOC_CONMENU, MF_SEPARATOR, 0 },
-        { LOC_CONMENU, MF_STRING, IDC_BUTTON_OPEN_IMDBWEB, L"&Open Imdb Web", &omdbClientDlg::openImdbWeb },
+        { LOC_CONMENU, MENU_OPEN_WEB },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_FILE, L"&File" },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_OMDB, L"&Omdb" },
         //{ LOC_SYSMENU            , MF_POPUP, SUBMENU_FS, L"File &System" },
-        { LOC_SYSMENU|LOC_CONMENU, MF_STRING, IDM_DIALOG_COLUMNS, L"Select &Colums to show", &omdbClientDlg::showColumnSelector },
-        { LOC_SYSMENU            , MF_STRING, IDM_DIALOG_VPLAYER, L"Select &Video Player", &omdbClientDlg::selectVideoPlayer },       
+        { LOC_SYSMENU|LOC_CONMENU, MENU_SELECTCOLUMNS },
+        { LOC_SYSMENU            , MENU_SELECTPLAYER },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_DB, L"&DataBase" },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_COMBOS, L"&Combos" },
         { LOC_SYSMENU            , MF_SEPARATOR, 0 },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_HELP, L"&Help" },
-        { LOC_SYSMENU            , MF_STRING, IDC_DIALOG_DEBUG_WINDOW, L"&Debug Window", &omdbClientDlg::showDebugWindow },
-        { LOC_SYSMENU            , MF_STRING, IDM_ABOUTBOX, L"&About omdbClient...", &omdbClientDlg::onAbout },
+        { LOC_SYSMENU            , MENU_DBGWND },
+        { LOC_SYSMENU            , MENU_HELP_ABOUT },
         { LOC_CONMENU            , MF_POPUP, SUBMENU_FILTERS, L"&Filter" }
     };
 
@@ -238,6 +222,7 @@ private:
     CMenu SubMenus[MENU_MAX][SUBMENU_MAX];
     CListCtrl *lstMovies;
     CEdit *editFolderPath;
+    CEdit *editSearch;
     CComboBox *comboFolderPath;
 
     CStatic *movieInfoStatic[INFO_MAX];
@@ -403,4 +388,5 @@ public:
 //    afx_msg void OnEnChangeEditFolder();
     afx_msg void OnStnClickedStaticApikey();
     afx_msg void OnCbnSelchangeComboFolders();
+    afx_msg void OnEnChangeEditSearch();
 };

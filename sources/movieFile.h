@@ -54,7 +54,7 @@ public:
 
     MovieFile();
     MovieFile(Movie _movie);
-    MovieFile(FS_CONFIG *_config);
+    //MovieFile(FS_CONFIG *_config);
     ~MovieFile();
     void resetFile();
     void resetMovie();
@@ -77,7 +77,8 @@ public:
     
     bool fileIsMovie();
     bool fileIsMovie(std::string _ext);
-    void setFsConfig(FS_CONFIG *_config);
+    //void setFsConfig(FS_CONFIG *_config);
+    //void setFsConfig(std::vector<std::string> extentions);
     void setFilename(std::string);
     std::string getFilename(void);
     void setExt(std::string);

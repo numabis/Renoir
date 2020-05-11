@@ -122,6 +122,7 @@ BEGIN_MESSAGE_MAP(omdbClientDlg, CDialogEx)
 //    ON_EN_SETFOCUS(IDC_EDIT_FOLDER, &omdbClientDlg::OnEnChangeEditFolder)
     ON_STN_CLICKED(IDC_STATIC_APIKEY, &omdbClientDlg::OnStnClickedStaticApikey)
     ON_CBN_SELCHANGE(IDC_COMBO_FOLDERS, &omdbClientDlg::OnCbnSelchangeComboFolders)
+    ON_EN_CHANGE(IDC_EDIT_SEARCH, &omdbClientDlg::OnEnChangeEditSearch)
 END_MESSAGE_MAP()
 void omdbClientDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -183,32 +184,32 @@ void omdbClientDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //tmp.Format(L"%d", (int)yPos);
 //GetDlgItem(IDC_EDIT_TESTlParam2)->SetWindowTextW(tmp);
 
-structMenu* l_structMenu = getStructMenu(nID);
+    structMenu* l_structMenu = getStructMenu(nID);
 
-if (l_structMenu && l_structMenu->method)
-(this->*l_structMenu->method)();
+    if (l_structMenu && l_structMenu->method)
+        (this->*l_structMenu->method)();
 
-if (nID > IDC_BUTTON_FILTER_DIRECTORS && nID < IDC_BUTTON_FILTER_ACTORS)
-{
-    std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_DIRECTOR);
-    std::string name = names->at(nID - IDC_BUTTON_FILTER_DIRECTORS - 1);
-    int pos = comboFilters[FILTERS_DIRECTORS]->FindString(-1, CString(name.c_str()));
-    comboFilters[FILTERS_DIRECTORS]->SetCurSel(pos);
-    OnCbnSelchangeComboDirector();
-}
-if (nID > IDC_BUTTON_FILTER_ACTORS && nID < IDC_BUTTON_FILTER_ACTORS + 5)
-{
-    std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_ACTOR);
-    std::string name = names->at(nID - IDC_BUTTON_FILTER_ACTORS - 1);
-    int pos = comboFilters[FILTERS_ACTORS]->FindString(-1, CString(name.c_str()));
-    comboFilters[FILTERS_ACTORS]->SetCurSel(pos);
-    OnCbnSelchangeComboActors();
-}
+    if (nID > IDC_BUTTON_FILTER_DIRECTORS && nID < IDC_BUTTON_FILTER_ACTORS)
+    {
+        std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_DIRECTOR);
+        std::string name = names->at(nID - IDC_BUTTON_FILTER_DIRECTORS - 1);
+        int pos = comboFilters[FILTERS_DIRECTORS]->FindString(-1, CString(name.c_str()));
+        comboFilters[FILTERS_DIRECTORS]->SetCurSel(pos);
+        OnCbnSelchangeComboDirector();
+    }
+    if (nID > IDC_BUTTON_FILTER_ACTORS && nID < IDC_BUTTON_FILTER_ACTORS + 5)
+    {
+        std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_ACTOR);
+        std::string name = names->at(nID - IDC_BUTTON_FILTER_ACTORS - 1);
+        int pos = comboFilters[FILTERS_ACTORS]->FindString(-1, CString(name.c_str()));
+        comboFilters[FILTERS_ACTORS]->SetCurSel(pos);
+        OnCbnSelchangeComboActors();
+    }
 
 //if (nID == 57665)
 //    CDialogEx::OnSysCommand(nID, lParam);
 
-CDialogEx::OnSysCommand(nID, lParam);
+    CDialogEx::OnSysCommand(nID, lParam);
 }
 void omdbClientDlg::OnPaint(void)
 {
@@ -424,7 +425,6 @@ BOOL omdbClientDlg::OnInitDialog()
 {
     ST_SAVE(ST_INITIATING);
 
-//    consoleDBG.push_back(stNames[ST_INITIATING]);
     GETLOG.ptr_consoleDBG = ptr_consoleDBG;
     GETDB.ptr_consoleDBG = ptr_consoleDBG;
     GETDB.ptr_globalState = ptr_globalState;
@@ -449,10 +449,8 @@ BOOL omdbClientDlg::OnInitDialog()
 
     OnInitDialogMenus();
 
-    // Establecer el icono para este cuadro de diálogo. El marco de trabajo realiza esta operación
-    //  automáticamente cuando la ventana principal de la aplicación no es un cuadro de diálogo
-    SetIcon(m_hIcon, TRUE);			// Establecer icono grande
-    SetIcon(m_hIcon, FALSE);		// Establecer icono pequeño
+    SetIcon(m_hIcon, TRUE);
+    SetIcon(m_hIcon, FALSE);
 
     srand((unsigned int)time(NULL));
     OnInitDialogVars();
@@ -463,7 +461,6 @@ BOOL omdbClientDlg::OnInitDialog()
         return false;
     }
 
-    //BUTIL::exLog::getInstance().setLogLevel(xmlConfig.getLogConfig()->logLevel);
     logLevel = GETCM.getConfigInt(CONF_LOG_LOGLEVEL);
     if (logLevel == -1) logLevel = 0;
     BUTIL::exLog::getInstance().setLogLevel(&logLevel); //);
@@ -579,6 +576,8 @@ bool omdbClientDlg::OnInitDialogConfig()
 {
     LOGDEBUG("");
 
+    bool ret;
+
     std::wstring wcmdLine(GetCommandLine());
     std::string cmdLine = WS2S(wcmdLine);
     std::string readXML = "-readXML";
@@ -587,11 +586,49 @@ bool omdbClientDlg::OnInitDialogConfig()
     bool connected = GETDB.setDB();
 
     if (found != string::npos)
-        GETCM.readConfFile();
+    {
+        if (!GETCM.loadConfFile())
+        {
+            exLOGERROR("Error Reading config File");
+            //MBOX("Error Reading config File", "Error", MB_ICONERROR | MB_OK);
+            return false;
+        }
+        
+        if (!GETCM.resetDBConfig())
+        {
+            exLOGERROR("Error Reset config Table");
+            MBOX("Error Reset config Table", "Error", MB_ICONERROR | MB_OK);
+            return false;
+        }
+
+        GETCM.configFile2configDB();
+        
+        if (!GETCM.saveConfigToDB())
+        {
+            exLOGERROR("Error Saving config to DB");
+            MBOX("Error Saving config to DB", "Error", MB_ICONERROR | MB_OK);
+            return false;
+        }
+        exLOGERROR("Config File loaded to DB");
+       MBOX("Config File loaded to DB", "Error", MB_ICONERROR | MB_OK);
+
+    }
 
     if (connected)
     {
-        GETCM.init();
+        ret = GETCM.init();
+        if (ret == false)
+        {
+            if (GETCM.checkConfig() != -1)
+            {
+                //std::string field = GETCM.getErrorConfig();
+                std::ostringstream msg;
+                msg << "Config Error, missing param " << GETCM.getErrorConfig() << ", cannot execute the app" ; //.getXmlLocalFullPath();
+                MBOX(msg.str(), "Error", MB_ICONERROR | MB_OK);
+            }
+            return false;
+        }
+        //GETCM.saveConfigToDB();
         if (GETDB.getUpdate())
         {
             saveXmlfile();
@@ -600,39 +637,6 @@ bool omdbClientDlg::OnInitDialogConfig()
         }
     }
     return true;
-        //int ret = xmlConfig.initLocalConfigFile();
-    //if (ret == XMLERROR)
-    //{
-    //    xmlConfig.initConfigFile();
-    //    MBOX("Please, select the home folder hosting your movies", "Info", MB_OK);
-    //    LOGDEBUG("selectFolder");
-    //    selectFolder();
-    //    LOGDEBUG("changeOmdbKey");
-    //    changeOmdbKey();
-    //}
-    //
-    //ret = xmlConfig.loadLocalConfigFile();
-    //if ((ret & XMLNOFSPATH) == XMLNOFSPATH)
-    //{
-    //    MBOX("Please, select the home folder hosting your movies", "Info", MB_OK);
-    //    ret = xmlConfig.initConfigFile();
-    //    selectFolder();
-    //} else
-    //    ret = xmlConfig.initConfigFile();
-    //
-    //if ((ret & XMLERROR) == XMLERROR)
-    //{
-    //    return false;
-    //}
-    ////while ((ret & XMLOK) != XMLOK)
-    //    ret = xmlConfig.initConfigFile();
-    //ret = xmlConfig.initConfigFile();
-    //if ((ret & XMLOK) != XMLOK)
-    //{
-    //    return false;
-    //}
-    //
-    //return true;
 }
 void omdbClientDlg::OnInitDialogVars()
 {
@@ -674,6 +678,7 @@ void omdbClientDlg::OnInitDialogVars()
 
     lstMovies = (CListCtrl *)GetDlgItem(IDC_MOVIE_LIST);
     editFolderPath = (CEdit *)GetDlgItem(IDC_EDIT_FOLDER);
+    editSearch = (CEdit *)GetDlgItem(IDC_EDIT_SEARCH);
     //editComboOccurrences = (CEdit *)GetDlgItem(IDC_EDIT_MINOCCURRENCES);
     checkShowDeleted = (CButton *)GetDlgItem(IDC_CHECK_SHOWDELETED);
     checkConfirmImdbIdUpd = (CButton *)GetDlgItem(IDC_CHECK_IMDBIDUPDCONF);
@@ -721,8 +726,8 @@ bool omdbClientDlg::OnInitDialogData()
 
     threadOmdbAllIsRunning = false;
 
-    log.init();
-    omdb.init();
+//    log.init();
+//    omdb.init();
     fs.init();
     v_FsFiles = fs.getVfiles();
     mtx_readfiles = fs.getMutex();
@@ -749,7 +754,7 @@ bool omdbClientDlg::OnInitDialogData()
 
     CString cs_loaded;
 
-    if (GETCM.getConfigInt(CONF_FS_AUTOREADFOLDER) == 1)
+    if (GETCM.getConfigBool(CONF_FS_AUTOREADFOLDER))
     {
         GETDB.MOVIESFS_setPhysical(false);
         hThreadReadFolder = fs.readFolder();
@@ -760,10 +765,10 @@ bool omdbClientDlg::OnInitDialogData()
     progressCounter[CNT_SUCCESS] = 0;
     progressCounter[CNT_ERROR] = 0;
     
-    //filters->folderFilter = xmlConfig.getGlobalConfig()->fsPath;
-    int folderId = GETDB.getPathId(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER));
-    if (folderId != -1)
-        filters->folderFilterId = folderId;
+    filters->folderFilter = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
+    //int folderId = GETDB.getPathId(filters->folderFilter);
+    //if (folderId != -1)
+    //    filters->folderFilterId = folderId;
 
     resetColumnSize();
     setSavedFilters();
@@ -806,7 +811,7 @@ void omdbClientDlg::loadFilesFromVector(void)
         updateLstMovies(&file, false);
         if (v_FsFiles->empty() == true)
         {
-            if (!fs.isRunning(hThreadReadFolder))
+            if (fs.isRunning(hThreadReadFolder))
             {
                 loadFolders();
                 textDebugWindowAt(logPos, "Loading from vector %d/%d", progressCounter[CNT_READ] + 1, progressCounter[CNT_TOTAL]);
@@ -819,6 +824,7 @@ void omdbClientDlg::loadFilesFromVector(void)
 
             if (!fs.isRunning(hThreadReadFolder))
             {
+                //loadFolders();
                 progressCounter[CNT_READ] = 0;
                 progressCounter[CNT_TOTAL] = 0;
             }
@@ -863,8 +869,8 @@ void omdbClientDlg::loadDatabase(bool _readfolder)
     //loadMoviesFS();
     comboFilters[FILTERS_YEARMIN]->SetCurSel(0);
     comboFilters[FILTERS_YEARMAX]->SetCurSel(0);
-    loadAllCombosExcept();
     readFolderIfEmpty(_readfolder);
+    loadAllCombosExcept();
     loadFolders();
 }
 void omdbClientDlg::loadFolders()
@@ -875,7 +881,7 @@ void omdbClientDlg::loadFolders()
 }
  int omdbClientDlg::loadFilters(filterTypes _filter)
 {
-     LOGDEBUG("");
+    //LOGDEBUG("");
     int nbTypes = GETDB.loadFilter(_filter);
     if (nbTypes >= 0)
     {
@@ -1224,8 +1230,12 @@ void omdbClientDlg::getFile(int _position)
             selectedFile.moviesFSId = CStringToInt(getItem);
             break;
         case DataBase::COL_PATH:
+        {
             //selectedFile.path = CStringToString(getItem);
             selectedFile.setPath(CStringToString(getItem));
+            selectedFile.setIdPath(GETDB.getPathId(CStringToString(getItem)));
+            //GETDB.getIdPath(selectedFile.);
+        }
             break;
         case DataBase::COL_FILENAME:
             selectedFile.setFilename(CStringToString(getItem));
@@ -1266,7 +1276,7 @@ void omdbClientDlg::getFile(int _position)
         }
     }
     
-    if (GETCM.getConfigInt(CONF_FS_SEARCHTYPES) == 1)
+    if (GETCM.getConfigBool(CONF_FS_SEARCHTYPES))
     {
         bool fields[FS_MAX_FIELDS - FS_ID];
         short fieldsCount = 0;
@@ -1282,8 +1292,11 @@ void omdbClientDlg::getFile(int _position)
                 fieldsCount++;
             }
         }
-        if (fieldsCount>0)
+        if (fieldsCount > 0)
+        {
+            selectedFile.fileNameToDetails();
             GETDB.MOVIESFS_update(&selectedFile, fields);
+        }
     }
 
     selectedFile.resetMovie();
@@ -1895,7 +1908,8 @@ void omdbClientDlg::openImdbWeb(void)
 {
     string url;
     if (selectedFile.isImdbId())
-        url = GETCM.getImdbTitleUrl(selectedFile.imdbId);
+        url = GETCM.getConfigStr(CONF_IMDB_URL) + GETCM.getConfigStr(CONF_IMDB_TITLE) + "/" + selectedFile.imdbId;
+        //url = GETCM.getImdbTitleUrl(selectedFile.imdbId);
     else
     {
         string title = selectedFile.title;
@@ -1904,7 +1918,9 @@ void omdbClientDlg::openImdbWeb(void)
         dlgEditTitle.setValue(&title);
         dlgEditTitle.setTexts(texts);
         dlgEditTitle.DoModal();
-        url = GETCM.getImdbFindUrl(title);
+        //url = GETCM.getImdbFindUrl(title);
+        BUTIL::Convert::string2url(&title);
+        url = GETCM.getConfigStr("IMDB_url") + GETCM.getConfigStr("IMDB_find") + title;
     }
     wchar_t *wurl = C2WC(url.c_str());
 
@@ -2268,10 +2284,10 @@ string omdbClientDlg::changeCombo(filterTypes _filter)
     std::wstring w_c_text((LPCTSTR)c_text);
     std::string SelectedValue = WS2S(w_c_text);
     GETDB.setFilterSelectedValue(_filter, SelectedValue);
-    if (ftypeSave[_filter] == true)
-    {
+//    if (ftypeSave[_filter] == true)
+//    {
         GETCM.setConfigValue(_filter, filters->nameSelected[_filter]);
-    }
+//    }
     loadMoviesFS();
     loadAllCombosExcept(_filter);
     GotoDlgCtrl(GetDlgItem(IDC_MOVIE_LIST));
@@ -2291,23 +2307,24 @@ string omdbClientDlg::changeComboFolders()
     comboFolderPath->GetLBText(cursor, c_text);
 
     std::wstring w_c_text((LPCTSTR)c_text);
-    std::string SelectedValue = WS2S(w_c_text);
+    std::string selectedValue = WS2S(w_c_text);
     std::string actualValue = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
-    GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, SelectedValue);
+    GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, selectedValue);
+    filters->folderFilter = selectedValue;
 
-    if (ST_PREDIFF(ST_INITIATING))
-    {
-        int folderId = GETDB.getPathId(SelectedValue);
-        if (folderId != -1)
-            filters->folderFilterId = folderId;
+    //if (ST_PREDIFF(ST_INITIATING))
+    //{
+        //int folderId = GETDB.getPathId(selectedValue);
+        //if (folderId != -1)
+        //    filters->folderFilterId = folderId;
         //xmlConfig.saveLocalConfigFile(false);
-        selectedFile.setPath(SelectedValue);
+        selectedFile.setPath(selectedValue);
         readFolderIfEmpty();
-    }
+    //}
 
     GotoDlgCtrl(GetDlgItem(IDC_MOVIE_LIST));
     ST_RESTORE();
-    return SelectedValue;
+    return selectedValue;
 }
 void omdbClientDlg::checkMovieTypes(DataBase::column _col)
 {
@@ -2473,23 +2490,11 @@ void omdbClientDlg::selectFolder()
         {
             std::string path = CStringToString(dlgFolder.GetPathName()) + "\\";
             LOGDEBUG("Folder: [%s]", path.c_str());
-            //if (ST_PREDIFF(ST_INITIATING))
-            //{
-                GETDB.PATHFS_insert(path);
-            //}
-
-            //editFolderPath->SetWindowTextW(CString(path.c_str()));
+            GETDB.PATHFS_insert(path);
             GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, path);
-            //xmlConfig.setXmlLocalConfig(XML_LOCAL_PATH, path);
-            //xmlConfig.saveLocalConfigFile(false);
-            
-            //if (ST_PREDIFF(ST_INITIATING))
-            //{
-                LOGDEBUG("loading Folders");
-                loadFolders();
-            //}
+            LOGDEBUG("loading Folders");
+            loadFolders();
             exit = true;
-
         }
         else
             exit = true;
@@ -2869,7 +2874,14 @@ void omdbClientDlg::OnCbnSelchangeComboFolders()
 
 #pragma endregion OnCbnSelchange
 
-
-
-
-
+void omdbClientDlg::OnEnChangeEditSearch()
+{
+    CString c_text;
+    editSearch->GetWindowText(c_text);
+    std::wstring w_c_text((LPCTSTR)c_text);
+    std::string selectedValue = WS2S(w_c_text);
+    filters->searchFilter = selectedValue;
+    loadMoviesFS();
+    loadAllCombosExcept();
+    //GotoDlgCtrl(GetDlgItem(IDC_MOVIE_LIST));
+}

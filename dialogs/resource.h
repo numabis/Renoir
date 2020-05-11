@@ -12,6 +12,7 @@
 #define IDR_MENU1                       101
 #define IDS_ABOUTBOX                    101
 #define IDD_omdbClient_DIALOG           102
+#define IDD_RENOIR_DIALOG               102
 #define IDS_DIALOG_SETKEY               103
 #define IDS_DIALOG_FOLDER               104
 #define IDS_DIALOG_COLUMNS              105
@@ -146,6 +147,7 @@
 #define IDC_BUTTON_RESET_ACTORS         1089
 #define IDC_BUTTON_RESET_DIRECTORS      1090
 #define IDC_LIST1                       1090
+#define IDC_EDIT_SEARCH                 1091
 
 // Next default values for new objects
 // 
@@ -153,7 +155,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        148
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1091
+#define _APS_NEXT_CONTROL_VALUE         1092
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

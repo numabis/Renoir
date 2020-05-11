@@ -129,6 +129,9 @@
     <ClInclude Include="DataBase\databaseConfDef.h">
       <Filter>DataBase</Filter>
     </ClInclude>
+    <ClInclude Include="sources\menus.h">
+      <Filter>sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

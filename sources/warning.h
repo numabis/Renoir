@@ -13,6 +13,7 @@
 #define STRING2(x) #x  
 #define STRING(x) STRING2(x)  
 
+#define BUG001
 #define BUG002
 #define BUG003
 
@@ -48,6 +49,9 @@
 
 #if !defined(BUG004)
 #pragma message (__FILE__ "[" STRING(__LINE__) "]: curl::curl_easy perform() fails if no connection")  
+#endif
+#if !defined(BUG005)
+#pragma message (__FILE__ "[" STRING(__LINE__) "]: deleting extention while editing filename")  
 #endif
 
 

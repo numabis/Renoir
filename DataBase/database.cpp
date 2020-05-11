@@ -91,7 +91,7 @@ DataBase::DataBase()
     {
         tabStruct[tab] = ptr_tabNames[tab];
     }
-    filters.folderFilterId = -1;
+    //filters.folderFilterId = -1;
     ptr_dbConfig = &dbConfig;
 }
 DataBase::~DataBase(void)
@@ -196,7 +196,6 @@ bool DataBase::initDB(bool _resetDB)
                 ostr << "Error creating table " << TABLE(tab).c_str();
                 MBOX(ostr.str(), "Error", MB_ICONERROR | MB_OK);
                 return false;
-                success = false;
             } else
                 exLOGINFO("Created tab [%s]", tabNames[tab].c_str());
 
@@ -425,25 +424,9 @@ bool DataBase::CONFIGURATION_populate(void)
     exLOGDEBUG("");
     bool ret = true;
 
-    GETCM.readConfFile();
-    GETCM.saveConfigToDB();
-    //confMap dbConf = { DBCONFFIELDS };
-    //std::string request;
-    //
-    //confMap::iterator conf;
-    //
-    //for (conf = dbConf.begin(); conf != dbConf.end(); conf++)
-    //{
-    //    string request = INSERTINTO(TAB_CONFIGURATION);
-    //    request += INSERTCOLS(CONF_VAR, CONF_VALUE, CONF_MULTI, CONF_DESCRIPTION);
-    //    request += INSERTVALS(conf->first, conf->second.value, STR(conf->second.multi), conf->second.description);
-    //
-    //    int tmpRet = execNolock(request);
-    //    if (tmpRet != ERROR_SUCCESS)
-    //        ret = false;
-    //
-    //    exLOGSQL("SQL %s : %s", ret ? "ok" : "ko", request.c_str());
-    //}
+    ret = GETCM.loadConfFile();
+    if (ret == true)
+        ret = GETCM.saveConfigToDB();
 
     return ret;
 
@@ -455,6 +438,10 @@ bool DataBase::getConfiguration(confMap * _confMan)
 bool DataBase::setConfiguration(std::string _var, dbConfiguration _conf)
 {
     return CONFIGURATION_insertOrUpdate(_var, _conf);
+}
+bool DataBase::resetConfiguration()
+{
+    return CONFIGURATION_deleteAll();
 }
 bool DataBase::CONFIGURATION_get(confMap * _confMan)
 {
@@ -522,6 +509,16 @@ bool DataBase::CONFIGURATION_insertOrUpdate(std::string _var, dbConfiguration _c
     }
     return (execNolock(request) == ERROR_SUCCESS);
 }
+bool DataBase::CONFIGURATION_deleteAll(void)
+{
+    bool ret = false;
+    std::string request = DELETE(TAB_CONFIGURATION);
+    ret = (execNolock(request) == ERROR_SUCCESS);
+
+    request = DELETE(TAB_PATHFS);
+    ret &= (execNolock(request) == ERROR_SUCCESS);
+    return ret;
+}
 #pragma endregion 
 
 #pragma region TAB_PATHFS
@@ -531,6 +528,8 @@ int  DataBase::getId(MovieFolder *_file)
 }
 int  DataBase::getPathId(std::string _path)
 {
+    if (_path.empty())
+        return -1;
     return PATHFS_selectId(_path);
 }
 std::string DataBase::getPath(int _id)
@@ -621,9 +620,9 @@ std::string DataBase::PATHFS_getPath(int _id)
 
      isConnected();
 
-     request = SELECT(PATH_PATH);
+     request = SELECT(PATH_PATH, PATH_ADDEDDATE);
      request += FROM(TAB_PATHFS);
-     request += WHERE(EQUAL(PATH_ID, STR(_id)));
+     request += WHERE(EQUAL(PATH_ID, STR(_id))) + ORDERBY(PATH_ADDEDDATE, ORDERBYASC) + LIMIT(1);;
 
      try
      {
@@ -851,16 +850,28 @@ string DataBase::AllMoviesFSGetFilter()
 {
     //string all = "1";
 
-    //string folderPath = *filters.folderFilter + "%";
-    //BUTIL::Convert::string2sqlLike(&folderPath);
-    //string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
-    //string folderFilter = INSELECT(FS_IDPATH, folderList);
-    string conditions = WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
+    string folderPath = filters.folderFilter + "%";
+    BUTIL::Convert::string2sqlLike(&folderPath);
+    string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
+    string folderFilter = INSELECT(FS_IDPATH, folderList);
+    string conditions = WHERE(folderFilter);
+    //string conditions = WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
 
     string yearMinFilter = GREATER(MOVIES_YEAR, filters.valueSelected[FILTERS_YEARMIN]);
     string yearMaxFilter = LESSER(MOVIES_YEAR, filters.valueSelected[FILTERS_YEARMAX]);
     string imdbRatingMinFilter = GREATER(MOVIES_IMDBRATING, filters.valueSelected[FILTERS_IMDBRATINGMIN]);
     string imdbRatingMaxFilter = LESSER(MOVIES_IMDBRATING, filters.valueSelected[FILTERS_IMDBRATINGMAX]);
+
+    //string searchFilter ;
+
+    if (filters.searchFilter.empty() == false)
+    {
+        string searchValue = "%" + filters.searchFilter + "%";
+        str2sql(&searchValue);
+        //searchValue += "%";
+        conditions += AND(LIKE(FS_FILENAME, searchValue));
+    }
+
 
     if (filters.valueSelected[FILTERS_YEARMIN] > MIN_YEAR)
         conditions += AND(yearMinFilter);
@@ -1169,11 +1180,11 @@ bool   DataBase::MOVIESFS_setPhysical(bool _exists)
     if (request[sz - 1] == ',')
         request[sz - 1] = ' ';
 
-    //string folderPath = *filters.folderFilter + "%";
-    //string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
-    //string folderFilter = INSELECT(FS_IDPATH, folderList);
-    //request += WHERE(folderFilter);
-    request += WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
+    string folderPath = filters.folderFilter + "%";
+    string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
+    string folderFilter = INSELECT(FS_IDPATH, folderList);
+    request += WHERE(folderFilter);
+    //request += WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
 
     int ret = execNolock(request);
     return (ret == ERROR_SUCCESS);
@@ -1768,6 +1779,14 @@ string DataBase::buildComboFilter(filterTypes _filterby)
     string serieFilter, animFilter, docFilter, shortFilter;
     string yearMin, yearMax, imdbRatingMin, imdbRatingMax;
 
+    if (filters.searchFilter.empty() == false)
+    {
+        string searchValue = "%" + filters.searchFilter + "%";
+        str2sql(&searchValue);
+        //searchValue += "%";
+        comboFilter += AND(LIKE(FS_FILENAME, searchValue));
+    }
+
     for (short role = ROLES_DIRECTOR; role < ROLES_MAX; role++)
     {
         selectIds = SELECT(PERSONINMOVIE_IDMOVIE) + FROM(TAB_PERSONINMOVIE);
@@ -1929,10 +1948,10 @@ int  DataBase::loadFilter(filterTypes _filterby)
     from = FROM(TAB_MOVIESFS);
     join = buildJoinFilter(_filterby);
 
-    //string folderPath = *filters.folderFilter + "%";
-    //BUTIL::Convert::string2sqlLike(&folderPath);
-    //string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
-    string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
+    string folderPath = filters.folderFilter + "%";
+    BUTIL::Convert::string2sqlLike(&folderPath);
+    string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(LIKE(PATH_PATH, folderPath));
+    //string folderList = SELECT(PATH_ID) + FROM(TAB_PATHFS) + WHERE(EQUAL(FS_IDPATH, STR(filters.folderFilterId)));
 
     string folderFilter = INSELECT(FS_IDPATH, folderList);
     //string conditions = WHERE(folderFilter);
