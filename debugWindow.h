@@ -13,7 +13,7 @@ public:
 
 // Datos del cuadro de diálogo
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG1 };
+	enum { IDD = IDD_DIALOG_DBG };
 #endif
     //void writeToConsole(std::string);
     size_t writeToConsole(const wchar_t*, size_t pos = 0);
@@ -28,7 +28,8 @@ private:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // Compatibilidad con DDX/DDV
-    virtual BOOL OnInitDialog();
+    virtual BOOL OnInitDialog(void);
+    virtual void OnCancel(void);
 
 	DECLARE_MESSAGE_MAP()
 public:

@@ -166,7 +166,7 @@ void MovieFile::fileNameToDetails()
 
 std::string MovieFile::getFullPath(void)
 {
-    return getPath() + "\\" + filename;
+    return getPath() + filename;
 }
 
 std::string MovieFile::getFullPath(std::string _filename)

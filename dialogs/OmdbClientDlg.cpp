@@ -430,6 +430,7 @@ void omdbClientDlg::OnOK()
 }
 void omdbClientDlg::OnCancel()
 {
+    CDialogEx::OnCancel();
 }
 #pragma endregion OnSys
 
@@ -445,11 +446,8 @@ BOOL omdbClientDlg::OnInitDialog()
     xmlFiles.ptr_globalState = ptr_globalState;
     fs.ptr_consoleDBG = ptr_consoleDBG;
     fs.ptr_globalState = ptr_globalState;
-    dlgWindow.Create(IDD_DIALOG1);
-#if defined (_DEBUG) || defined(_DEMO)
-    dlgWindow.ShowWindow(SW_SHOW);
-#endif
-    //editConsole = dlgWindow.getConsole();
+    dlgWindow.Create(IDD_DIALOG_DBG);
+
     LOGDEBUG("");
 
     textDebugWindow("Initializing Console");
@@ -756,6 +754,11 @@ bool omdbClientDlg::OnInitDialogData()
 
     forceOmdb = (btnOmdb[CHK_OMDB_FORCE]->GetCheck() == 1);
     autoOmdb = (btnOmdb[CHK_OMDB_AUTO]->GetCheck() == 1);
+
+#if defined (_DEBUG) || defined(_DEMO)
+    if (GETCM.getConfigBool(CONF_APP_SHOWDEBUG))
+        dlgWindow.ShowWindow(SW_SHOW);
+#endif
 
     if (GETCM.getConfigStr(CONF_APP_CURRENTFOLDER).empty() == true)
         initFolder();
@@ -1467,18 +1470,20 @@ bool omdbClientDlg::createFiltersSubMenu(Movie *_movie)
     int totalItem = myMenu[_menuId]->GetMenuItemCount();
     myMenu[_menuId]->RemoveMenu(totalItem-1, MF_BYPOSITION);
     SubMenus[_menuId][sub].DestroyMenu();
+
     VERIFY(SubMenus[_menuId][sub].CreateMenu());
-    if (SubMenus[_menuId][sub] != NULL)
+
+    if (selectedFile.isImdbId() && SubMenus[_menuId][sub] != NULL)
     {
         for (size_t menu = 0; menu < mySubMenus[sub].size(); menu++)
         {
             if ((loc & mySubMenus[sub][menu].location) == loc)
             {
                 SubMenus[_menuId][sub].AppendMenu(mySubMenus[sub][menu].type, mySubMenus[sub][menu].id, mySubMenus[sub][menu].name);
+
                 UINT_PTR role = mySubMenus[sub][menu].id;
                 std::vector<std::string> emptyV;
                 std::vector<std::string>* names = &emptyV;
-                //std::string *name;
                 int indice;
                 if (role == subMenuFilter[SUBMENUFILTER_DIRECTORS])
                 {
@@ -1490,10 +1495,6 @@ bool omdbClientDlg::createFiltersSubMenu(Movie *_movie)
                     names = _movie->getvRoles(ROLES_ACTOR);
                     indice = SUBMENUFILTER_ACTORS + 1;
                 }
-                //else
-                //{
-                //    names = {};
-                //}
                 int vSz = names->size();
                 if (vSz != 0)
                 {
@@ -1506,25 +1507,19 @@ bool omdbClientDlg::createFiltersSubMenu(Movie *_movie)
                         CString cname(C2WC((*name).c_str()));
                         SubMenus[_menuId][sub].AppendMenu(MF_STRING, (UINT_PTR)subMenuFilter[indice + i], cname);
                     }
-                    //for (int person = 0; person < vSz; person++)
-                    //{
-                    //    //std::string name = names->at(person);
-                    //    LPCWSTR lName = (LPCWSTR)(C2WC(names->at(person).c_str()));
-                    //    CString cname(S2WS(names->at(person)).c_str());
-                    //
-                    //    SubMenus[_menuId][sub].AppendMenu(MF_STRING, (UINT_PTR)subMenuFilter[indice +person], cname);
-                    //}
                     SubMenus[_menuId][sub].AppendMenu(MF_SEPARATOR, 0);
                 }
-    
-    
             }
-            //pSubMenus[sub].EnableMenuItem(mySubMenus[sub][menu].id, MF_DISABLED | MF_GRAYED);
-            //if ((_location & mySubMenus[sub][menu].location) == _location)
-            //    pSubMenus[sub].EnableMenuItem(mySubMenus[sub][menu].id, MF_ENABLED);
         }
-        size_t menu = myTopSysMenu.size()-1;
+        size_t menu = myTopSysMenu.size() - 1;
         myMenu[_menuId]->AppendMenu(myTopSysMenu[menu].type, (UINT_PTR)SubMenus[_menuId][myTopSysMenu[menu].id].m_hMenu, myTopSysMenu[menu].name);
+        return true;
+    }
+    else
+    {
+        size_t menu = myTopSysMenu.size() - 1;
+        myMenu[_menuId]->AppendMenu(myTopSysMenu[menu].type, (UINT_PTR)SubMenus[_menuId][myTopSysMenu[menu].id].m_hMenu, myTopSysMenu[menu].name);
+        myMenu[_menuId]->EnableMenuItem((UINT_PTR)SubMenus[_menuId][myTopSysMenu[menu].id].m_hMenu, MF_GRAYED | MF_DISABLED);
         return true;
     }
     return false;
@@ -1823,7 +1818,9 @@ void omdbClientDlg::setBtnOmdbSingleState(void)
     if (FindMenuPos(myMenu[MENU_SYS], idcOmdb[BTN_OMDB_SINGLE], temp, m_Pos))
         subMenu = true;
 
-    if ((!selectedFile.isImdbId() || forceOmdb == true) /*&& isApiKeySet*/ && !autoOmdb)
+
+
+    if ((!selectedFile.isImdbId() || forceOmdb == true) /*&& isApiKeySet && !autoOmdb*/)
     {
         //btnOmdb[BTN_OMDB_SINGLE]->EnableWindow(true);
         myMenu[MENU_CON]->EnableMenuItem(idcOmdb[BTN_OMDB_SINGLE], MF_ENABLED);
@@ -1902,6 +1899,15 @@ size_t omdbClientDlg::textDebugWindowAt(int _pos, std::string _text)
     return dlgWindow.writeToConsole(_text, _pos);
 #endif
 }
+void omdbClientDlg::showDebugWindow(void)
+{
+    GETCM.setConfigValue(CONF_APP_SHOWDEBUG,"true");
+    dlgWindow.ShowWindow(SW_SHOW);
+    textDebugWindow("Opening Console");
+}
+#pragma endregion displayInfo
+
+#pragma region inAppFunction
 void omdbClientDlg::editImdbId()
 {
     setOmdbKey dlgEditImdbId;
@@ -1939,7 +1945,7 @@ void omdbClientDlg::openImdbWeb(void)
     string url;
     if (selectedFile.isImdbId())
         url = GETCM.getConfigStr(CONF_IMDB_URL) + GETCM.getConfigStr(CONF_IMDB_TITLE) + "/" + selectedFile.imdbId;
-        //url = GETCM.getImdbTitleUrl(selectedFile.imdbId);
+    //url = GETCM.getImdbTitleUrl(selectedFile.imdbId);
     else
     {
         string title = selectedFile.title;
@@ -1966,10 +1972,30 @@ void omdbClientDlg::openImdbWeb(void)
         SW_SHOWNORMAL
     );
 }
+void omdbClientDlg::openExplorer(void)
+{
+    static bool firstUse = true;
+    int ret = S_OK;
+    if (firstUse == true)
+    {
+        ret = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+        firstUse = false;
+    }
+    if (ret == S_OK)
+    {
+        CString cspath = CString(selectedFile.getFullPath().c_str());
+        ITEMIDLIST *pidl = ILCreateFromPath(cspath);
+        if (pidl)
+        {
+            SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
+            ILFree(pidl);
+        }
+    }
+}
 void omdbClientDlg::editFileName()
 {
     setOmdbKey dlgEditFileName;
-    string texts[3] = { "   You can edit the value", "", "Name :" };
+    string texts[3] = { "   Edit file name", "", "Name :" };
     string tmpFileName;
     if (selectedFile.year != 0)
         tmpFileName = BUTIL::Util::format("%s (%d)%s", selectedFile.title.c_str(), selectedFile.year, selectedFile.getExt().c_str());
@@ -2017,12 +2043,50 @@ void omdbClientDlg::editFileName()
         }
     }
 }
-void omdbClientDlg::showDebugWindow(void)
+void omdbClientDlg::playMovie(void)
 {
-    dlgWindow.ShowWindow(SW_SHOW);
-    textDebugWindow("Opening Console");
+    if (selectedFile.getFilename().empty() == true)
+        return;
+
+    //string videoPlayer = xmlConfig.getXmlLocalConfig(XML_LOCAL_VIDEOPLAYER);
+    string videoPlayer = GETCM.getConfigStr(CONF_APP_VIDEOPLAYER);
+
+    if (videoPlayer.empty())
+    {
+        selectVideoPlayer();
+    }
+
+    videoPlayer += " \"" + selectedFile.getFullPath() + "\"";
+
+    // additional information
+    STARTUPINFOA si;
+    ZeroMemory(&si, sizeof(STARTUPINFOA));
+    si.cb = sizeof(si);
+
+    // set the size of the structures
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+
+    if (!CreateProcessA(NULL,   // the path
+        (LPSTR)videoPlayer.c_str(),      // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &si,            // Pointer to STARTUPINFO structure
+        &pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+    ))
+    {
+        LOGERROR("Can't launch app: %d", videoPlayer.c_str());
+        MessageBoxA(NULL, "Can't launch multimedia app", "Error", MB_ICONERROR | MB_OK);
+    }
+    // Close process and thread handles. 
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 }
-#pragma endregion displayInfo
+#pragma endregion inAppFunction
 
 #pragma region omdb
 void omdbClientDlg::CountOmdbAllStart()
@@ -2852,46 +2916,8 @@ void omdbClientDlg::OnBnClickedCheckShort()
 }
 void omdbClientDlg::OnBnClickedButtonPlay()
 {
-    if (selectedFile.getFilename().empty() == true)
-        return;
-
-    //string videoPlayer = xmlConfig.getXmlLocalConfig(XML_LOCAL_VIDEOPLAYER);
-    string videoPlayer = GETCM.getConfigStr(CONF_APP_VIDEOPLAYER);
-    
-    if (videoPlayer.empty())
-    {
-        selectVideoPlayer();
-    }
-
-    videoPlayer += " \"" + selectedFile.getFullPath() + "\"";
-
-    // additional information
-    STARTUPINFOA si;
-    ZeroMemory(&si, sizeof(STARTUPINFOA));
-    si.cb = sizeof(si);
-
-    // set the size of the structures
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
-
-    if (!CreateProcessA(NULL,   // the path
-        (LPSTR)videoPlayer.c_str(),      // Command line
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &pi             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
-    ))
-    {
-        LOGERROR("Can't launch app: %d", videoPlayer.c_str());
-        MessageBoxA(NULL, "Can't launch multimedia app", "Error", MB_ICONERROR | MB_OK);
-    }
-    // Close process and thread handles. 
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
+    LOGDEBUG("button [Play] pressed");
+    playMovie();
 }
 void omdbClientDlg::OnBnClickedClearmovies()
 {

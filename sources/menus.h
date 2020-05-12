@@ -33,6 +33,9 @@
 #define MENU_RELOAD_ANIM                0x02F0
 #define MENU_RELOAD_DOC                 0x0300
 #define MENU_RELOAD_SHORT               0x0310
+#define IDC_MENU_OPEN_EXPLORER          0x0320
+#define IDC_MENU_PLAY_MOVIE             0x0330
+
 
 #define MENU_FOLDER             MF_STRING, IDM_CHANGE_FOLDER, L"&Add Folder", &omdbClientDlg::selectFolder
 #define MENU_READFS             MF_STRING, IDM_READFOLDER, L"&Read Folder", &omdbClientDlg::readFolder
@@ -49,10 +52,13 @@
 #define MENU_EDIT_IMDBID        MF_STRING, IDC_BUTTON_EDIT_IMDBID, L"&Edit ImdbId", &omdbClientDlg::editImdbId
 #define MENU_EDIT_FILENAME      MF_STRING, IDC_BUTTON_EDIT_FNAME, L"&Edit File Name", &omdbClientDlg::editFileName
 #define MENU_OPEN_WEB           MF_STRING, IDC_BUTTON_OPEN_IMDBWEB, L"&Open Imdb Web", &omdbClientDlg::openImdbWeb
+#define MENU_OPEN_EXPLORER      MF_STRING, IDC_MENU_OPEN_EXPLORER, L"&Show in Windows Explorer", &omdbClientDlg::openExplorer
+#define MENU_PLAY_MOVIE         MF_STRING, IDC_MENU_PLAY_MOVIE, L"&Play Movie", &omdbClientDlg::playMovie
+
 
 #define MENU_SELECTCOLUMNS      MF_STRING, IDM_DIALOG_COLUMNS, L"Select &Colums to show", &omdbClientDlg::showColumnSelector
 #define MENU_SELECTPLAYER       MF_STRING, IDM_DIALOG_VPLAYER, L"Select &Video Player", &omdbClientDlg::selectVideoPlayer
-#define MENU_DBGWND            MF_STRING, IDC_DIALOG_DEBUG_WINDOW, L"&Debug Window", &omdbClientDlg::showDebugWindow
+#define MENU_DBGWND             MF_STRING, IDC_DIALOG_DEBUG_WINDOW, L"&Debug Window", &omdbClientDlg::showDebugWindow
 
 #define MENU_RESETTABFS         MF_STRING, IDM_RESETFS, L"Reset &FS Table", &omdbClientDlg::dbClearMoviesFS
 #define MENU_RESETTABMOVIES     MF_STRING, IDM_RESETMOVIES, L"Reset &Movies Table", &omdbClientDlg::dbClearMovies

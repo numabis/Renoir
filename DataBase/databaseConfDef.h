@@ -20,6 +20,7 @@
 #define CONF_LOG_LOGLEVEL	            "LOG_loglevel"
 #define CONF_APP_CURRENTFOLDER	        "APP_currentfolder"
 #define CONF_APP_VIDEOPLAYER	        "APP_videoplayer"
+#define CONF_APP_SHOWDEBUG  	        "APP_showdebug"
 #define CONF_OMDB_APIKEY	            "OMDB_apikey"
 #define CONF_OMDB_URL	                "OMDB_url"
 #define CONF_OMDB_APIREQUEST	        "OMDB_apirequest"

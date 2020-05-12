@@ -22,7 +22,7 @@
 #define IDD_DIALOG_COLUMNSELECTOR       137
 #define IDD_DIALOG_SETAPIKEY            139
 #define IDD_DIALOG_COL                  141
-#define IDD_DIALOG1                     146
+#define IDD_DIALOG_DBG                  146
 #define IDD_PATHS                       148
 
 #define IDC_MOVIE_LIST                  1000

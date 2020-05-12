@@ -5,7 +5,8 @@
 #include "renoir.h"
 #include "debugWindow.h"
 #include "afxdialogex.h"
-#include "sources\definitions.h"
+#include "definitions.h"
+#include "configManager.h"
 
 #define MAXLOG  1000
 
@@ -14,7 +15,7 @@
 IMPLEMENT_DYNAMIC(debugWindow, CDialogEx)
 
 debugWindow::debugWindow(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_DIALOG1, pParent)
+	: CDialogEx(IDD_DIALOG_DBG, pParent)
 {
 
 }
@@ -119,4 +120,10 @@ CEdit * debugWindow::getConsole(void)
 void debugWindow::OnBnClickedOk()
 {
     CDialogEx::OnOK();
+}
+
+void debugWindow::OnCancel()
+{
+    GETCM.setConfigValue(CONF_APP_SHOWDEBUG, "false");
+    ShowWindow(SW_HIDE); 
 }

@@ -113,6 +113,7 @@ public:
         },
         { // SUBMENU_FILTERS
             { LOC_CONMENU, MENU_FILTERS_RESET },
+            { LOC_CONMENU, MF_SEPARATOR, 0 },
             { LOC_CONMENU, MENU_FILTERS_DIRECTORS },
             { LOC_CONMENU, MENU_FILTERS_ACTORS},
         },
@@ -135,15 +136,18 @@ public:
     };
 
     std::vector <omdbClientDlg::structMenu> myTopSysMenu = {
-        { LOC_CONMENU, MENU_OMDB1REQ },
-        { LOC_CONMENU, MENU_EDIT_IMDBID },
+        { LOC_CONMENU, MENU_PLAY_MOVIE },
+        { LOC_CONMENU, MENU_OPEN_EXPLORER },
         { LOC_CONMENU, MENU_EDIT_FILENAME },
-        { LOC_SYSMENU|LOC_CONMENU, MF_SEPARATOR, 0 },
+        { LOC_CONMENU, MENU_EDIT_IMDBID },
+        { LOC_SYSMENU | LOC_CONMENU, MF_SEPARATOR, 0 },
         { LOC_CONMENU, MENU_OPEN_WEB },
+        { LOC_SYSMENU | LOC_CONMENU, MF_SEPARATOR, 0 },
+        { LOC_CONMENU, MENU_OMDB1REQ },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_FILE, L"&File" },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_OMDB, L"&Omdb" },
         //{ LOC_SYSMENU            , MF_POPUP, SUBMENU_FS, L"File &System" },
-        { LOC_SYSMENU|LOC_CONMENU, MENU_SELECTCOLUMNS },
+        { LOC_SYSMENU, MENU_SELECTCOLUMNS },
         { LOC_SYSMENU            , MENU_SELECTPLAYER },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_DB, L"&DataBase" },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_COMBOS, L"&Combos" },
@@ -331,6 +335,7 @@ private:
     size_t textDebugWindow(std::string);
     void editFileName(void);
     void openImdbWeb(void);
+    void openExplorer(void);
     bool omdbRequest(MovieFile *file);
     void omdbAllRequest(void);
     void omdbAllStop(void);
@@ -346,6 +351,7 @@ private:
     void displayContextMenu(UINT uNewState);
     bool FindMenuPos(CMenu *pBaseMenu, UINT myID, CMenu * & pMenu, int & mpos);
     std::string getStringPond(DataBase::pondStr);
+    void playMovie(void);
 
     virtual void OnOK();
     virtual void OnCancel();
