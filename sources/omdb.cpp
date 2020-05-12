@@ -167,7 +167,7 @@ void Omdb::searchByName(MovieFile *file)
     using namespace std::string_literals;
     std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
 
-    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE))
+    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE) == false)
         url.append("?" + OMDBKEY + GETCM.getConfigStr(CONF_OMDB_APIKEY));
     else
         url.append("?" + OMDBKEY + "");

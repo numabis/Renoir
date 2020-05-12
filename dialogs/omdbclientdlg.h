@@ -3,6 +3,7 @@
 #include "renoir.h"
 #include "omdbClientInfo.h"
 #include "debugWindow.h"
+#include "FolderManager.h"
 #include "configManager.h"
 #include "database.h"
 //#include "configManager.h"
@@ -155,7 +156,9 @@ public:
 
 //    void setEditedImdbid(std::string);
     std::string changeCombo(filterTypes);
+    std::string editCombo(filterTypes);
     std::string changeComboFolders();
+    std::string editComboFolders();
     int getOmdbAllStart(void);
     int onOmdbReadFinish(void);
     void CountOmdbAllStart(void);
@@ -242,6 +245,8 @@ private:
     CPictureCtrl m_picCtrl;
     
     debugWindow dlgWindow;
+
+    FolderManager dlgFolderManager;
 
     states globalState;
     states *ptr_globalState = &globalState;
@@ -341,6 +346,9 @@ private:
     void displayContextMenu(UINT uNewState);
     bool FindMenuPos(CMenu *pBaseMenu, UINT myID, CMenu * & pMenu, int & mpos);
     std::string getStringPond(DataBase::pondStr);
+
+    virtual void OnOK();
+    virtual void OnCancel();
 public:
 
     afx_msg void OnLvnItemchangedMovieList(NMHDR *pNMHDR, LRESULT *pResult);
@@ -356,6 +364,10 @@ public:
     afx_msg void OnCbnSelchangeComboGenres();
     afx_msg void OnCbnSelchangeComboDirector();
     afx_msg void OnCbnSelchangeComboActors();
+    afx_msg void OnCbnEditchangeComboActors();
+    afx_msg void OnCbnEditchangeComboDirector();
+    afx_msg void OnCbnEditchangeComboGenres();
+    afx_msg void OnCbnEditchangeComboGenres2();
     afx_msg void OnBnClickedCheckForce();
     //afx_msg void OnBnClickedButtonEditMinoccurrences();
     afx_msg void OnCustomDrawList(NMHDR* pNMHDR, LRESULT* pResult);
@@ -388,5 +400,10 @@ public:
 //    afx_msg void OnEnChangeEditFolder();
     afx_msg void OnStnClickedStaticApikey();
     afx_msg void OnCbnSelchangeComboFolders();
+    afx_msg void OnCbnEditchangeComboFolders();
+
     afx_msg void OnEnChangeEditSearch();
+    afx_msg void OnEnChangeEditSearch2();
+    //afx_msg void OnLButtonDblClk(NMHDR *pNMHDR, LRESULT *pResult);
+    //afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };

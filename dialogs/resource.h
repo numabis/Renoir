@@ -3,11 +3,7 @@
 // Usado por mainWindow.rc
 //
 #define IDM_ABOUTBOX                    0x0010
-#define IDM_DIALOG_SETKEY               0x0020
-#define IDM_CHANGE_FOLDER               0x0030
-#define IDM_DIALOG_COLUMNS              0x0040
-#define IDM_DIALOG_VPLAYER              0x0050
-#define IDM_READFOLDER                  0x0060
+
 #define IDD_ABOUTBOX                    100
 #define IDR_MENU1                       101
 #define IDS_ABOUTBOX                    101
@@ -20,28 +16,15 @@
 #define IDS_DIALOG_READFOLDER           107
 #define IDS_RESETFS                     108
 #define IDS_RESETMOVIES                 109
-#define IDM_RESETFS                     0x0070
-#define IDM_RESETMOVIES                 0x0080
+
 #define IDR_MAINFRAME                   128
 #define IDD_IMDBID_EDIT                 133
 #define IDD_DIALOG_COLUMNSELECTOR       137
 #define IDD_DIALOG_SETAPIKEY            139
 #define IDD_DIALOG_COL                  141
-#define IDM_EXIT                        0x0090
 #define IDD_DIALOG1                     146
-#define IDC_BUTTON_OMDB_REQUEST         0x00A0
-#define IDC_BUTTON_OMDB_ALL             0x00B0
-#define IDC_BUTTON_LOADXMLFILE          0x00C0
-#define IDC_BUTTON_WRITEXMLFILE         0x00D0
-#define IDC_BUTTON_EDIT_IMDBID          0x00E0
-#define IDC_BUTTON_EDIT_FNAME           0x00F0
-#define IDC_BUTTON_OPEN_IMDBWEB         0x0100
-#define IDC_BUTTON_FILTER_DIRECTORS     0x0110
-#define IDC_BUTTON_FILTER_ACTORS        0x0150
-#define IDC_DIALOG_DEBUG_WINDOW         0x0200
-#define IDC_BUTTON_OMDB_ALL_STOP        0x0210
-#define IDC_BUTTON_RESET_FILTERS        0x0220
-#define IDC_STOP_READFOLDER             0x0230
+#define IDD_PATHS                       148
+
 #define IDC_MOVIE_LIST                  1000
 #define IDC_BUTTON_READFOLDER           1001
 #define IDC_CLEARMOVIES                 1002
@@ -148,14 +131,15 @@
 #define IDC_BUTTON_RESET_DIRECTORS      1090
 #define IDC_LIST1                       1090
 #define IDC_EDIT_SEARCH                 1091
+#define IDC_FOLDER_LIST                 1092
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        148
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1092
+#define _APS_NEXT_CONTROL_VALUE         1093
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

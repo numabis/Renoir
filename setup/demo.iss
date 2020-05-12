@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 #define SysWord     "x86"
 #define SourceDir   "../"
-#define ExeName     "renoir.exe"
+#define ExeName     "Renoir.exe"
 #define Release     "Demo"
 #define AppName     "Renoir"
 #define LibDir      SourceDir + "\Libs"
@@ -27,7 +27,7 @@ AppSupportURL={#URL}
 AppUpdatesURL={#URL}
 DefaultDirName={commonpf}\{#AppName}
 DefaultGroupName={#AppName}
-OutputDir={#SourceDir}\setup\{#AppVersion}_{#Release}
+OutputDir={#SourceDir}\setup\
 OutputBaseFilename=setup_renoir_{#SysWord}_{#AppVersion}_{#Release}
 Compression=lzma
 SolidCompression=yes

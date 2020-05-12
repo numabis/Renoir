@@ -7,8 +7,6 @@
 
 //confMap dbConfTmp = { DBCONFFIELDS } ;
 
-#define HOMEFOLDER "\\Renoir\\"
-
 ConfigManager::ConfigManager(void)
 {
     dbConf = { DBCONFFIELDS };
@@ -138,33 +136,30 @@ bool ConfigManager::setConfigValue(filterTypes _filter, std::string _value)
 
 std::string ConfigManager::getFilter(filterTypes _var)
 {
-    switch (_var)
-    {
-    case FILTERS_DIRECTORS:
-        return getConfigStr("FILTER_directors");
-        break;
-    }
-    return std::string();
+    std::string filter2config[FILTERS_MAX] = { CONF_FILTER_DIRECTORS , CONF_FILTER_WRITERS , CONF_FILTER_ACTORS , CONF_FILTER_GENRES , CONF_FILTER_GENRES2, CONF_FILTER_YEARMIN , CONF_FILTER_YEARMAX , CONF_FILTER_IMDBRATINGMIN , CONF_FILTER_IMDBRATINGMAX , CONF_FILTER_SERIE , CONF_FILTER_ANIM , CONF_FILTER_DOC , CONF_FILTER_SHORT } ;
+    return  getConfigStr(filter2config[_var]);
 }
 
 std::string ConfigManager::getFsType(int _type)
 {
-    switch (_type)
-    {
-    case TYPE_SERIE:
-        return getConfigStr(CONF_FS_TYPESERIE);
-        break;
-    case TYPE_ANIM:
-        return getConfigStr(CONF_FS_TYPEANIM);
-        break;
-    case TYPE_DOC:
-        return getConfigStr(CONF_FS_TYPEDOC);
-        break;
-    case TYPE_SHORT:
-        return getConfigStr(CONF_FS_TYPESHORT);
-        break;
-    }
-    return std::string();
+    std::string type2config[TYPE_MAX] = { CONF_FS_TYPESERIE , CONF_FS_TYPEANIM , CONF_FS_TYPEDOC , CONF_FS_TYPESHORT };
+    return  getConfigStr(type2config[_type]);
+    //switch (_type)
+    //{
+    //case TYPE_SERIE:
+    //    return getConfigStr(CONF_FS_TYPESERIE);
+    //    break;
+    //case TYPE_ANIM:
+    //    return getConfigStr(CONF_FS_TYPEANIM);
+    //    break;
+    //case TYPE_DOC:
+    //    return getConfigStr(CONF_FS_TYPEDOC);
+    //    break;
+    //case TYPE_SHORT:
+    //    return getConfigStr(CONF_FS_TYPESHORT);
+    //    break;
+    //}
+    //return std::string();
 }
 
 bool ConfigManager::readConfigFromDB()

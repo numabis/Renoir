@@ -78,10 +78,15 @@ BEGIN_MESSAGE_MAP(omdbClientDlg, CDialogEx)
     ON_WM_QUERYDRAGICON()
     ON_WM_INITMENUPOPUP()
     ON_WM_TIMER()
+    //ON_WM_LBUTTONDBLCLK()
+    //ON_WM_LBUTTONDBLCLK()
     ON_NOTIFY(LVN_ITEMCHANGED, IDC_MOVIE_LIST, &omdbClientDlg::OnLvnItemchangedMovieList)
     ON_NOTIFY(LVN_COLUMNCLICK, IDC_MOVIE_LIST, &omdbClientDlg::OnLvnColumnClickMovieList)
-    //ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTVIEW, OnSortInfo)
-    //ON_NOTIFY_RANGE(wNotifyCode, id, idLast, memberFxn)
+    //ON_WM_MOUSEACTIVATE(LVN_ITEMCHANGING, IDC_MOVIE_LIST, &omdbClientDlg::OnLButtonDblClk)
+    //ON_WM_NCLBUTTONDBLCLK(LVN_ITEMCHANGING, IDC_MOVIE_LIST, &omdbClientDlg::OnLButtonDblClk)
+    //ON_NOTIFY(LVN_ITEMCHANGING, IDC_MOVIE_LIST, &omdbClientDlg::OnLButtonDblClk)
+    //ON_NOTIFY(LVN_BEGINDRAG, IDC_MOVIE_LIST, &omdbClientDlg::OnLButtonDblClk)
+    //ON_NOTIFY(LVN_COLUMNCLICK, IDC_MOVIE_LIST, &omdbClientDlg::OnLButtonDblClk)
     ON_BN_CLICKED(IDCANCEL, &omdbClientDlg::OnBnClickedCancel)
     ON_BN_CLICKED(IDC_BUTTON_OMDB_REQUEST, &omdbClientDlg::OnBnClickedOmdbRequest)
     ON_BN_CLICKED(IDC_BUTTON_READFOLDER, &omdbClientDlg::OnBnClickedButtonReadfolder)
@@ -90,7 +95,6 @@ BEGIN_MESSAGE_MAP(omdbClientDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_OMDB_ALL, &omdbClientDlg::OnBnClickedButtonOmdbAll)
     ON_BN_CLICKED(IDC_BUTTON_WRITEXMLFILE, &omdbClientDlg::OnBnClickedButtonWritexmlfile)
     ON_BN_CLICKED(IDC_CHECK_FORCE, &omdbClientDlg::OnBnClickedCheckForce)
-//    ON_BN_CLICKED(IDC_BUTTON_EDIT_MINOCCURRENCES, &omdbClientDlg::OnBnClickedButtonEditMinoccurrences)
     ON_BN_CLICKED(IDC_CLEARMOVIES, &omdbClientDlg::OnBnClickedClearmovies)
     ON_BN_CLICKED(IDC_CLEARFS, &omdbClientDlg::OnBnClickedClearfs)
     ON_BN_CLICKED(IDC_BUTTON_OMDB_SETKEY, &omdbClientDlg::OnBnClickedButtonOmdbSetkey)
@@ -106,6 +110,7 @@ BEGIN_MESSAGE_MAP(omdbClientDlg, CDialogEx)
     ON_BN_CLICKED(IDC_CHECK_ACTORS, &omdbClientDlg::OnBnClickedCheckActors)
 
     ON_CBN_SELCHANGE(IDC_COMBO_GENRES, &omdbClientDlg::OnCbnSelchangeComboGenres)
+    ON_CBN_SELCHANGE(IDC_COMBO_GENRES2, &omdbClientDlg::OnCbnSelchangeComboGenres2)
     ON_CBN_SELCHANGE(IDC_COMBO_DIRECTOR, &omdbClientDlg::OnCbnSelchangeComboDirector)
     ON_CBN_SELCHANGE(IDC_COMBO_ACTORS, &omdbClientDlg::OnCbnSelchangeComboActors)
     ON_CBN_SELCHANGE(IDC_COMBO_SERIES, &omdbClientDlg::OnCbnSelchangeComboSeries)
@@ -116,13 +121,17 @@ BEGIN_MESSAGE_MAP(omdbClientDlg, CDialogEx)
     ON_CBN_SELCHANGE(IDC_COMBO_IMDBRATINGMAX, &omdbClientDlg::OnCbnSelchangeComboImdbratingmax)
     ON_CBN_SELCHANGE(IDC_COMBO_DOCS, &omdbClientDlg::OnCbnSelchangeComboDocs)
     ON_CBN_SELCHANGE(IDC_COMBO_SHORTS, &omdbClientDlg::OnCbnSelchangeComboShorts)
-    ON_CBN_SELCHANGE(IDC_COMBO_GENRES2, &omdbClientDlg::OnCbnSelchangeComboGenres2)
     ON_BN_CLICKED(IDC_BUTTON_RESET_DIRECTORS, &omdbClientDlg::OnBnClickedButtonResetDirectors)
     ON_BN_CLICKED(IDC_BUTTON_RESET_ACTORS, &omdbClientDlg::OnBnClickedButtonResetActors)
 //    ON_EN_SETFOCUS(IDC_EDIT_FOLDER, &omdbClientDlg::OnEnChangeEditFolder)
     ON_STN_CLICKED(IDC_STATIC_APIKEY, &omdbClientDlg::OnStnClickedStaticApikey)
     ON_CBN_SELCHANGE(IDC_COMBO_FOLDERS, &omdbClientDlg::OnCbnSelchangeComboFolders)
+    ON_CBN_EDITCHANGE(IDC_COMBO_FOLDERS, &omdbClientDlg::OnCbnEditchangeComboFolders)
     ON_EN_CHANGE(IDC_EDIT_SEARCH, &omdbClientDlg::OnEnChangeEditSearch)
+    ON_CBN_EDITCHANGE(IDC_COMBO_GENRES, &omdbClientDlg::OnCbnEditchangeComboGenres)
+    ON_CBN_EDITCHANGE(IDC_COMBO_GENRES2, &omdbClientDlg::OnCbnEditchangeComboGenres2)
+    ON_CBN_EDITCHANGE(IDC_COMBO_DIRECTOR, &omdbClientDlg::OnCbnEditchangeComboDirector)
+    ON_CBN_EDITCHANGE(IDC_COMBO_ACTORS, &omdbClientDlg::OnCbnEditchangeComboActors)
 END_MESSAGE_MAP()
 void omdbClientDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -192,15 +201,18 @@ void omdbClientDlg::OnSysCommand(UINT nID, LPARAM lParam)
     if (nID > IDC_BUTTON_FILTER_DIRECTORS && nID < IDC_BUTTON_FILTER_ACTORS)
     {
         std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_DIRECTOR);
-        std::string name = names->at(nID - IDC_BUTTON_FILTER_DIRECTORS - 1);
+        int vpos = nID - IDC_BUTTON_FILTER_DIRECTORS - 2;
+        std::string name = names->at(vpos);
         int pos = comboFilters[FILTERS_DIRECTORS]->FindString(-1, CString(name.c_str()));
         comboFilters[FILTERS_DIRECTORS]->SetCurSel(pos);
         OnCbnSelchangeComboDirector();
     }
-    if (nID > IDC_BUTTON_FILTER_ACTORS && nID < IDC_BUTTON_FILTER_ACTORS + 5)
+    if (nID > IDC_BUTTON_FILTER_ACTORS && nID < IDC_BUTTON_FILTER_ACTORS + 0x0050)
     {
         std::vector<std::string>* names = selectedFile.getMovie()->getvRoles(ROLES_ACTOR);
-        std::string name = names->at(nID - IDC_BUTTON_FILTER_ACTORS - 1);
+        int vpos = nID - IDC_BUTTON_FILTER_ACTORS;
+        vpos -= 2;
+        std::string name = names->at(vpos);
         int pos = comboFilters[FILTERS_ACTORS]->FindString(-1, CString(name.c_str()));
         comboFilters[FILTERS_ACTORS]->SetCurSel(pos);
         OnCbnSelchangeComboActors();
@@ -413,11 +425,12 @@ bool omdbClientDlg::FindMenuPos(CMenu *pBaseMenu, UINT myID, CMenu * & pMenu, in
     }
     return false; // iterate in the upper stackframe
 }
-//int omdbClientDlg::myMsgBox(std::string _str, std::string _title, int _btns)
-//{
-//    return MessageBox(CString(_str.c_str()), CString(_title.c_str()), _btns);
-//}
-
+void omdbClientDlg::OnOK()
+{
+}
+void omdbClientDlg::OnCancel()
+{
+}
 #pragma endregion OnSys
 
 #pragma region OnInitDialog
@@ -666,6 +679,7 @@ void omdbClientDlg::OnInitDialogVars()
     for (int infoType = 0; infoType < TYPE_MAX; infoType++)
     {
         checkIs[infoType] = (CButton *)GetDlgItem(idcInfoTypes[infoType]);
+        checkIs[infoType]->SetButtonStyle(BS_AUTO3STATE);
     }
     for (int text = 0; text < STATIC_ALL_MAX; text++)
     {
@@ -748,6 +762,9 @@ bool omdbClientDlg::OnInitDialogData()
     else
         GETDB.PATHFS_insert(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER));
 
+
+    if (GETCM.getConfigStr(CONF_OMDB_APIKEY).empty() == true)
+        changeOmdbKey();
     //CString tmp;
     //tmp.Format(L"%s", BUTIL::Convert::string2wstring(GETCM.getConfigStr(CONF_APP_CURRENTFOLDER)).c_str());
     //editFolderPath->SetWindowTextW(tmp);
@@ -765,7 +782,7 @@ bool omdbClientDlg::OnInitDialogData()
     progressCounter[CNT_SUCCESS] = 0;
     progressCounter[CNT_ERROR] = 0;
     
-    filters->folderFilter = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
+    //filters->folderFilter = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
     //int folderId = GETDB.getPathId(filters->folderFilter);
     //if (folderId != -1)
     //    filters->folderFilterId = folderId;
@@ -973,6 +990,7 @@ void omdbClientDlg::loadFilterShort(void)
     {
         while (GETDB.MOVIESFS_getAll(&file))
         {
+            count++;
             mtx_readfiles->lock();
             v_FsFiles->push_back(file);
             mtx_readfiles->unlock();
@@ -1398,7 +1416,19 @@ void omdbClientDlg::displayMovieInfos(MovieFile *_file)
         displayMovieInfo(movie, (movieInfo)info);
     for (int infoType = TYPE_SERIE; infoType < TYPE_MAX; infoType++)
     {
-        checkIs[infoType]->SetCheck(selectedFile.typeIs[infoType] == TYPE_NOTMOVIE);
+        switch (selectedFile.typeIs[infoType])
+        {
+        case TYPE_NOTMOVIE:
+            checkIs[infoType]->SetCheck(BST_CHECKED);
+            break;
+        case TYPE_MOVIE:
+            checkIs[infoType]->SetCheck(BST_UNCHECKED);
+            break;
+        case TYPE_UNKNOWN:
+            checkIs[infoType]->SetCheck(BST_INDETERMINATE);
+            break;
+        }
+        
     }
     movie->consoleDBG = &consoleDBG;
 
@@ -2082,7 +2112,7 @@ bool omdbClientDlg::omdbRequest(MovieFile *_file)
     ST_SAVE(ST_OMDB_REQUEST_SINGLE);
     //progressCounter[CNT_TOTAL] = 1;
     bool ret = false;
-    if (selectedFile.isImdbId() == true && GETDB.getMovieData(&selectedFile))
+    if (selectedFile.isImdbId() == true && GETDB.getMovieData(&selectedFile) && forceOmdb == false)
     {
         ret = true;
     }
@@ -2093,7 +2123,7 @@ bool omdbClientDlg::omdbRequest(MovieFile *_file)
 
         ret = xmlFiles.loadOmdbStr(_file);
         //omdbCountTotal++;
-        if (ret)
+        if (_file->isImdbId())
         {
             textDebugWindow("OmdbRequest: OK", _file->title);
             progressCounter[CNT_SUCCESS]++;
@@ -2236,7 +2266,7 @@ bool omdbClientDlg::OmdbSetkey()
     dlgOmdbKey.setValue(&newApikey);
     dlgOmdbKey.setTexts(texts);
     //std::string url = xmlConfig.getOmdbConfig()->omdbUrl + xmlConfig.getOmdbConfig()->apiRequestUrl;
-    std::string url = GETCM.getConfigStr(CONF_OMDB_URL) + GETCM.getConfigStr(CONF_OMDB_LISTSEPARATOR);
+    std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
     //LPCWSTR LPCWSTRurl = C2WC(url.c_str());
     wchar_t * wurl = C2WC(url.c_str());
     dlgOmdbKey.setURL(wurl);
@@ -2245,6 +2275,8 @@ bool omdbClientDlg::OmdbSetkey()
     GETCM.setConfigValue(CONF_OMDB_APIKEY, newApikey);
     LOGINFO("Omdb Key set to [%s]", newApikey.c_str());
     isApiKeySet = !newApikey.empty();
+    if (isApiKeySet)
+        autoOmdb = (btnOmdb[CHK_OMDB_AUTO]->GetCheck() == 1);
     setStaticText(STATIC_DESC, "");
     return (tmpApikey.compare(newApikey) != 0);
 }
@@ -2294,6 +2326,48 @@ string omdbClientDlg::changeCombo(filterTypes _filter)
     SetTimer(_REFRESH_UI_EVENT_, 10, NULL);
     return SelectedValue;
 }
+string omdbClientDlg::editCombo(filterTypes _combo)
+{
+    LOGDEBUG("");
+    CString c_text;
+    string text;
+    int count = 0;
+    comboFilters[_combo]->GetWindowText(c_text);
+
+    std::wstring w_c_text((LPCTSTR)c_text);
+    std::string SelectedValue = WS2S(w_c_text);
+
+    std::vector<string>::iterator name;
+
+    int pos = 0;
+
+    transform(SelectedValue.begin(), SelectedValue.end(), SelectedValue.begin(), ::tolower);
+
+    for (name = filters->v_combos[_combo].begin(); name != filters->v_combos[_combo].end(); name++)
+    {
+        std::string tmpName = *name;
+        transform(tmpName.begin(), tmpName.end(), tmpName.begin(), ::tolower);
+        std::size_t found = tmpName.find(SelectedValue);
+        if (found != string::npos)
+        {
+            if (count == 0)
+            {
+                comboFilters[_combo]->ResetContent();
+                comboFilters[_combo]->Clear();
+            }
+            count++;
+            CString cstr(C2WC((*name).c_str()));
+            comboFilters[_combo]->AddString(cstr);
+        }
+    }
+
+    comboFilters[_combo]->ShowDropDown(true);
+    comboFilters[_combo]->SetWindowText(c_text);
+    comboFilters[_combo]->SetEditSel(0, -1);
+    comboFilters[_combo]->SetEditSel(-1,-1);
+
+    return SelectedValue;
+}
 string omdbClientDlg::changeComboFolders()
 {
     LOGDEBUG("");
@@ -2310,7 +2384,7 @@ string omdbClientDlg::changeComboFolders()
     std::string selectedValue = WS2S(w_c_text);
     std::string actualValue = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
     GETCM.setConfigValue(CONF_APP_CURRENTFOLDER, selectedValue);
-    filters->folderFilter = selectedValue;
+    //filters->folderFilter = selectedValue;
 
     //if (ST_PREDIFF(ST_INITIATING))
     //{
@@ -2326,12 +2400,63 @@ string omdbClientDlg::changeComboFolders()
     ST_RESTORE();
     return selectedValue;
 }
+string omdbClientDlg::editComboFolders()
+{
+    LOGDEBUG("");
+    CString c_text;
+    string text;
+
+    comboFolderPath->GetWindowText(c_text);
+
+    std::wstring w_c_text((LPCTSTR)c_text);
+    std::string SelectedValue = WS2S(w_c_text);
+
+    std::vector<VARDB(pondStr)>::iterator name;
+    comboFolderPath->ResetContent();
+    comboFolderPath->Clear();
+    int pos = 0;
+
+    transform(SelectedValue.begin(), SelectedValue.end(), SelectedValue.begin(), ::tolower);
+
+    for (name = filters->folders.begin(); name != filters->folders.end(); name++)
+    {
+        std::string tmpName = name->str;
+        transform(tmpName.begin(), tmpName.end(), tmpName.begin(), ::tolower);
+        std::size_t found = tmpName.find(SelectedValue);
+        if (found != string::npos)
+        {
+            //CString cstr(C2WC((name->str).c_str()));
+            comboFolderPath->AddString(CString(((*name).str.c_str())));
+            //comboFolderPath->AddString(cstr);
+        }
+    }
+
+    comboFolderPath->ShowDropDown(true);
+    comboFolderPath->SetWindowText(c_text);
+    comboFolderPath->SetEditSel(0, -1);
+    comboFolderPath->SetEditSel(-1, -1);
+
+    return SelectedValue;
+}
 void omdbClientDlg::checkMovieTypes(DataBase::column _col)
 {
     LOGDEBUG("");
     GotoDlgCtrl(GetDlgItem(IDC_MOVIE_LIST));
     movieInfoTypes infoType = col2InfoType(_col);
-    selectedFile.typeIs[infoType] = (checkIs[infoType]->GetCheck() == 1) ? TYPE_NOTMOVIE : TYPE_MOVIE;
+    switch (checkIs[infoType]->GetCheck())
+    {
+    case BST_CHECKED:
+        selectedFile.typeIs[infoType] = TYPE_NOTMOVIE;
+        break;
+    case BST_UNCHECKED:
+        selectedFile.typeIs[infoType] = TYPE_MOVIE;
+        break;
+    case BST_INDETERMINATE:
+        selectedFile.typeIs[infoType] = TYPE_UNKNOWN;
+        break;
+
+    }
+    //selectedFile.typeIs[infoType] = (checkIs[infoType]->GetCheck() == 1) ? TYPE_NOTMOVIE : TYPE_MOVIE;
 
     bool fields[FS_MAX_FIELDS - FS_ID];
     for (short i = 0; i < FS_MAX_FIELDS - FS_ID; i++)
@@ -2664,7 +2789,7 @@ void omdbClientDlg::OnBnClickedButtonLoadxmlfile()
 void omdbClientDlg::OnBnClickedCancel()
 {
     LOGDEBUG("button [EXIT] pressed");
-    onExit();
+    //onExit();
 }
 void omdbClientDlg::OnBnClickedCheckShowdeleted()
 {
@@ -2805,11 +2930,6 @@ void omdbClientDlg::OnBnClickedButtonResetActors()
     resetFilters(FILTERS_ACTORS);
 
 }
-//void omdbClientDlg::OnEnChangeEditFolder()
-//{
-//    selectFolder();
-//    
-//}
 void omdbClientDlg::OnStnClickedStaticApikey()
 {
     LOGDEBUG("button [OmdbSetkey] pressed");
@@ -2819,6 +2939,22 @@ void omdbClientDlg::OnStnClickedStaticApikey()
 #pragma endregion OnBnClicked
 
 #pragma region OnCbnSelchange
+void omdbClientDlg::OnCbnEditchangeComboGenres()
+{
+    LOGDEBUG("button [ComboDirector] <%s> selected", editCombo(FILTERS_GENRES).c_str());
+}
+void omdbClientDlg::OnCbnEditchangeComboGenres2()
+{
+    LOGDEBUG("button [ComboDirector] <%s> selected", editCombo(FILTERS_GENRES2).c_str());
+}
+void omdbClientDlg::OnCbnEditchangeComboDirector()
+{
+    LOGDEBUG("changeCombo [ComboActor] <%s> selected", editCombo(FILTERS_DIRECTORS).c_str());
+}
+void omdbClientDlg::OnCbnEditchangeComboActors()
+{
+    LOGDEBUG("changeCombo [ComboActor] <%s> selected", editCombo(FILTERS_ACTORS).c_str());
+}
 void omdbClientDlg::OnCbnSelchangeComboGenres()
 {
     LOGDEBUG("button [ComboGenre] <%s> selected", changeCombo(FILTERS_GENRES).c_str());
@@ -2869,11 +3005,13 @@ void omdbClientDlg::OnCbnSelchangeComboShorts()
 }
 void omdbClientDlg::OnCbnSelchangeComboFolders()
 {
-    LOGDEBUG("button [ComboShort] <%s> selected", changeComboFolders().c_str());
+    LOGDEBUG("button [ComboFolders] <%s> selected", changeComboFolders().c_str());
 }
-
-#pragma endregion OnCbnSelchange
-
+void omdbClientDlg::OnCbnEditchangeComboFolders()
+{
+    LOGDEBUG("edit [ComboFolders] <%s>", editComboFolders().c_str());
+    
+}
 void omdbClientDlg::OnEnChangeEditSearch()
 {
     CString c_text;
@@ -2885,3 +3023,78 @@ void omdbClientDlg::OnEnChangeEditSearch()
     loadAllCombosExcept();
     //GotoDlgCtrl(GetDlgItem(IDC_MOVIE_LIST));
 }
+void omdbClientDlg::OnEnChangeEditSearch2()
+{
+    CString c_text;
+    editSearch->GetWindowText(c_text);
+
+    int pos = lstMovies->GetItemCount();
+    CString filename;
+
+    for (int i = 0; i < pos; i++)
+    {
+        filename = lstMovies->GetItemText(i, DataBase::COL_FILENAME);
+        if (filename.Find(c_text))
+        {
+            COLORREF crText = RGB(64, 64, 64);
+            //lstMovies->SetBkColor(crText);
+            lstMovies->SetTextColor(crText);
+        }
+        else
+        {
+            COLORREF crText = RGB(128, 128, 128);
+            //lstMovies->SetBkColor(crText);
+            lstMovies->SetTextColor(crText);
+        }
+    }
+}
+
+#pragma endregion OnCbnSelchange
+
+
+//void omdbClientDlg::OnLButtonDblClk(NMHDR *pNMHDR, LRESULT *pResult)
+//{
+//    static int countInt = 0;
+//    static int countExt = 0;
+//    static int clicks = 0;
+//    LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+//    ASSERT(pNMLV);
+//    //globalState = globalState;
+//    countExt++;
+//    if (pNMLV->uChanged & LVIF_STATE && ST_DIFF(ST_READING_FODLER))
+//    {
+//        countInt++;
+//        if (pNMLV->uNewState == pNMLV->uOldState && pNMLV->uNewState & LVIS_SELECTED && countInt % 2 == 0)
+//        {
+//            std::string text;
+//            text += BUTIL::Util::format(" (%d click(s) %d-%d count)", clicks++, countInt, countExt);
+//            setStaticText(STATIC_DESC, text);
+//            //OnBnClickedButtonPlay();
+//        }
+//    }
+//
+//    *pResult = 0;
+//
+//}
+
+//void omdbClientDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
+//{
+//    static int countInt = 0;
+//    static int countExt = 0;
+//    static int clicks = 0;
+//    
+//    countExt++;
+//    //if (pNMLV->uChanged & LVIF_STATE && ST_DIFF(ST_READING_FODLER))
+    //{
+//        countInt++;
+////        if (pNMLV->uNewState == pNMLV->uOldState && pNMLV->uNewState & LVIS_SELECTED && countInt % 2 == 0)
+//        {
+//            std::string text;
+//            text += BUTIL::Util::format(" (%d click(s) %d-%d count)", clicks++, countInt, countExt);
+//            setStaticText(STATIC_DESC, text);
+//            //OnBnClickedButtonPlay();
+//        }
+//    }
+//
+////    *pResult = 0;
+//}

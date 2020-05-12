@@ -3,6 +3,7 @@
 #include "util.h"
 #include "convert.h"
 #include "database.h"
+#include "configManager.h"
 #include <algorithm>
 #include <curl/curl.h>
 
@@ -561,16 +562,6 @@ size_t Movie::callbackfunction(void *ptr, size_t size, size_t nmemb, void* userd
     return written;
 }
 
-bool Movie::folderExists(std::string _path)
-{
-    int error;
-    DWORD ftyp = GetFileAttributesA(_path.c_str());
-    error = ::GetLastError();
-    if (error == INVALID_FILE_ATTRIBUTES)
-        return false;
-
-    return ((ftyp & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY);
-}
 bool Movie::fileExists(std::string _path)
 {
     int error;
@@ -585,61 +576,31 @@ bool Movie::fileExists(std::string _path)
 //    consoleLOG->push_back("fileExists ftyp " + ftyp);
     return ((ftyp & FILE_ATTRIBUTE_DIRECTORY) != FILE_ATTRIBUTE_DIRECTORY);
 }
-bool Movie::folderCreates(std::string _path)
-{
-    int success, error = -1;
-    string fileName;
-    fileName = CACHEPATH;
 
-    if (!folderExists(_path))
-    {
-        success = CreateDirectoryA(fileName.c_str(), NULL);
-        error = ::GetLastError();
-    }
-
-    //if (error != ERROR_ALREADY_EXISTS && error != ERROR_SUCCESS) {
-    if (error != ERROR_ALREADY_EXISTS && error != ERROR_SUCCESS) {
-
-        wchar_t wmsg[256];
-        char* msg = BUTIL::Util::GetLastErrorAsString(error);
-        _swprintf(wmsg, L"%s : %s", BUTIL::Convert::charToWchar(msg), BUTIL::Convert::charToWchar((LPSTR)fileName.c_str()));
-        MessageBox(NULL, wmsg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
-        exLOGERROR("%s : %s", fileName.c_str());
-        return false;
-    }
-    return true;
-}
 std::string Movie::url2fileName(std::string _url)
 {
     size_t found = _url.find_last_of("/");
     if (found != string::npos)
     {
         //fileName += "\\" + _url.substr(found + 1, string::npos);
-        return CACHEPATH FOLDERSEPARATOR + _url.substr(found + 1, string::npos);
+        return CACHEPATH + _url.substr(found + 1, string::npos);
     }
     return "";
 }
 bool Movie::downloadJpeg(string _url, string _fileName)
 {
-    DWORD error = ERROR_BAD_PATHNAME;
-    DWORD success = false;
+    //DWORD error = ERROR_BAD_PATHNAME;
+    //DWORD success = false;
+    bool success = false;
     std::string path = CACHEPATH;
     if (_fileName.empty() == false)
     {
-        DWORD ftyp = GetFileAttributesA(path.c_str());
-        error = ::GetLastError();
-        if (ftyp == INVALID_FILE_ATTRIBUTES)
+        if (BUTIL::Util::folderCreates(path) == false)
         {
-            exLOGDEBUG("Create Dir %s", path.c_str());
-            success = CreateDirectoryA(path.c_str(), NULL);
-            error = ::GetLastError();
-        }
-        
-        if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
-        {
-            error = ERROR_SUCCESS;
-            exLOGDEBUG("Ok");
-            success = true;
+            int error = ::GetLastError();
+            ERRORMBOX(BUTIL::Util::GetLastErrorAsString(error) + _fileName);
+            exLOGERROR("%s - %s", BUTIL::Util::GetLastErrorAsString(error),_fileName.c_str());
+            return false;
         }
 
         FILE* fp = fopen(_fileName.c_str(), "wb");

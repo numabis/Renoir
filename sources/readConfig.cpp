@@ -4,7 +4,6 @@
 #include "util.h"
 #include "configManager.h"
 
-#define HOMEFOLDER "\\Renoir\\"
 using std::string;
 
 ReadConfig::ReadConfig()
@@ -126,46 +125,46 @@ bool ReadConfig::saveConfigFile()
     return false;
 }
 
-int  ReadConfig::loadConfigFile()
-{
-    int ret = XMLOK;
-
-    TiXmlDocument docConfig;
-    TiXmlElement *nodeConfig = BUTIL::Xml::load(docConfig, configPath);
-
-    if (nodeConfig && std::string(nodeConfig->Value()) == XMLTAG_CONFIG)
-    {
-        TiXmlElement *node[XML_CONFIG_MAX];
-        for (short i=0;i<XML_CONFIG_MAX;i++)
-            node[i] = nodeConfig->FirstChildElement(xmlConfigTags[i]);
-
-        if (node[XML_CONFIG_FS])
-            ret |= readConfigFS(node[XML_CONFIG_FS]);
-        else
-            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_FS]);
-
-        if (node[XML_CONFIG_DB])
-            ret |= readConfigDB(node[XML_CONFIG_DB]);
-        else
-            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_DB]);
-
-        if (node[XML_CONFIG_OMDB])
-            ret |= readConfigOMDB(node[XML_CONFIG_OMDB]);
-        else
-            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_OMDB]);
-
-        if (node[XML_CONFIG_IMDB])
-            ret |= readConfigIMDB(node[XML_CONFIG_IMDB]);
-        else
-            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_IMDB]);
-
-        if (node[XML_CONFIG_LOG])
-            ret |= readConfigLOG(node[XML_CONFIG_LOG]);
-        else
-            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_LOG]);
-    }
-    return ret;
-}
+//int  ReadConfig::loadConfigFile()
+//{
+//    int ret = XMLOK;
+//
+//    TiXmlDocument docConfig;
+//    TiXmlElement *nodeConfig = BUTIL::Xml::load(docConfig, configPath);
+//
+//    if (nodeConfig && std::string(nodeConfig->Value()) == XMLTAG_CONFIG)
+//    {
+//        TiXmlElement *node[XML_CONFIG_MAX];
+//        for (short i=0;i<XML_CONFIG_MAX;i++)
+//            node[i] = nodeConfig->FirstChildElement(xmlConfigTags[i]);
+//
+//        if (node[XML_CONFIG_FS])
+//            ret |= readConfigFS(node[XML_CONFIG_FS]);
+//        else
+//            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_FS]);
+//
+//        if (node[XML_CONFIG_DB])
+//            ret |= readConfigDB(node[XML_CONFIG_DB]);
+//        else
+//            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_DB]);
+//
+//        if (node[XML_CONFIG_OMDB])
+//            ret |= readConfigOMDB(node[XML_CONFIG_OMDB]);
+//        else
+//            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_OMDB]);
+//
+//        if (node[XML_CONFIG_IMDB])
+//            ret |= readConfigIMDB(node[XML_CONFIG_IMDB]);
+//        else
+//            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_IMDB]);
+//
+//        if (node[XML_CONFIG_LOG])
+//            ret |= readConfigLOG(node[XML_CONFIG_LOG]);
+//        else
+//            exLOGERROR("%s", configPath, xmlConfigTags[XML_CONFIG_LOG]);
+//    }
+//    return ret;
+//}
 
 int ReadConfig::initLocalConfigFile()
 {
@@ -186,91 +185,90 @@ int ReadConfig::initLocalConfigFile()
     return XMLOK;
 }
 
-int  ReadConfig::readConfigFS(TiXmlElement *_node) {
-    int ret = XMLOK;
-
-    //xmlConfig.fs.path = xmlConfig.fsPath;
-
-    if (BUTIL::Xml::existsNode(_node, "autoreadfolder"))
-        xmlConfig.fs.autoReadFolder = BUTIL::Xml::XML_bool(_node, "autoreadfolder");
-    else
-        xmlConfig.fs.autoReadFolder = false;
-
-    TiXmlElement *nodeExt = _node->FirstChildElement("extentions");
-    if (nodeExt)
-    {
-        std::string ext, ext2;
-
-        for (TiXmlElement* e = nodeExt->FirstChildElement("extention"); e != NULL; e = e->NextSiblingElement("extention"))
-        {
-            ext = BUTIL::Xml::XML_string(e);
-            BUTIL::Convert::toLower(&ext);
-            xmlConfig.fs.extentions.push_back(ext);
-        }
-    }
-    TiXmlElement *nodeTypes = _node->FirstChildElement("types");
-    if (nodeTypes)
-    {
-        xmlConfig.fs.searchTypes = BUTIL::Xml::XML_bool(nodeTypes, "searchtypes");
-        for (int type= TYPE_SERIE; type<TYPE_MAX; type++)
-            xmlConfig.fs.strType[type] = BUTIL::Xml::XML_string(nodeTypes, xmlTypes[type]);
-    }
-    return ret;
-}
-
-int  ReadConfig::readConfigDB(TiXmlElement *node) {
-    int ret = XMLOK;
-    xmlConfig.db.dbPath = homeFolder;
-    if (BUTIL::Xml::existsNode(node, "dbpath") && BUTIL::Xml::XML_string(node, "dbpath").size() != 0)
-    {
-        xmlConfig.db.dbPath += BUTIL::Xml::XML_string(node, "dbpath");
-    }
-
-    if (BUTIL::Xml::existsNode(node, "dbname") && BUTIL::Xml::XML_string(node, "dbname").size() != 0)
-        xmlConfig.db.dbName = BUTIL::Xml::XML_string(node, "dbname");
-    else
-        xmlConfig.db.dbName = DBNAME;
-
-    if (BUTIL::Xml::existsNode(node, "resetdb"))
-        xmlConfig.db.resetDB = BUTIL::Xml::XML_bool(node, "resetdb");
-    else
-        xmlConfig.db.resetDB = DBRESETDEFAULT;
-    return ret;
-}
-int  ReadConfig::readConfigOMDB(TiXmlElement *_node) {
-    int ret = XMLOK;
-    OMDB_CONFIG *omdb = &xmlConfig.omdb;
-    omdb->omdbUrl = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_URL]);
-    omdb->apiRequestUrl = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_API]);
-    omdb->plot = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_PLOT]);
-    omdb->type = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_TYPE]);
-    omdb->separator = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_SEP]);
-    omdb->testmode = BUTIL::Xml::XML_bool(_node, xmlOmdbTags[XML_OMDB_TEST]);
-//    omdb->plotShort = xmlConfig.omdb.plot == xmlOmdbTags[XML_OMDB_PLOT] ? true : false;
-//    omdb->typeXml = xmlConfig.omdb.type == xmlOmdbTags[XML_OMDB_TYPE] ? true : false;
-    return ret;
-}
-int  ReadConfig::readConfigIMDB(TiXmlElement *_node) {
-    int ret = XMLOK;
-    for (int i= XML_IMDB_URL ; i < XML_IMDB_MAX ; i++)
-        xmlConfig.imdb[i] = BUTIL::Xml::XML_string(_node, xmlImdbTags[i]);
-    return ret;
-}
-int  ReadConfig::readConfigLOG(TiXmlElement *_node) {
-    int ret = XMLOK;
-    LOG_CONFIG *log = &xmlConfig.log;
-    log->logPath = homeFolder;
-    if (BUTIL::Xml::existsNode(_node, "logPath") && BUTIL::Xml::XML_string(_node, "logPath").size() != 0)
-    {
-        log->logPath += BUTIL::Xml::XML_string(_node, "logPath");
-    }
-
-    if (BUTIL::Xml::existsNode(_node, "level"))
-        log->logLevel = BUTIL::Xml::XML_int(_node, "level");
-    else
-        log->logLevel = 0;
-    return ret;
-}
+//int  ReadConfig::readConfigFS(TiXmlElement *_node) {
+//    int ret = XMLOK;
+//
+//    //xmlConfig.fs.path = xmlConfig.fsPath;
+//
+//    if (BUTIL::Xml::existsNode(_node, "autoreadfolder"))
+//        xmlConfig.fs.autoReadFolder = BUTIL::Xml::XML_bool(_node, "autoreadfolder");
+//    else
+//        xmlConfig.fs.autoReadFolder = false;
+//
+//    TiXmlElement *nodeExt = _node->FirstChildElement("extentions");
+//    if (nodeExt)
+//    {
+//        std::string ext, ext2;
+//
+//        for (TiXmlElement* e = nodeExt->FirstChildElement("extention"); e != NULL; e = e->NextSiblingElement("extention"))
+//        {
+//            ext = BUTIL::Xml::XML_string(e);
+//            BUTIL::Convert::toLower(&ext);
+//            xmlConfig.fs.extentions.push_back(ext);
+//        }
+//    }
+//    TiXmlElement *nodeTypes = _node->FirstChildElement("types");
+//    if (nodeTypes)
+//    {
+//        xmlConfig.fs.searchTypes = BUTIL::Xml::XML_bool(nodeTypes, "searchtypes");
+//        for (int type= TYPE_SERIE; type<TYPE_MAX; type++)
+//            xmlConfig.fs.strType[type] = BUTIL::Xml::XML_string(nodeTypes, xmlTypes[type]);
+//    }
+//    return ret;
+//}
+//int  ReadConfig::readConfigDB(TiXmlElement *node) {
+//    int ret = XMLOK;
+//    xmlConfig.db.dbPath = homeFolder;
+//    if (BUTIL::Xml::existsNode(node, "dbpath") && BUTIL::Xml::XML_string(node, "dbpath").size() != 0)
+//    {
+//        xmlConfig.db.dbPath += BUTIL::Xml::XML_string(node, "dbpath");
+//    }
+//
+//    if (BUTIL::Xml::existsNode(node, "dbname") && BUTIL::Xml::XML_string(node, "dbname").size() != 0)
+//        xmlConfig.db.dbName = BUTIL::Xml::XML_string(node, "dbname");
+//    else
+//        xmlConfig.db.dbName = DBNAME;
+//
+//    if (BUTIL::Xml::existsNode(node, "resetdb"))
+//        xmlConfig.db.resetDB = BUTIL::Xml::XML_bool(node, "resetdb");
+//    else
+//        xmlConfig.db.resetDB = DBRESETDEFAULT;
+//    return ret;
+//}
+//int  ReadConfig::readConfigOMDB(TiXmlElement *_node) {
+//    int ret = XMLOK;
+//    OMDB_CONFIG *omdb = &xmlConfig.omdb;
+//    omdb->omdbUrl = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_URL]);
+//    omdb->apiRequestUrl = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_API]);
+//    omdb->plot = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_PLOT]);
+//    omdb->type = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_TYPE]);
+//    omdb->separator = BUTIL::Xml::XML_string(_node, xmlOmdbTags[XML_OMDB_SEP]);
+//    omdb->testmode = BUTIL::Xml::XML_bool(_node, xmlOmdbTags[XML_OMDB_TEST]);
+////    omdb->plotShort = xmlConfig.omdb.plot == xmlOmdbTags[XML_OMDB_PLOT] ? true : false;
+////    omdb->typeXml = xmlConfig.omdb.type == xmlOmdbTags[XML_OMDB_TYPE] ? true : false;
+//    return ret;
+//}
+//int  ReadConfig::readConfigIMDB(TiXmlElement *_node) {
+//    int ret = XMLOK;
+//    for (int i= XML_IMDB_URL ; i < XML_IMDB_MAX ; i++)
+//        xmlConfig.imdb[i] = BUTIL::Xml::XML_string(_node, xmlImdbTags[i]);
+//    return ret;
+//}
+//int  ReadConfig::readConfigLOG(TiXmlElement *_node) {
+//    int ret = XMLOK;
+//    LOG_CONFIG *log = &xmlConfig.log;
+//    log->logPath = homeFolder;
+//    if (BUTIL::Xml::existsNode(_node, "logPath") && BUTIL::Xml::XML_string(_node, "logPath").size() != 0)
+//    {
+//        log->logPath += BUTIL::Xml::XML_string(_node, "logPath");
+//    }
+//
+//    if (BUTIL::Xml::existsNode(_node, "level"))
+//        log->logLevel = BUTIL::Xml::XML_int(_node, "level");
+//    else
+//        log->logLevel = 0;
+//    return ret;
+//}
 
 DATA_CONFIG *ReadConfig::getGlobalConfig() {
     return &xmlConfig;

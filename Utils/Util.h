@@ -13,7 +13,7 @@ namespace BUTIL
         static bool isYear(const std::string str);
         static inline void ltrim(std::string &s);
         // trim from end (in place)
-        static inline void rtrim(std::string &s);
+        static void rtrim(std::string &s);
         // trim from both ends (in place)
         static inline void trim(std::string &s);
         // trim from start (copying)
@@ -100,7 +100,8 @@ namespace BUTIL
 
         static int msgBox(std::string _str, std::string _title, int _btns);
         static int msgBox(std::ostringstream ostr, std::string _title, int _btns);
-
+        static bool folderCreates(std::string _path);
+        static bool folderExists(std::string _path);
     private:
 			/** Función auxiliar de formatNumber para partir números.
 			*	@param Número que queda por formatear 

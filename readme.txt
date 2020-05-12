@@ -1,4 +1,4 @@
-OMDB Client Version 1.3.0
+Renoir Version 0.9.1
 
 GENERAL USAGE NOTES
 -------------------
@@ -23,7 +23,7 @@ CONFIGURATION
 
 The client use a XML file for configuration: Config\config.xml
 The demo version uses a configDEBUG.xml configuration file.
-It writes a log to the app folder, in case of trouble, please send the log file.
+It writes a log to the user\AppData\Roaming\Renoir folder, in case of trouble, please send the log file.
 
 CONTACT
 -------

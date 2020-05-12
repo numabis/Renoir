@@ -20,7 +20,7 @@
 
 #define MBOX                BUTIL::Util::msgBox
 
-#define DEFAULTSEP ","
+#define DEFAULTSEP ", "
 #define OMDBNOTFOUND    "?"
 #define OMDBTT          "tt"
 #define CNT_TOTAL           0

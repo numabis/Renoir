@@ -132,6 +132,9 @@
     <ClInclude Include="sources\menus.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="dialogs\FolderManager.h">
+      <Filter>dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -209,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="sources\configManager.cpp">
       <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\FolderManager.cpp">
+      <Filter>dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

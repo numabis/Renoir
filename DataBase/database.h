@@ -62,7 +62,7 @@ public:
         std::vector<std::string> v_combos[FILTERS_MAX];
         bool invertFilters[INVERT_FILTERS_MAX];
         std::vector<pondStr> folders;
-        std::string folderFilter;
+        //std::string folderFilter;
         //int folderFilterId;
     } moviesFSFilters;
 

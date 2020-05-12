@@ -6,40 +6,23 @@
 #include <sstream>
 
 #include "Convert.h"
+#include "Util.h"
+#include "configManager.h"
 
 namespace BUTIL
 {
-	/*
-	 * Constructor. Solo inicializa la clase Mutex.
-	 *      
-	 * Inicializa la ruta por defecto a la misma donde esta el cliente
-	 * y el log desactivado.          
-	 */
 	exLog::exLog()
 	{
-		LOG_path = "./";
+		LOG_path = LOGPATH;
         logDisable = exLOG_SQL;
         logLevel = &logDisable;
-
+        BUTIL::Util::folderCreates(LOG_path);
 	}
 
-	/**
-	 * Destructor.
-	 */
     exLog::~exLog()
 	{
 	}
 
-//    void Log::setConfig(LOG_CONFIG *_logConfig)
-//    {
-//        logConfig = _logConfig;
-//    }
-
-	/**
-	 * Asigna el path donde guardara los archivos log.
-	 *      
-	 * @param _path Ruta donde guardar el archivo log.
-	 */
 	void exLog::setPath( std::string _path )
 	{
 		lock();
@@ -48,22 +31,11 @@ namespace BUTIL
 
 	}
 
-	/**
-	 * Asigna el path donde guardara los archivos log.
-	 *      
-	 * @param _path Ruta donde guardar el archivo log.
-	 */
 	void exLog::setPath( std::wstring _path )
 	{
 		setPath( Convert::wstring2string(_path) );
 	}
 
-
-	/**
-	 * Establece el nivel de profundidad del log.
-	 *      
-	 * @param _estado true para activar la escritura fisica.
-	 */
 	void exLog::setLogLevel( int *level )
 	{
 		if(*level >= exLOG_DISABLED && *level < exLOG_MAX)
@@ -72,11 +44,6 @@ namespace BUTIL
 			logLevel = &logDisable;
 	}
 
-	/**
-	 * Escribe una entrada log formateada
-	 *      
-	 * @param format Formato standar printf
-	 */
 	void exLog::exlog(int level, const wchar_t *format, ...)
 	{
 		wchar_t Linea[1024];

@@ -13,12 +13,9 @@ class renoirApp : public CWinApp, CFrameWnd
 {
 public:
 	renoirApp();
-    bool initalChecks();
-    std::string localPath;
 
 public:
 	virtual BOOL InitInstance();
-    bool localConfig ;
 	DECLARE_MESSAGE_MAP()
 };
 

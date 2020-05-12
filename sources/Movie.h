@@ -107,9 +107,9 @@ private:
     void setSerie();
     static size_t callbackfunction(void *ptr, size_t size, size_t nmemb, void* userdata);
     bool downloadJpeg(std::string _url, std::string _file);
-    bool folderExists(std::string path);
+    //bool folderExists(std::string path);
     bool fileExists(std::string path);
-    bool folderCreates(std::string path);
+    //bool folderCreates(std::string path);
     std::string url2fileName(std::string _url);
 
     int idMovie;

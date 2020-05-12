@@ -12,6 +12,8 @@
 #include "sha256.h"
 #include "cultureInfo.h"
 
+
+
 namespace BUTIL
 {
 #pragma region "Conversión a Mayusculas/Minusculas. Varias funciones del tipo."
@@ -798,7 +800,7 @@ namespace BUTIL
     }
 
     // trim from end (in place)
-    inline void Util::rtrim(std::string &s) {
+    void Util::rtrim(std::string &s) {
         s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
             return !std::isspace(ch);
         }).base(), s.end());
@@ -864,5 +866,39 @@ namespace BUTIL
     {
         return MessageBox(NULL, CString(_str.c_str()), CString(_title.c_str()), _btns);
     }
+
+    bool Util::folderCreates(std::string _path)
+    {
+        int error = ERROR_SUCCESS;
+        bool exists = folderExists(_path);
+
+        if (exists == false)
+        {
+            if(!CreateDirectoryA(_path.c_str(), NULL))
+                error = ::GetLastError();
+        }
+
+        if (error != ERROR_ALREADY_EXISTS && error != ERROR_SUCCESS) {
+            std::string err = BUTIL::Util::GetLastErrorAsString(error);
+            //exLOGDEBUG("Error");
+            //ERRORMBOX(BUTIL::Util::GetLastErrorAsString(error) + _path);
+            //exLOGERROR(BUTIL::Util::GetLastErrorAsString(error));
+            //exLOGERROR(_path.c_str());
+            return false;
+        }
+        return true;
+    }
+
+    bool Util::folderExists(std::string _path)
+    {
+        DWORD ftyp = GetFileAttributesA(_path.c_str());
+        int error = ::GetLastError();
+        //std::string errorMsg = BUTIL::Util::GetLastErrorAsString(error);
+        if (error == INVALID_FILE_ATTRIBUTES || error == ERROR_FILE_NOT_FOUND)
+            return false;
+
+        return ((ftyp & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY);
+    }
+
 }
 

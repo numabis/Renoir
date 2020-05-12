@@ -331,6 +331,7 @@
     <ClInclude Include="DataBase\databaseTabDef.h" />
     <ClInclude Include="debugWindow.h" />
     <ClInclude Include="dialogs\CAboutDlg.h" />
+    <ClInclude Include="dialogs\FolderManager.h" />
     <ClInclude Include="dialogs\OmdbClientInfo.h" />
     <ClInclude Include="dialogs\OmdbClientDlg.h" />
     <ClInclude Include="dialogs\OmdbClientImdbIdEditDlg.h" />
@@ -366,6 +367,7 @@
     <ClCompile Include="DataBase\database.cpp" />
     <ClCompile Include="debugWindow.cpp" />
     <ClCompile Include="dialogs\CAboutDlg.cpp" />
+    <ClCompile Include="dialogs\FolderManager.cpp" />
     <ClCompile Include="dialogs\OmdbClientDlg.cpp" />
     <ClCompile Include="dialogs\OmdbClientImdbIdEditDlg.cpp" />
     <ClCompile Include="PictureControl\PictureCtrl.cpp" />

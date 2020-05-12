@@ -2220,7 +2220,7 @@ int DataBase::insertInDefTabs(int _table, std::string _value)
 
     request = COUNTFROM(_table) + WHERE(EQUAL(tabColId, _value));
     ret = execScalar(request);
-    if (ret > 0)
+    if (ret >= 0)
         return ERROR_SUCCESS;
 
     request = INSERTINTO(_table) + INSERTCOLS(tabColId) + INSERTVALS(_value.c_str());
@@ -2264,18 +2264,7 @@ int DataBase::PERSONINMOVIE_insert(int _movieId, int _personId, int _roleId)
     request += INSERTCOLS(PERSONINMOVIE_IDMOVIE, PERSONINMOVIE_IDPERSON, PERSONINMOVIE_IDROLE);
     request += INSERTVALS(STR(_movieId), STR(_personId), STR(_roleId));
 
-    ret = execNolock(request);
-    if (ret != ERROR_SUCCESS) {
-        __debugbreak();
-        ERRORMBOX(BUTIL::Util::GetLastErrorAsString());
-        exLOGERROR("SQL ko: %s", BUTIL::Util::GetLastErrorAsString());
-        exLOGERROR("SQL ko: %s", request.c_str());
-        return false;
-    }
-    else
-        exLOGSQL("SQL ok : %s", request.c_str());
-
-    return ret;
+    return execNolock(request);
 }
 int DataBase::GENREINMOVIE_insert(int _movieId, int _genreId)
 {// ret 0 if correct / GetLastError()
@@ -2292,17 +2281,7 @@ int DataBase::GENREINMOVIE_insert(int _movieId, int _genreId)
     request += INSERTCOLS(GENREINMOVIE_IDMOVIE, GENREINMOVIE_IDGENRE);
     request += INSERTVALS(STR(_movieId), STR(_genreId));
 
-    ret = execNolock(request);
-    if (ret != ERROR_SUCCESS) {
-        __debugbreak();
-        ERRORMBOX(BUTIL::Util::GetLastErrorAsString());
-        exLOGERROR("SQL ko: %s", BUTIL::Util::GetLastErrorAsString());
-        exLOGERROR("SQL ko: %s", request.c_str());
-        return false;
-    }
-    else
-        exLOGSQL("SQL ok : %s", request.c_str());
-    return ret;
+    return execNolock(request);
 }
 int DataBase::insertGenresInMovies(Movie *_movie)
 {// ret : inserted genres / -1 if error

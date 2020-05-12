@@ -6,6 +6,14 @@
 
 #define CONFIGMAX 7
 
+#ifdef _DEBUG
+#define HOMEFOLDER "\\Renoir_debug\\"
+#elif defined (_DEMO)
+#define HOMEFOLDER "\\Renoir_demo\\"
+#else
+#define HOMEFOLDER "\\Renoir\\"
+#endif
+
 class ConfigManager: public BUTIL::Singleton<ConfigManager>
 {
 

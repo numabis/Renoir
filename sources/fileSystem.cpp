@@ -17,17 +17,7 @@ fileSystem::~fileSystem(void)
 
 void fileSystem::init()
 {
-    //fsConfig = GETCM.getFsConfig();
-    //fsConfig.autoReadFolder = GETCM.getConfigBool(CONF_FS_AUTOREADFOLDER);
-    //fsConfig.extentions = GETCM.getConfigVect(CONF_FS_EXTENTIONS, ",");
-    //fsConfig.searchTypes = GETCM.getConfigBool(CONF_FS_SEARCHTYPES);
-
 }
-
-//void fileSystem::init(FS_CONFIG *_FsConfig)
-//{
-//    fsConfig = _FsConfig;
-//}
 
 static DWORD WINAPI readFolderThread(void* Param)
 {
@@ -87,33 +77,30 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
     strType[TYPE_ANIM] = GETCM.getConfigStr(CONF_FS_TYPEANIM);
     strType[TYPE_DOC] = GETCM.getConfigStr(CONF_FS_TYPEDOC);
     strType[TYPE_SHORT] = GETCM.getConfigStr(CONF_FS_TYPESHORT);
-    //filetype file;
-    progressCounter[CNT_READ] = 0;
-    progressCounter[CNT_TOTAL] = 0;
-    progressCounter[CNT_MAX_READ] = 0;
+
+    //progressCounter[CNT_READ] = 0;
+    //progressCounter[CNT_TOTAL] = 0;
+    //progressCounter[CNT_MAX_READ] = 0;
+
+    int localProgressCounter = 0;
 
     std::string currentFolder = GETCM.getConfigStr(CONF_APP_CURRENTFOLDER);
 
-    for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
-    {
-        //MovieFile file;
-        if (std::find(extList.begin(), extList.end(), entry.path().extension().string()) != extList.end())
-        //if (file.fileIsMovie(entry.path().extension().string()))
-        {
-            progressCounter[CNT_TOTAL]++;
-        }
-    }
+    //for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
+    //{
+    //    if (std::find(extList.begin(), extList.end(), entry.path().extension().string()) != extList.end())
+    //    {
+    //        //progressCounter[CNT_TOTAL]++;
+    //        localProgressCounter++;
+    //    }
+    //}
 
-    {
-        if (GETDB.getPathId(currentFolder) == -1)
-        {
-            MovieFolder homeFolder(currentFolder, true);
-            homeFolder.insertDB();
-        }
-    }
+    //if (GETDB.getPathId(currentFolder) == -1)
+    //{
+    //    MovieFolder homeFolder(currentFolder, true);
+    //    homeFolder.insertDB();
+    //}
 
-    //GETDB.bulkInit(TAB_PATHFS);
-    //GETDB.bulkInit(TAB_MOVIESFS);
     GETDB.TRANSACTION_begin();
     for (const auto & entry : fs::recursive_directory_iterator(currentFolder))
     {
@@ -130,9 +117,9 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
             file.setPath(entry.path().parent_path().string());
             file.setIsSub(file.pathCompare(currentFolder)!=0);
             file.setIsRead(true);
-            //file.insertDB();
             file.exists = true;
-            progressCounter[CNT_READ]++;
+            //progressCounter[CNT_READ]++;
+            localProgressCounter++;
             if (GetFileAttributesEx((LPCWSTR)BUTIL::Convert::string2wstring(entry.path().string()).c_str(), GetFileExInfoStandard, &fInfo))
             {
                 min = &fInfo.ftCreationTime;
@@ -150,12 +137,9 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
             else
             {
                 int error = GetLastError();
-                exLOGERROR("GetFileAttributesEx Error: %d", error);
+                std::string errorMsg = BUTIL::Util::GetLastErrorAsString();
+                exLOGERROR("GetFileAttributesEx Error: %s", errorMsg.c_str());
             }
-
-            //char * strType[TYPE_MAX] = { SERIES, ANIMATION, DOCUMENTARY, SHORT };
-
-            //std::vector<std::string>::iterator it;
 
             if (GETCM.getConfigBool(CONF_FS_SEARCHTYPES))
             {
@@ -173,18 +157,12 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
                 GETDB.getData(&file);
 
             file.initMovieValue();
-            GETDB.getMovieData(&file);
-            //if (GETDB.getMovieData(&file))
-            //{
-            //    file.imdbId = file.getMovie()->getImdbId();
-            //    file.imdbRating = file.getMovie()->getImdbRating();
-            //}
-            //int exists = GETDB.MOVIESFS_exists(&file);
+            if (file.isImdbId() == false)
+                GETDB.getMovieData(&file);
+
             if (exists <= 0)
             {
                 GETDB.MOVIESFS_insert(&file);
-                //GETDB.getMovieFSId(&file);
-                //GETDB.bulkInsertMovieFS(&file);
             }
             else
             {
@@ -204,9 +182,6 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
                 }
 
                 GETDB.MOVIESFS_update(&file, fields);
-
-                
-
             }
             file.dateAdded = file.dateAdded.substr(0, 10);
             mtx_readfiles.lock();
@@ -215,24 +190,13 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
         }
     }
     GETDB.TRANSACTION_commit();
-    //GETDB.bulkInsertCommit(TAB_PATHFS);
-    //GETDB.bulkInsertCommit(TAB_MOVIESFS);
+    MovieFolder homeFolder(currentFolder, true);
+    homeFolder.updateDB();
     ST_RESTORE();
-    return progressCounter[CNT_READ];
+    //return progressCounter[CNT_READ];
+    return localProgressCounter;
 }
 
-//std::string fileSystem::getFolderPath()
-//{
-//    return *fsConfig->path;
-//}
-
-//void fileSystem::setFolderPath(std::string _path)
-//{
-//    *fsConfig->path = _path;
-////    BUTIL::Convert::toLower(&fsConfig->path);
-//}
-
-//int *fileSystem::getReadFiles()
 void fileSystem::setProgressCounter(size_t * _progressCounter)
 {
     progressCounter = _progressCounter;

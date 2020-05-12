@@ -2220,7 +2220,7 @@ int DataBase::insertInDefTabs(int _table, std::string _value)
 
     request = COUNTFROM(_table) + WHERE(EQUAL(tabColId, _value));
     ret = execScalar(request);
-    if (ret > 0)
+    if (ret >= 0)
         return ERROR_SUCCESS;
 
     request = INSERTINTO(_table) + INSERTCOLS(tabColId) + INSERTVALS(_value.c_str());

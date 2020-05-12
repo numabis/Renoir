@@ -76,7 +76,7 @@ namespace BUTIL
         for (size_t i = 0; i < _str->length(); ++i) {
             switch ((*_str)[i]) {
             case ' ':
-            case '\'':
+            //case '\'':
             case '-':
             case '_':
             case '.':
@@ -115,26 +115,34 @@ namespace BUTIL
             case ':':
             case ',':
             case '\'':
-                (*_str)[i] = '%';
-                break;
             case 'é':
             case 'è':
             case 'ê':
-                (*_str)[i] = 'e';
-                break;
             case 'á':
             case 'à':
-                (*_str)[i] = 'a';
-                break;
             case 'ú':
-                (*_str)[i] = 'u';
-                break;
             case 'ó':
-                (*_str)[i] = 'o';
-                break;
             case 'í':
-                (*_str)[i] = 'i';
+                (*_str)[i] = '%';
                 break;
+//            case 'é':
+//            case 'è':
+//            case 'ê':
+//                (*_str)[i] = 'e';
+//                break;
+//            case 'á':
+//            case 'à':
+//                (*_str)[i] = 'a';
+//                break;
+//            case 'ú':
+//                (*_str)[i] = 'u';
+//                break;
+//            case 'ó':
+//                (*_str)[i] = 'o';
+//                break;
+//            case 'í':
+//                (*_str)[i] = 'i';
+//                break;
             }
         }
         //*_str += "%";

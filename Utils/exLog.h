@@ -13,6 +13,7 @@
 #define exLOGSQL(...)	BUTIL::exLog::getInstance().exlog(BUTIL::exLog::exLOG_SQL,    __FUNCTION__, ##__VA_ARGS__);
 #define exLOGXML(...)	BUTIL::exLog::getInstance().exlog(BUTIL::exLog::exLOG_XML,   __FUNCTION__, ##__VA_ARGS__);
 #define exLOGDEBUG(...)	BUTIL::exLog::getInstance().exlog(BUTIL::exLog::exLOG_DEBUG, __FUNCTION__, ##__VA_ARGS__);
+#define ERRORMBOX(MERROR)           MBOX(std::string(__FUNCTION__) + std::string(":") + MERROR, "Error", MB_ICONERROR | MB_OK);
 
 #define ST_SAVE(MY_ST) states preState = *ptr_globalState; *ptr_globalState = MY_ST; //consoleDBG->push_back(BUTIL::exLog::stNames[MY_ST]);
 #define ST_SET(MY_ST) *ptr_globalState = MY_ST; //consoleDBG->push_back(stNames[MY_ST]);
