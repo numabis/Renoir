@@ -56,7 +56,8 @@ Name: "{group}\Renoir"; Filename: "{app}\{#ExeName}" ; WorkingDir: "{app}"
 Name: "{commondesktop}\Renoir"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
 
 [Run]
-Filename: "{app}\readme.txt"; Description: "View the readme file"; Flags: nowait shellexec skipifsilent
+Filename: "{app}\readme.txt"; Description: "View the readme file"; Flags: postinstall shellexec skipifsilent
+Filename: "{app}\renoir.pdf"; Description: "Open user manual (PDF)"; Flags: postinstall shellexec skipifsilent
 Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,Omdb Client}"; Flags: postinstall skipifsilent waituntilterminated
 
 
