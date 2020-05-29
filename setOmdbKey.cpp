@@ -1,5 +1,6 @@
 // setOmdbKey.cpp: archivo de implementación
 //
+#include "definitions.h"
 
 #include "stdafx.h"
 #include "renoir.h"
@@ -20,13 +21,14 @@ BOOL setOmdbKey::OnInitDialog()
         {
             dialogStatics[line] = (CStatic *)GetDlgItem(idcLines[line]);
             cs_loaded.Format(BUTIL::Convert::string2wstring(texts[line]).c_str());
+            cs_loaded = CString(texts[line].c_str());
             dialogStatics[line]->SetWindowText(cs_loaded);
             dialogStatics[line]->ShowWindow(SW_SHOW);
         }
     }
     
     link = (CLinkCtrl*)GetDlgItem(IDC_SYSLINK_OMDB);
-    if (wurl != nullptr)
+    if (url != nullptr)
     {
         //"<a>https://www.omdbapi.com/apikey.aspx</a>"
         link->SetWindowText(m_strDlgCaption);
@@ -38,6 +40,7 @@ BOOL setOmdbKey::OnInitDialog()
     edit = (CEdit *)GetDlgItem(IDC_EDIT_APIKEY);
     CString tmp;
     tmp.Format(L"%s", BUTIL::Convert::string2wstring(*value).c_str());
+    tmp = CString(value->c_str());
     edit->SetWindowTextW(tmp);
     return true;
 }
@@ -81,19 +84,19 @@ void setOmdbKey::setValue(std::string *_value)
     value = _value;
 }
 
-void setOmdbKey::setURL(wchar_t *_url)
+void setOmdbKey::setURL(const char * _url)
 {
-    wurl = _url;
+    url = _url;
     m_strDlgCaption.Format(L"<a>%s</a>", _url);
 }
 
 void setOmdbKey::OnNMClickSyslinkOmdb(NMHDR *pNMHDR, LRESULT *pResult)
 { //IDC_SYSLINK_OMDB
-    ShellExecute(
+    ShellExecuteA(
         NULL, // or your can use GetSafeHwnd()
-        L"open",
+        "open",
         //        L"https://www.omdbapi.com/apikey.aspx",
-        wurl,
+        url,
         NULL,
         NULL,
         SW_SHOWNORMAL

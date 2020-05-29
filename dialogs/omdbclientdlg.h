@@ -6,8 +6,7 @@
 #include "FolderManager.h"
 #include "configManager.h"
 #include "database.h"
-//#include "configManager.h"
-#include "omdb.h"
+
 #include "fileSystem.h"
 #include "manageXML.h"
 #include "log.h"
@@ -42,13 +41,14 @@ public:
     enum { IDD = IDD_RENOIR_DIALOG };
 
     size_t columnSizes   [DataBase::NUM_COLUMNS];
-    char* columNames     [DataBase::NUM_COLUMNS] = { "FsId", "Path", "Name", "isDel", "Added", "Size", "ImdbID", "isSerie", "isAnim", "iDoc", "isShort", "Rating" };
+//    char* columNames     [DataBase::NUM_COLUMNS] = { "FsId", "Path", "Name", "isDel", "Added", "Size", "ImdbID", "isSerie", "isAnim", "iDoc", "isShort", "Rating" };
+    wchar_t* columNames  [DataBase::NUM_COLUMNS] = { L"FsId", L"Path", L"Name", L"isDel", L"Added", L"Size", L"ImdbID", L"isSerie", L"isAnim", L"iDoc", L"isShort", L"Rating" };
     size_t columnMinSizes[DataBase::NUM_COLUMNS] = {    10,     50,    100,      0,        50,     50,       80,        50,       50,     50,        50,      25  };
     size_t columnMaxSizes[DataBase::NUM_COLUMNS] = {    20,    400,    400,     20,       150,    120,      150,       120,      120,    120,       120,      90  };
     size_t columnMultipli[DataBase::NUM_COLUMNS] = {    12,     15,     15,     10,        12,     15,       12,        15,       15,     15,        15,      15  };
     bool columnsToSHow   [DataBase::NUM_COLUMNS] = { false,  false,   true,  false,      true,   true,     true,     false,    false,  false,     false,    true  };
 
-    enum BTN_OMDB { BTN_OMDB_SINGLE, BTN_OMDB_ALL, BTN_OMDB_ALL_STOP, CHK_OMDB_FORCE, CHK_OMDB_AUTO, BTN_OMDB_MAX };
+    enum BTN_OMDB { BTN_OMDB_SINGLE, BTN_OMDB_SEARCH, BTN_OMDB_ALL, BTN_OMDB_ALL_STOP, CHK_OMDB_FORCE, CHK_OMDB_AUTO, RADIO_AUTO, RADIO_MANUAL, BTN_OMDB_MAX };
     enum BTN_XMLFILE { BTN_XMLFILE_READ, BTN_XMLFILE_WRITE, BTN_XMLFILE_MAX };
     enum BTN_ALL { BTN_PLAY, BTN_RESET_DIRECTORS, BTN_RESET_ACTORS, BTN_ALL_MAX };
     enum STATIC_ALL { STATIC_TEXT, STATIC_DESC, STATIC_KEY, STATIC_ALL_MAX };
@@ -58,7 +58,7 @@ public:
 
     short subMenuFilter[SUBMENUFILTER_MAX] = { IDC_BUTTON_FILTER_DIRECTORS, IDC_BUTTON_FILTER_DIRECTORS + 1, IDC_BUTTON_FILTER_DIRECTORS + 2, IDC_BUTTON_FILTER_DIRECTORS + 3, IDC_BUTTON_FILTER_DIRECTORS + 4, IDC_BUTTON_FILTER_ACTORS, IDC_BUTTON_FILTER_ACTORS + 1, IDC_BUTTON_FILTER_ACTORS + 2, IDC_BUTTON_FILTER_ACTORS + 3, IDC_BUTTON_FILTER_ACTORS + 4, IDC_BUTTON_FILTER_ACTORS + 5 };
 
-    short idcOmdb[BTN_OMDB_MAX] = { IDC_BUTTON_OMDB_REQUEST, IDC_BUTTON_OMDB_ALL, IDC_BUTTON_OMDB_ALL_STOP, IDC_CHECK_FORCE, IDC_CHECK_AUTOOMDB/*, IDC_BUTTON_OMDB_SETKEY*/ };
+    short idcOmdb[BTN_OMDB_MAX] = { IDC_BUTTON_OMDB_REQUEST, IDC_BUTTON_OMDB_SEARCH, IDC_BUTTON_OMDB_ALL, IDC_BUTTON_OMDB_ALL_STOP, IDC_CHECK_FORCE, IDC_CHECK_AUTOOMDB, IDC_RADIO_AUTO, IDC_RADIO_MANUAL/*, IDC_BUTTON_OMDB_SETKEY*/ };
     short idcXmlFile[BTN_XMLFILE_MAX] = { IDC_BUTTON_LOADXMLFILE, IDC_BUTTON_WRITEXMLFILE };
     short idcMovieInfo[INFO_MAX] = { IDC_EDIT_TITLE , IDC_EDIT_RUNTIME, IDC_EDIT_GENRES, IDC_EDIT_DIRECTOR, IDC_EDIT_WRITERS, IDC_EDIT_ACTORS,IDC_EDIT_PLOT };
     short idcStaticMovieInfo[INFO_MAX] = { 0 , 0, 0, IDC_STATIC_DIRECTOR, IDC_STATIC_WRITER, IDC_STATIC_ACTORS,0 };
@@ -98,6 +98,7 @@ public:
         { // SUBMENU_OMDB
             { LOC_SYSMENU, MENU_OMDBSETKEY },
             { LOC_SYSMENU, MENU_OMDB1REQ },
+            { LOC_SYSMENU, MENU_OMDBSEARCH },
             { LOC_SYSMENU, MENU_OMDBXREQ },
             { LOC_SYSMENU, MENU_OMDBSTOP },
         },
@@ -144,6 +145,7 @@ public:
         { LOC_CONMENU, MENU_OPEN_WEB },
         { LOC_SYSMENU | LOC_CONMENU, MF_SEPARATOR, 0 },
         { LOC_CONMENU, MENU_OMDB1REQ },
+        { LOC_CONMENU, MENU_OMDBSEARCH },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_FILE, L"&File" },
         { LOC_SYSMENU            , MF_POPUP, SUBMENU_OMDB, L"&Omdb" },
         //{ LOC_SYSMENU            , MF_POPUP, SUBMENU_FS, L"File &System" },
@@ -200,8 +202,11 @@ protected:
 
 private:
 
+    std::string versionRenoir = MY_PRODUCT_FILE_VERSION2;
+    std::string versionDB;
+
     MovieFile selectedFile;
-    Omdb omdb;
+//    Omdb omdb;
     ManageXML xmlFiles;
 //    ReadConfig xmlConfig;
     fileSystem fs;
@@ -261,6 +266,7 @@ private:
     bool forceOmdb;
     bool autoOmdb;
     bool isApiKeySet;
+    bool manualRequest;
     size_t progressCounter[CNT_FIELD];
 
     DataBase::moviesFSFilters *filters;
@@ -274,7 +280,7 @@ private:
     void OnInitDialogMenus();
     bool OnInitDialogConfig();
     void OnInitDialogValues();
-    bool OnInitDialogData();
+    bool OnInitDialogAppVars();
 
     void setSavedFilters();
     void loadDatabase(bool _readfolder = true);
@@ -328,15 +334,16 @@ private:
     void editImdbId(void);
     void showDebugWindow(void);
     size_t textDebugWindowAt(int _pos, const char *, ...);
-    size_t textDebugWindowAt(int _pos, const wchar_t *, ...);
+    //size_t textDebugWindowAt(int _pos, const wchar_t *, ...);
     size_t textDebugWindowAt(int _pos, std::string);
     size_t textDebugWindow(const char *, ...);
-    size_t textDebugWindow(const wchar_t *, ...);
+    //size_t textDebugWindow(const wchar_t *, ...);
     size_t textDebugWindow(std::string);
     void editFileName(void);
     void openImdbWeb(void);
     void openExplorer(void);
-    bool omdbRequest(MovieFile *file);
+    void showSearchResult(void);
+    bool omdbRequest();
     void omdbAllRequest(void);
     void omdbAllStop(void);
     void omdbSingleRequest(void);
@@ -353,8 +360,8 @@ private:
     std::string getStringPond(DataBase::pondStr);
     void playMovie(void);
 
-    virtual void OnOK();
-    virtual void OnCancel();
+    virtual void OnOK(void);
+    virtual void OnCancel(void);
 public:
 
     afx_msg void OnLvnItemchangedMovieList(NMHDR *pNMHDR, LRESULT *pResult);
@@ -412,4 +419,6 @@ public:
     afx_msg void OnEnChangeEditSearch2();
     //afx_msg void OnLButtonDblClk(NMHDR *pNMHDR, LRESULT *pResult);
     //afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+    afx_msg void OnBnClickedRadioAuto();
+    afx_msg void OnBnClickedRadioManual();
 };

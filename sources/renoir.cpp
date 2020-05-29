@@ -9,7 +9,6 @@
 #include "Util.h"
 #include "omdbClientDlg.h"
 
-
 BEGIN_MESSAGE_MAP(renoirApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()

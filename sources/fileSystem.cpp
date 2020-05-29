@@ -120,7 +120,8 @@ int fileSystem::readFolderStart(ManageXML *_xmlFiles)
             file.exists = true;
             //progressCounter[CNT_READ]++;
             localProgressCounter++;
-            if (GetFileAttributesEx((LPCWSTR)BUTIL::Convert::string2wstring(entry.path().string()).c_str(), GetFileExInfoStandard, &fInfo))
+
+            if (GetFileAttributesExA(entry.path().string().c_str(), GetFileExInfoStandard, &fInfo))
             {
                 min = &fInfo.ftCreationTime;
                 if (min->dwHighDateTime > fInfo.ftLastAccessTime.dwHighDateTime)

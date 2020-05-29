@@ -30,3 +30,13 @@ CONTACT
 
 email at numabis@riseup.net
 
+
+Enhancement & bug-fixes:
+----------
+
+V.0.9.2  	ADDED : search panel.
+V.0.9.1  	ADDED : Open file location.
+			ADDED : Search in combo
+			FIXED : Context Menu
+V.0.9.0		ADDED : search bar
+			ADDED : Config Manager

@@ -8,6 +8,7 @@
 #define SysWord     "x86"
 #define SourceDir   "../"
 #define ExeName     "Renoir.exe"
+#define JpgEmpty	"notFound.jpg"
 #define Release     "Release"
 #define AppName     "Renoir"
 #define LibDir      SourceDir + "\Libs"
@@ -17,7 +18,7 @@
 #define Publisher   "NumaCorp"
 #define URL         "https://github.com/numabis/renoir"
   
-AppId={{0403370A-B8FF-4AC7-A8DE-1907B23BCB94}
+AppId={{FB8DA164-D048-4494-8F69-E8C23C5D1B0F}
 AppName={#AppName}
 VersionInfoVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
@@ -42,6 +43,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#BinDir}\{#ExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourceDir}\{#JpgEmpty}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#configDir}\config.xml"; DestDir: "{app}\Config"; Flags: ignoreversion
 Source: "{#SourceDir}\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourceDir}\Renoir.pdf"; DestDir: "{app}"; Flags: ignoreversion
@@ -56,7 +58,7 @@ Name: "{commondesktop}\Renoir"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon
 [Run]
 Filename: "{app}\readme.txt"; Description: "View the readme file"; Flags: postinstall shellexec skipifsilent
 Filename: "{app}\renoir.pdf"; Description: "Open user manual (PDF)"; Flags: postinstall shellexec skipifsilent
-Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,Omdb Client}"; Flags: postinstall skipifsilent waituntilterminated
+Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,Renoir}"; Flags: postinstall skipifsilent waituntilterminated
 
 
 

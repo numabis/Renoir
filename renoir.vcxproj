@@ -126,7 +126,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -196,7 +196,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -256,7 +256,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_DEMO;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -336,7 +336,11 @@
     <ClInclude Include="dialogs\OmdbClientDlg.h" />
     <ClInclude Include="dialogs\OmdbClientImdbIdEditDlg.h" />
     <ClInclude Include="dialogs\resource.h" />
+    <ClInclude Include="Movies\Movie.h" />
+    <ClInclude Include="Movies\movieFile.h" />
+    <ClInclude Include="Movies\movieFolder.h" />
     <ClInclude Include="PictureControl\PictureCtrl.h" />
+    <ClInclude Include="SearchResults.h" />
     <ClInclude Include="setOmdbKey.h" />
     <ClInclude Include="ShowColumns.h" />
     <ClInclude Include="sources\configManager.h" />
@@ -344,9 +348,8 @@
     <ClInclude Include="sources\fileSystem.h" />
     <ClInclude Include="sources\manageXML.h" />
     <ClInclude Include="sources\menus.h" />
-    <ClInclude Include="sources\Movie.h" />
-    <ClInclude Include="sources\movieFile.h" />
     <ClInclude Include="sources\omdb.h" />
+    <ClInclude Include="sources\omdbXML.h" />
     <ClInclude Include="sources\renoir.h" />
     <ClInclude Include="sources\readConfig.h" />
     <ClInclude Include="sources\variables.h" />
@@ -370,15 +373,18 @@
     <ClCompile Include="dialogs\FolderManager.cpp" />
     <ClCompile Include="dialogs\OmdbClientDlg.cpp" />
     <ClCompile Include="dialogs\OmdbClientImdbIdEditDlg.cpp" />
+    <ClCompile Include="Movies\Movie.cpp" />
+    <ClCompile Include="Movies\movieFile.cpp" />
+    <ClCompile Include="Movies\movieFolder.cpp" />
     <ClCompile Include="PictureControl\PictureCtrl.cpp" />
+    <ClCompile Include="SearchResults.cpp" />
     <ClCompile Include="setOmdbKey.cpp" />
     <ClCompile Include="ShowColumns.cpp" />
     <ClCompile Include="sources\configManager.cpp" />
     <ClCompile Include="sources\fileSystem.cpp" />
     <ClCompile Include="sources\manageXML.cpp" />
-    <ClCompile Include="sources\Movie.cpp" />
-    <ClCompile Include="sources\movieFile.cpp" />
     <ClCompile Include="sources\omdb.cpp" />
+    <ClCompile Include="sources\omdbXML.cpp" />
     <ClCompile Include="sources\renoir.cpp" />
     <ClCompile Include="sources\readConfig.cpp" />
     <ClCompile Include="stdafx.cpp" />

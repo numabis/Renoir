@@ -23,6 +23,12 @@
     <Filter Include="DataBase">
       <UniqueIdentifier>{49e32899-ad9d-446f-9000-095357716a3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="omdb">
+      <UniqueIdentifier>{0d970cff-cd86-4546-b9d8-6b178c0633e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="movies">
+      <UniqueIdentifier>{74cdaf49-8d1b-4d95-aa10-ee23d389d902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -68,12 +74,6 @@
     <ClInclude Include="sources\manageXML.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Movie.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\omdb.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="sources\readConfig.h">
       <Filter>sources</Filter>
     </ClInclude>
@@ -84,9 +84,6 @@
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="sources\renoir.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\movieFile.h">
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="dialogs\resource.h" />
@@ -135,6 +132,22 @@
     <ClInclude Include="dialogs\FolderManager.h">
       <Filter>dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="sources\omdbXML.h">
+      <Filter>omdb</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\omdb.h">
+      <Filter>omdb</Filter>
+    </ClInclude>
+    <ClInclude Include="Movies\Movie.h">
+      <Filter>movies</Filter>
+    </ClInclude>
+    <ClInclude Include="Movies\movieFile.h">
+      <Filter>movies</Filter>
+    </ClInclude>
+    <ClInclude Include="Movies\movieFolder.h">
+      <Filter>movies</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchResults.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -180,19 +193,10 @@
     <ClCompile Include="sources\manageXML.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Movie.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\omdb.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="sources\readConfig.cpp">
       <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="sources\renoir.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\movieFile.cpp">
       <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="setOmdbKey.cpp">
@@ -216,6 +220,22 @@
     <ClCompile Include="dialogs\FolderManager.cpp">
       <Filter>dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="sources\omdbXML.cpp">
+      <Filter>omdb</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\omdb.cpp">
+      <Filter>omdb</Filter>
+    </ClCompile>
+    <ClCompile Include="Movies\Movie.cpp">
+      <Filter>movies</Filter>
+    </ClCompile>
+    <ClCompile Include="Movies\movieFile.cpp">
+      <Filter>movies</Filter>
+    </ClCompile>
+    <ClCompile Include="Movies\movieFolder.cpp">
+      <Filter>movies</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchResults.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dialogs\mainWindow.rc">

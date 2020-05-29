@@ -1,53 +1,14 @@
+#ifndef _MOVIE_FILE_H_
+#define _MOVIE_FILE_H_
 #pragma once
 
 #include <string>
 #include "Movie.h"
+#include "MovieFolder.h"
+#include "omdb.h"
 
-enum FOLDER_STAT { FOLDER_ISREAD, FOLDER_ISSUB, FOLDER_ISHIDDEN };
 
-class MovieFolder
-{
-public:
-    MovieFolder(std::string);
-    MovieFolder(std::string, int, bool, bool, bool);
-    MovieFolder(std::string, bool);
-    MovieFolder(void);
-    ~MovieFolder(void);
-    void resetFolder(void);
-    
-    void setFolder(MovieFolder _folder);
-    void setFolder(MovieFile _file);
-    void setPath(std::string);
-    void setIdPath(short);
-    void setIsSub(bool);
-    void setIsHide(bool);
-    void setIsRead(bool);
-    
-    std::string getPath(void);
-    short getIdPath(void);
-    bool isSub(void);
-    bool isHide(void);
-    bool isRead(void);
-    
-    int pathCompare(std::string);
-    bool guessType(std::string);
-    void guessType();
-    bool isPathEmpty();
-    int  insertDB();
-    int  updateDB();
-    bool updateIsRead(FOLDER_STAT);
-
-private:
-    char * strType[TYPE_MAX] = MOVIE_TYPES;
-    std::string path;
-    short id;
-    bool  subfolder;
-    bool  hide;
-    bool  read;
-    typesValues typeIs[TYPE_MAX];
-};
-
-class MovieFile: public MovieFolder
+class MovieFile: /*public Omdb, */public MovieFolder
 {
 
 public:
@@ -85,14 +46,35 @@ public:
     std::string getExt(void);
     void setMovie(Movie _movie);
     bool isImdbId(void);
+
+    /* OMDB */
     std::string getOmdbXml(void);
     void setOmdbXml(std::string, bool);
+    void clearSearchResults();
+    void setSearchResults(std::vector <omdbSearchValues> *_results);
     bool isOmdbXmlSetted(void);
+
     void initMovieValue();
     void initMovieValue(std::string*, std::string);
     void fileNameToDetails(void);
     std::string getFullPath(void);
     std::string getFullPath(std::string);
+    bool omdbRequest();
+    int omdbSearch();
+    void omdbSetLimit(int _limit);
+    int omdbGetLimit();
+    int omdbGetTotalResults();
+
+    std::vector <omdbSearchValues> * getOmdbSearchResults();
+
+    /*FOLDER*/
+    //void setPath(std::string);
+    //void setIsSub(bool);
+    //int pathCompare(std::string);
+    //void setIsRead(bool);
+    //bool guessType(std::string);
+    //std::string getPath(void);
+    //void setIdPath(short);
 
 #ifdef USEJSON
     std::string getOmdbJson();
@@ -101,15 +83,24 @@ public:
 #endif
 
 private:
+
+    Omdb omdb;
+    MovieFolder folder;
+
     FS_CONFIG *fsConfig;
 
     std::string ext;
     std::string filename;
 
-    friend class MovieFolder;
+    //friend class MovieFolder;
+    //friend class Omdb;
+
     Movie movie;
     std::string omdbXml;
+    std::vector <omdbSearchValues> omdbSearchResults;
     bool isOmdbXml;
+    bool omdbResponse;
+    int omdbResult;
 #ifdef USEJSON
     std::string omdbJson;
     bool isOmdbJson;
@@ -118,3 +109,5 @@ private:
     void normalize(std::string *str);
   
 };
+
+#endif // _MOVIE_FILE_H_

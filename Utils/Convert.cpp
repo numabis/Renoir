@@ -100,7 +100,10 @@ namespace BUTIL
                 break;
             case 'í':
                 (*_str)[i] = 'i';
-                break;            
+                break;
+            case '&':
+                _str->replace(i, 1, "%26");
+                break;
             }
         }
     }
@@ -292,6 +295,36 @@ namespace BUTIL
         }
 
         return result;
+    }
+
+    void Convert::separateValues(std::vector<std::string> *v_list, std::string _list, std::string _sep)
+    {
+        v_list->clear();
+        size_t list_sz = _list.size();
+        size_t list_end = list_sz;
+        size_t found = _list.find_last_of(_sep);
+        size_t next = found;
+        while (_list[next + 1] == ' ') next++;
+        while (found != std::string::npos)
+        {
+            list_end = _list.find_last_of("(");
+            if (list_end == std::string::npos)
+                list_end = list_sz;
+            else
+                list_end -= 1;
+            v_list->push_back(_list.substr(next + 1, list_end - next - 1));
+            list_sz = found;
+            _list.resize(found);
+            found = _list.find_last_of(_sep);
+            next = found;
+            while (_list[next + 1] == ' ') next++;
+        }
+        list_end = _list.find_last_of("(");
+        if (list_end == std::string::npos)
+            list_end = list_sz;
+        else
+            list_end--;
+        v_list->push_back(_list.substr(0, list_end));
     }
 }
 

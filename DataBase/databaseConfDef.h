@@ -16,21 +16,43 @@
 #define CONF_FS_LANGSPANISH	            "FS_LANG_spanish"
 #define CONF_FS_LANGENGLISH	            "FS_LANG_english"
 #define CONF_FS_LANGITALIAN	            "FS_LANG_italian"
+
 #define CONF_DB_RESET	                "DB_reset"
+
 #define CONF_LOG_LOGLEVEL	            "LOG_loglevel"
+
 #define CONF_APP_CURRENTFOLDER	        "APP_currentfolder"
 #define CONF_APP_VIDEOPLAYER	        "APP_videoplayer"
 #define CONF_APP_SHOWDEBUG  	        "APP_showdebug"
-#define CONF_OMDB_APIKEY	            "OMDB_apikey"
-#define CONF_OMDB_URL	                "OMDB_url"
-#define CONF_OMDB_APIREQUEST	        "OMDB_apirequest"
-#define CONF_OMDB_TYPE	                "OMDB_type"
-#define CONF_OMDB_PLOT	                "OMDB_plot"
+#define CONF_APP_AUTOREQUEST            "APP_autorequest"
+#define CONF_APP_FORCEREQUEST           "APP_forcerequest"
+#define CONF_APP_REQUESTTYPEMANUAL      "APP_requesttypemanual"
+#define CONF_APP_JPGNOTFOUND            "APP_jpgnotfound"
+
+#define CONF_OMDB_QUERY_URL             "OMDB_QURL"
+#define CONF_OMDB_QUERY_REQUEST	        "OMDB_QURLAPI"
 #define CONF_OMDB_LISTSEPARATOR	        "OMDB_listseparator"
 #define CONF_OMDB_TESTMODE	            "OMDB_testmode"
+#define CONF_OMDB_QUERY_SEARCH          "OMDB_searchQ"
+#define CONF_OMDB_QUERY_TITLE           "OMDB_titleQ"
+#define CONF_OMDB_QUERY_YEAR            "OMDB_yearQ"
+#define CONF_OMDB_QUERY_PAGE            "OMDB_pageQ"
+#define CONF_OMDB_QUERY_IMDBID          "OMDB_imdbidQ"
+#define CONF_OMDB_QUERY_CALLBACK        "OMDB_callbackQ"
+#define CONF_OMDB_QUERY_VERSION         "OMDB_versionQ"
+#define CONF_OMDB_QUERY_APIKEY	        "OMDB_apikeyQ"
+#define CONF_OMDB_APIKEY	            "OMDB_apikey"
+#define CONF_OMDB_QUERY_MOVIE_TYPE      "OMDB_movietypeQ"
+#define CONF_OMDB_MOVIE_TYPE            "OMDB_movietype"
+#define CONF_OMDB_QUERY_PLOT            "OMDB_plotQ"
+#define CONF_OMDB_PLOT	                "OMDB_plot"
+#define CONF_OMDB_QUERY_RETURN_TYPE     "OMDB_returntypeQ"
+#define CONF_OMDB_RETURN_TYPE           "OMDB_returntype"
+
 #define CONF_IMDB_URL	                "IMDB_url"
 #define CONF_IMDB_TITLE	                "IMDB_title"
 #define CONF_IMDB_FIND	                "IMDB_find"
+
 #define CONF_FILTER_DIRECTORS	        "FILTER_directors"
 #define CONF_FILTER_USE_DIRECTORS	    "FILTER_USE_directors"
 #define CONF_FILTER_WRITERS	            "FILTER_writers"
@@ -57,6 +79,7 @@
 #define CONF_FILTER_USE_DOC	            "FILTER_USE_doc"
 #define CONF_FILTER_SHORT	            "FILTER_short"
 #define CONF_FILTER_USE_SHORT	        "FILTER_USE_short"
+
 #define CONF_XML_PATH	                "XML_path"
 #define CONF_XML_FILENAME	            "XML_filename"
 #define CONF_XML_FILENAMEEXT  	        "XML_filenameext"  
@@ -78,10 +101,27 @@
 { CONF_LOG_LOGLEVEL,                { "6", "DISABLED=0 ERROR=1 INFO=2 DB=3 XML=4 DEBUG=5 SQL=6" } }, \
 { CONF_APP_CURRENTFOLDER,           { "", "Actual Folder"} }, \
 { CONF_APP_VIDEOPLAYER,             { "", "Path to player"} }, \
-{ CONF_OMDB_APIKEY,                 {"", "Omdb Key"} }, \
-{ CONF_OMDB_URL,                    { "http://www.omdbapi.com/", "Omdb URL"} }, \
-{ CONF_OMDB_APIREQUEST,             { "apikey.aspx", "Omdb page"} }, \
-{ CONF_OMDB_TYPE,                   { "xml", "data in XML or JSON"} }, \
+{ CONF_APP_AUTOREQUEST,             { "1", "Automatically send requests to OMDB" } }, \
+{ CONF_APP_FORCEREQUEST,            { "0", "Force requests to OMDB" } }, \
+{ CONF_APP_REQUESTTYPEMANUAL,        { "1", "user validation is request to send queries to OMDB" } }, \
+{ CONF_APP_JPGNOTFOUND,             { ".\\notFound.jpg", ""}},\
+{ CONF_OMDB_APIKEY,                 { "", "Omdb Key"} }, \
+{ CONF_OMDB_QUERY_URL,              { "http://www.omdbapi.com/", "Omdb web URL"} }, \
+{ CONF_OMDB_QUERY_REQUEST,          { "apikey.aspx", "Omdb page"} }, \
+{ CONF_OMDB_QUERY_APIKEY,           { "apikey=", ""} }, \
+{ CONF_OMDB_QUERY_TITLE,            { "t=", "Movie title to search for." } }, \
+{ CONF_OMDB_QUERY_SEARCH,           { "s=", "Movie title to search for." } }, \
+{ CONF_OMDB_QUERY_PAGE,             { "page=", "Page number to return." } }, \
+{ CONF_OMDB_QUERY_YEAR,             { "y=", "Year of release." } }, \
+{ CONF_OMDB_QUERY_RETURN_TYPE,      { "r=", "The data type to return (json, xml)." } }, \
+{ CONF_OMDB_QUERY_IMDBID,           { "i=", "A valid IMDb ID" } }, \
+{ CONF_OMDB_QUERY_MOVIE_TYPE,       { "type=", "Type of result to return (movie, series, episode)." } }, \
+{ CONF_OMDB_QUERY_PLOT,	            { "plot=", "Return short or full plot (short, full)." } }, \
+{ CONF_OMDB_QUERY_CALLBACK,	        { "callback=", "JSONP callback name." } }, \
+{ CONF_OMDB_QUERY_VERSION,	        { "v=", "API version (reserved for future use)." } }, \
+{ CONF_OMDB_APIKEY,	                { "", "A valid OMDB API KEY" } }, \
+{ CONF_OMDB_RETURN_TYPE,            { "xml", "data in XML or JSON"} }, \
+{ CONF_OMDB_MOVIE_TYPE,             { "movie", "Type of result to return (movie, series, episode)"} }, \
 { CONF_OMDB_PLOT,                   { "full", "plot:full or short"} }, \
 { CONF_OMDB_LISTSEPARATOR,          { ",", "Actual Folder"} }, \
 { CONF_OMDB_TESTMODE,               { "false", "Actual Folder"} }, \

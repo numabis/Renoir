@@ -2,11 +2,16 @@
 #include "Convert.h"
 #include "definitions.h"
 #include "database.h"
-#include "omdb.h"
 #include "Util.h"
 #include "configManager.h"
 
 #include <fstream>
+
+#define NODE_ROOT "root"
+#define NODE_MOVIE "movie"
+#define NODE_ERROR "error"
+#define ATTR_RESPONSE "response"
+#define ATTR_TOTALRESULTS "totalResults"
 
 std::string omdbXmlAttr[] = { "title", "year", "rated", "released", "runtime", "genre", "director", "writer", "actors", "plot", "language", "country", "awards", "poster", "metascore", "imdbRating", "imdbVotes", "imdbID", "type" };
 std::vector<Movie> vectorMovies;
@@ -30,15 +35,15 @@ ManageXML::~ManageXML(void)
 //    omdbSeparator = _separator;
 //}
 
-void ManageXML::init()
-{
-    xmlpath = GETCM.getConfigStr(CONF_XML_PATH);
-}
-
-void ManageXML::init(std::string _path)
-{
-    xmlpath = _path;
-}
+//void ManageXML::init()
+//{
+//    xmlpath = GETCM.getConfigStr(CONF_XML_PATH);
+//}
+//
+//void ManageXML::init(std::string _path)
+//{
+//    xmlpath = _path;
+//}
 
 
 //std::string ManageXML::getXmlLocalFullPath()
@@ -87,12 +92,12 @@ bool ManageXML::readOmdbError(MovieFile *_file)
     TiXmlDocument docOmdbXml;
     TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getOmdbXml());
 
-    if (nodeRoot && std::string(nodeRoot->Value()) == "root")
+    if (nodeRoot && std::string(nodeRoot->Value()) == NODE_ROOT)
     {
-        bool response = BUTIL::Xml::XML_ATTR_bool(nodeRoot, "response");
+        bool response = BUTIL::Xml::XML_ATTR_bool(nodeRoot, ATTR_RESPONSE);
         if (response == false)
         {
-            TiXmlElement *nodeError = nodeRoot->FirstChildElement("error");
+            TiXmlElement *nodeError = nodeRoot->FirstChildElement(NODE_ERROR);
             if (nodeError)
             {
                 _file->setOmdbXml(nodeError->GetText(), false);
@@ -124,21 +129,21 @@ bool ManageXML::isRunning(HANDLE  _hThread)
 int ManageXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file)
 { 
     //ST_SAVE(ST_READING_FILE);
-    if (_nodeRoot && std::string(_nodeRoot->Value()) == "root")
+    if (_nodeRoot && std::string(_nodeRoot->Value()) == NODE_ROOT)
     {
-        bool response = BUTIL::Xml::XML_ATTR_bool(_nodeRoot, "response");
+        bool response = BUTIL::Xml::XML_ATTR_bool(_nodeRoot, ATTR_RESPONSE);
         if (response == true)
         {
-            TiXmlElement *nodeMovie = _nodeRoot->FirstChildElement("movie");
+            TiXmlElement *nodeMovie = _nodeRoot->FirstChildElement(NODE_MOVIE);
             if (nodeMovie)
             {
                 if (progressCounter[CNT_TOTAL] == 0)
-                for (TiXmlElement* e = _nodeRoot->FirstChildElement("movie"); e != NULL; e = e->NextSiblingElement("movie"))
+                for (TiXmlElement* e = _nodeRoot->FirstChildElement(NODE_MOVIE); e != NULL; e = e->NextSiblingElement(NODE_MOVIE))
                 {
                     progressCounter[CNT_TOTAL]++;
                 }
                 GETDB.TRANSACTION_begin();
-                for (TiXmlElement* e = _nodeRoot->FirstChildElement("movie"); e != NULL; e = e->NextSiblingElement("movie"))
+                for (TiXmlElement* e = _nodeRoot->FirstChildElement(NODE_MOVIE); e != NULL; e = e->NextSiblingElement(NODE_MOVIE))
                 {
                     if (stopThreads)
                     {
@@ -175,27 +180,72 @@ int ManageXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file)
 
 }
 
+void ManageXML::setGenRootNode(std::string _xml)
+{
+    //TiXmlDocument docOmdbXml;
+    genRootNode = BUTIL::Xml::parse(genXmlDoc, _xml);
+
+}
+
+int ManageXML::readTotalResults(TiXmlElement *_node)
+{
+    int totalResults = 0;
+
+    if (_node && std::string(_node->Value()) == NODE_ROOT)
+    {
+        totalResults = BUTIL::Xml::XML_ATTR_int(_node, ATTR_TOTALRESULTS);
+    }
+    return totalResults;
+}
+
+int ManageXML::readTotalResults(std::string _omdbRes)
+{
+    TiXmlDocument docOmdbXml;
+    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _omdbRes);
+
+    return readTotalResults(nodeRoot);
+}
+
+bool ManageXML::readResponse(TiXmlElement *_node)
+{
+    bool response = false;
+
+    if (_node && std::string(_node->Value()) == NODE_ROOT)
+    {
+        response = BUTIL::Xml::XML_ATTR_bool(_node, ATTR_RESPONSE);
+    }
+    return response;
+}
+
+bool ManageXML::readResponse(std::string _omdbRes)
+{
+    TiXmlDocument docOmdbXml;
+    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _omdbRes);
+
+    return readResponse(nodeRoot);
+}
+
 int ManageXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file, Movie *_movie)
 { //<root response="False"><error>Movie not found!</error></root>
     progressCounter[CNT_TOTAL] = 0;
     progressCounter[CNT_READ] = 0;
-    if (_nodeRoot && std::string(_nodeRoot->Value()) == "root")
+    if (_nodeRoot && std::string(_nodeRoot->Value()) == NODE_ROOT)
     {
-        bool response = BUTIL::Xml::XML_ATTR_bool(_nodeRoot, "response");
+        bool response = BUTIL::Xml::XML_ATTR_bool(_nodeRoot, ATTR_RESPONSE);
         if (response == true)
         {
-            TiXmlElement *nodeMovie = _nodeRoot->FirstChildElement("movie");
+            TiXmlElement *nodeMovie = _nodeRoot->FirstChildElement(NODE_MOVIE);
             if (nodeMovie) {
-                for (TiXmlElement* e = _nodeRoot->FirstChildElement("movie"); e != NULL; e = e->NextSiblingElement("movie"))
+                for (TiXmlElement* e = _nodeRoot->FirstChildElement(NODE_MOVIE); e != NULL; e = e->NextSiblingElement(NODE_MOVIE))
                 {
                     progressCounter[CNT_TOTAL]++;
                 }
             }
 
-            nodeMovie = _nodeRoot->FirstChildElement("movie");
+            nodeMovie = _nodeRoot->FirstChildElement(NODE_MOVIE);
             if (nodeMovie)
             {
-                for (TiXmlElement* e = _nodeRoot->FirstChildElement("movie"); e != NULL; e = e->NextSiblingElement("movie"))
+                for (TiXmlElement* e = _nodeRoot->FirstChildElement(NODE_MOVIE); e != NULL; e = e->NextSiblingElement(NODE_MOVIE))
                 {
                     std::string xmlValues[XML_NBATTRIBUTES];
                     memset(&xmlValues, 0, sizeof(xmlValues[XML_NBATTRIBUTES]));
@@ -218,7 +268,7 @@ int ManageXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file, Movie *_mo
 
 HANDLE ManageXML::saveMoviesToXml(std::string _path, bool _compress)
 {
-    xmlpath = _path;
+    //xmlpath = _path;
     saveXmlCompress = _compress;
     DWORD  hThreadIdArray;
     return  CreateThread(NULL, 0, saveMoviesToXmlThread, (void*) this, 0, &hThreadIdArray);
@@ -246,6 +296,8 @@ bool ManageXML::saveMoviesToXmlStart()
             progressCounter[CNT_READ]++;
         }
         std::string xml = BUTIL::Xml::createRoot(str.str(), true);
+
+        std::string xmlpath = GETCM.getConfigStr(CONF_XML_PATH) + "\\" + GETCM.getConfigStr(CONF_XML_FILENAME) + "." + GETCM.getConfigStr(CONF_XML_FILENAMEEXT);
 
         ret = BUTIL::Xml::saveZ(xmlpath, xml);
 
@@ -277,27 +329,12 @@ bool ManageXML::saveMoviesToXmlStart()
             progressCounter[CNT_READ]++;
         }
         std::string xml = BUTIL::Xml::createRoot(str.str(), true);
-
+        std::string xmlpath = GETCM.getConfigStr(CONF_XML_PATH) + "\\" + GETCM.getConfigStr(CONF_XML_FILENAME) + "." + GETCM.getConfigStr(CONF_XML_FILENAMEEXT);
         ret = BUTIL::Xml::save(xmlpath, xml);
     }
     return ret;
 }
-#ifdef _WSTRING
-std::wstring ManageXML::movieToWxml(Movie _movie)
-{
-    std::wstringstream str;
-    std::string xmlValues[XML_NBATTRIBUTES];
-    _movie.movie2string(xmlValues);
-    str << "<movie ";
-    for (int attr = 0; attr < XML_NBATTRIBUTES; attr++)
-    {
-        std::wstring wTag = S2WS(xmlValues[attr]);
-        str << BUTIL::Xml::XML_attr(omdbXmlAttr[attr].c_str(), wTag);
-    }
-    str << "/>";
-    return str.str();
-}
-#endif
+
 std::string ManageXML::movieToXml(Movie _movie)
 {
     std::stringstream str;
@@ -350,6 +387,8 @@ int ManageXML::loadOmdbFileStart()
     
     MovieFile file;
     file.exists = false;
+
+    std::string xmlpath = GETCM.getConfigStr(CONF_XML_PATH) + "\\" + GETCM.getConfigStr(CONF_XML_FILENAME) + "." + GETCM.getConfigStr(CONF_XML_FILENAMEEXT);
 
     TiXmlDocument docOmdbXml;
 

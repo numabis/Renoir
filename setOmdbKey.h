@@ -28,7 +28,7 @@ public:
 
     void setTexts(std::string[LINEMAX]);
     void setValue(std::string *);
-    void setURL(wchar_t *_url);
+    void setURL(const char *_url);
 
 private:
 
@@ -36,7 +36,7 @@ private:
     CLinkCtrl *link;
     CEdit *edit;
     std::string* value;
-    wchar_t *wurl;
+    const char *url;
     CString m_strDlgCaption;
     CStatic *dialogStatics[LINEMAX];
     std::string *texts;

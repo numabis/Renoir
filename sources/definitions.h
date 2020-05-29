@@ -3,22 +3,6 @@
 #pragma once
 
 #define NEWLINE             "\r\n"
-#ifdef _WSTRING
-#define S2WS                BUTIL::Xml::utf8_wstring
-#else
-#define S2WS                
-#endif
-#ifdef _WSTRING
-#define WS2S                BUTIL::Xml::wstring_utf8
-#else
-#define WS2S                BUTIL::Convert::wstring2string
-#endif
-#define C2WC(wc)            (wchar_t *)BUTIL::Convert::charToWchar((char*)wc)
-//#define WC2C                BUTIL::Convert::wcharToChar
-
-#define STR2INT             BUTIL::Util::stringToInt
-
-#define MBOX                BUTIL::Util::msgBox
 
 #define DEFAULTSEP ","
 #define OMDBNOTFOUND    "?"
@@ -52,11 +36,7 @@
 #define LOGPATH		    GETCM.getHomeFolder() + "log\\"
 #define	CONFIGFILE		CONFIGPATH "config.xml"
 #define	DBGCONFIGFILE	CONFIGPATH "configDebug.xml"
-//#if defined(_DEBUG) || defined(_DEMO)
 #define	LOCALCONFIGFILE	CONFIGPATH MOVIEDB ".xml"
-//#else
-//#define	LOCALCONFIGFILE	CONFIGPATH MOVIEDB ".zxml"
-//#endif
 #define DBNAME          MOVIEDB ".s3db"
 #define XMLLOGNAME      "logXML"
 #define DBRESETDEFAULT  false
@@ -74,23 +54,19 @@
 #define CAT(A, B)   A##B
 #define L(A)  CAT(L, #A)
 
-//#define GET_DB(_0, _1, _2, NAME, ...) NAME
-//#define GETDB(...) GET_DB(_0, ##__VA_ARGS__, FOO2, FOO1, FOO0)(__VA_ARGS__)
-
 #define STR std::to_string
 #define GETDB         DataBase::getInstance()
 #define GETCM         ConfigManager::getInstance()
 #define VARDB(var)    DataBase::var
 #define GETLOG        BUTIL::exLog::getInstance()
+#define EXECPCIONMBOX(EXCEPCION)    MBOX(std::string(__FUNCTION__) + std::string(":") + std::string(EXCEPCION.ErrText()), "Error", MB_ICONERROR | MB_OK);
+//#define S2WS                
+#define WS2S                BUTIL::Convert::wstring2string
+#define C2WC(wc)            (wchar_t *)BUTIL::Convert::charToWchar((char*)wc)
+#define STRING2CSTRING(STRING,CSTRINGVAR) wchar_t *wtext = (wchar_t *)BUTIL::Convert::charToWchar((char*)((STRING).c_str()));CString CSTRINGVAR(wtext);delete[] wtext;
+#define STR2INT             BUTIL::Util::stringToInt
+#define MBOX                BUTIL::Util::msgBox
 
 #define CONF_DESC "description"
-
-//#define SERIES      "series"
-//#define EPISODE     "episode"
-//#define ANIMATION   "Animation"
-//#define DOCUMENTARY "Documentary"
-//#define SHORT       "short"
-
-//#define MOVIE_TYPES   { SERIES, ANIMATION, DOCUMENTARY, SHORT }
 
 #endif

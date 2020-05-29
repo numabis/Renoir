@@ -79,6 +79,7 @@ public:
     bool             setDB(std::string path);
     bool             setDB(DB_CONFIG*);
     bool             initDB(bool _resetDB);
+    
     bool             getUpdate();
     int              execNolock(std::string);
     bool             initTable(int _tabId);
@@ -106,6 +107,7 @@ public:
     bool setConfiguration(std::string _var, dbConfiguration _conf);
     bool resetConfiguration();
     double DBVERSIONS_getVersion(void);
+    double getVersion(void);
 
     int  MOVIES_iniAll(std::string _separator);
     bool MOVIES_getAll(Movie *movie);

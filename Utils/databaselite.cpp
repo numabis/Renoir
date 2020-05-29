@@ -57,6 +57,7 @@ namespace BUTIL
         const char * cfile = _file.c_str();
         const wchar_t * wcfile = BUTIL::Convert::charToWchar((LPSTR)cfile);
         SAString SAWfile(cfile);
+        delete[] wcfile;
         //        SAString *SAfile;
         //SAfile.GetWideChars() = wcfile;
         //SAfile = new SAString(wcfile);
@@ -83,6 +84,13 @@ namespace BUTIL
         }
         catch (SAException &e)
         {
+            //__debugbreak();
+            //MessageBox(NULL, std::wstring(__FUNCTION__) + std::wstring(":") + std::wstring(e.ErrText()), L"Error", MB_ICONERROR | MB_OK);
+            //EXECPCIONMBOX(e);
+            //exLOGERROR("SQL ko : %s", request.c_str());
+            //exLOGERROR(e.ErrText());
+
+
             wchar_t msg[512];
             std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
             std::wstring wfile = BUTIL::Convert::string2wstring(_file);

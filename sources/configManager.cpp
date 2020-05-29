@@ -126,6 +126,12 @@ bool ConfigManager::setConfigValue(std::string _variable, int _value)
     return saveConfigToDB(_variable);
 }
 
+bool ConfigManager::setConfigValue(std::string _variable, bool _value)
+{
+    dbConf[_variable].value = _value?"true":"false";
+    return saveConfigToDB(_variable);
+}
+
 bool ConfigManager::setConfigValue(filterTypes _filter, std::string _value)
 {
     std::string filter2config[FILTERS_MAX] = { "FILTER_directors", "FILTER_writers", "FILTER_actors",  "FILTER_genres",  "FILTER_genres2", "FILTER_yearmin", "FILTER_yearmax", "FILTER_imdbratingmin", "FILTER_imdbratingmax", "FILTER_serie", "FILTER_anim", "FILTER_doc", "FILTER_short" };
@@ -309,5 +315,5 @@ void ConfigManager::separateValues(std::vector<std::string> *v_list, std::string
 //std::string ConfigManager::getImdbFindUrl(std::string _title)
 //{
 //    BUTIL::Convert::string2url(&_title);
-//    return getConfigStr("IMDB_url") + getConfigStr("IMDB_find") + _title;
+//    return getConfigStr(CONF_IMDB_URL) + getConfigStr(CONF_IMDB_FIND) + _title;
 //}

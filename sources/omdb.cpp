@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <math.h>
 //#include <map>
 
 #include <curlpp/cURLpp.hpp>
@@ -13,52 +14,66 @@
 
 #include "omdb.h"
 #include "Convert.h"
+#include "Util.h"
 #include "configManager.h"
+#include "movieFile.h"
+//#include "omdbXML.h"
 
-#define WOMDBKEY     L"apikey="
-#define WOMDBURL     L"http://www.omdbapi.com/?"
-#define WOMDBTITLE   L"t="
-#define WOMDBTYPE    L"type=" //movie, series, episode
-#define WOMDBYEAR    L"y="
-#define WOMDBRET     L"r=" //  json, xml
-#define WOMDBIMDB    L"i="
+#define URLFIRST   "?"
+#define URLNEXT    "&"
+#define URLTITLEUNION "+"
 
-#define OMDBKEY "apikey="s
-#define OMDBURL "http://www.omdbapi.com/?"
-#define OMDBTITLE   "t="s
-#define OMDBTYPE    "type="s //movie, series, episode
-#define OMDBYEAR    "y="s
-#define OMDBRET     "r="s //  json, xml
-#define OMDBIMDB    "i="s
-
+using namespace std::string_literals;
 
 Omdb::Omdb()
 {
-
+    limit = 15;
 }
 
 Omdb::~Omdb(void)
 {
 }
 
-//void Omdb::init()
-//{
-//    //omdbConfig = GETCM.getOmdbConfig();
-//    omdbConfig.apikey = GETCM.getConfigStr(CONF_OMDB_APIKEY);
-//    omdbConfig.omdbUrl = GETCM.getConfigStr(CONF_OMDB_URL);
-//    omdbConfig.apiRequestUrl = GETCM.getConfigStr(CONF_OMDB_APIREQUEST);
-//    omdbConfig.type = GETCM.getConfigStr(CONF_OMDB_TYPE);
-//    omdbConfig.plot = GETCM.getConfigStr(CONF_OMDB_PLOT);
-//    omdbConfig.separator = GETCM.getConfigStr(CONF_OMDB_LISTSEPARATOR);
-//    omdbConfig.testmode = (GETCM.getConfigInt(CONF_OMDB_TESTMODE) == 1);
-//    //omdbConfig.typeXml = GETCM.getConfigStr("CONF_OMDB_APIKEY");
-//    //omdbConfig.plotShort = GETCM.getConfigStr("CONF_OMDB_APIKEY");
-//}
+bool Omdb::readOmdbResult(MovieFile *_file)
+{
+    return omdbXml.readOmdbXml(_file);
+}
 
-//void Omdb::init(OMDB_CONFIG *_config)
-//{
-//    omdbConfig = _config;
-//}
+/// Return URL 
+/// + APIKEY
+/// + RETURN TYPE (json/xml)
+/// + PLOT TYPE (short/full)
+std::string Omdb::getComonUrl()
+{
+    std::string url = GETCM.getConfigStr(CONF_OMDB_QUERY_URL);
+
+    if (url.empty())
+    {
+        exLOGERROR("ERROR OMDB URL EMPTY");
+        MessageBox(NULL, L"ERROR OMDB URL EMPTY", (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
+
+        return std::string();
+    }
+
+    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE) == false)
+        url.append(URLFIRST + GETCM.getConfigStr(CONF_OMDB_QUERY_APIKEY) + GETCM.getConfigStr(CONF_OMDB_APIKEY));
+    else
+        url.append(URLFIRST + GETCM.getConfigStr(CONF_OMDB_QUERY_APIKEY) + "12345");
+
+    std::string type = GETCM.getConfigStr(CONF_OMDB_RETURN_TYPE);
+    if (type.empty() == false)
+        url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_RETURN_TYPE) + type);
+
+    std::string plot = GETCM.getConfigStr(CONF_OMDB_PLOT);
+    if (plot.empty() == false)
+        url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_PLOT) + plot);
+
+    std::string MovieType = GETCM.getConfigStr(CONF_OMDB_MOVIE_TYPE);
+    if (MovieType.empty() == false)
+        url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_MOVIE_TYPE) + MovieType);
+
+    return url;
+}
 
 std::stringstream Omdb::get_response(std::wstring url)
 {
@@ -87,21 +102,74 @@ std::stringstream Omdb::get_response(std::string url)
     return str;
 }
 
-void Omdb::searchByImdb(MovieFile* _file)
+int Omdb::searchRequest(MovieFile *_file)
 {
-    using namespace std::string_literals;
-
-    std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
-    url.append("?" + OMDBKEY + GETCM.getConfigStr(CONF_OMDB_APIKEY));
-    url.append("&" + OMDBRET + GETCM.getConfigStr(CONF_OMDB_TYPE));
-    url.append("&" + OMDBIMDB + _file->imdbId);
-
-    if (GETCM.getConfigStr(CONF_OMDB_URL).empty())
+    int results = search(_file);
+    std::vector <omdbSearchValues> * v_search = _file->getOmdbSearchResults();
+    if (results == 1 && v_search->size()>0)
     {
-        wchar_t wmsg[256];
-        //char* msg = BUTIL::Util::GetLastErrorAsString(error);
-        _swprintf(wmsg, L"Wrong URL : %s\nCheck config file", BUTIL::Convert::charToWchar((LPSTR)url.c_str()));
-        MessageBox(NULL, wmsg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
+        omdbSearchValues movie = v_search->back();
+        v_search->pop_back();
+        _file->imdbId = movie.values[XMLS_IMDBID];
+        results = getByImdb(_file);
+    }
+    else if (omdbRes == true)
+    {
+        _file->setSearchResults(omdbXml.getSearchResults());
+    }
+
+    return results;
+}
+
+int Omdb::request(MovieFile *_file)
+{
+    int results = 0;
+    omdbRes = false;
+    std::string request = getRequest(_file);
+
+    //bool doSearchRequest = true;
+    bool doSearchRequest = false;
+
+    if (request.empty() == false)
+    {
+        auto omdbResp = get_response(request);
+        omdbRes = omdbXml.readResponse(omdbResp.str());
+        if (omdbRes == true)
+        {
+            doSearchRequest = false;
+            _file->setOmdbXml(omdbResp.str(), true);
+            exLOGINFO("OmdbRequest:%s", request.c_str());
+            results = 1;
+        }
+    }
+
+    //if (doSearchRequest == true)
+    //{
+    //    results = searchRequest(_file);
+    //    if (results == 1)
+    //    {
+    //        std::vector <omdbSearchValues> * v_search = _file->getOmdbSearchResults();
+    //        omdbSearchValues movie = v_search->back();
+    //        v_search->pop_back();
+    //        _file->imdbId = movie.values[XMLS_IMDBID];
+    //        results = getByImdb(_file);
+    //    }
+    //}
+
+    return results;
+}
+
+int Omdb::getByImdb(MovieFile* _file)
+{
+    int results = 0;
+
+    std::string url = getComonUrl();
+
+    url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_IMDBID) + _file->imdbId);
+
+    if (GETCM.getConfigStr(CONF_OMDB_QUERY_URL).empty())
+    {
+        MBOX("Wrong URL : " + url + "\nCheck config file", "Error", MB_ICONERROR | MB_OK);
         exLOGERROR("Wrong url : %s", url.c_str());
     }
     else
@@ -109,89 +177,372 @@ void Omdb::searchByImdb(MovieFile* _file)
         auto omdb = get_response(url);
         _file->setOmdbXml(omdb.str(), true);
         exLOGINFO("OmdbRequest:%s", url.c_str());
+        results = 1;
 
     }
+    return results;
 }
 
-#ifdef WSTRINGS
-std::wstring Omdb::search(std::wstring _imdbtt)
+int Omdb::getByTitle(MovieFile *file)
 {
-    using namespace std::string_literals;
+    //using namespace std::string_literals;
+    std::string url = getComonUrl();
+    std::string title = file->title;
+    int results = 0;
 
-    std::string url = omdbConfig->url;
-    //url.append(L"?" + WOMDBKEY + omdbConfig->apikey);
-    //url.append(L"&" + WOMDBRET + omdbConfig->type);
-    //url.append(L"&" + WOMDBIMDB + _imdbtt);
-    //
-    auto resp = get_response(url);
-    return BUTIL::Convert::string2wstring(resp.str());
-
-}
-#endif
-void Omdb::search(MovieFile *file)
-{
-    if (file->isImdbId())
-        searchByImdb(file);
-    else
-        searchByName(file);
-}
-#ifdef WSTRINGS
-std::wstring Omdb::search(std::wstring _title, short _year)
-{
-    using namespace std::string_literals;
-    //std::wstring url = omdbConfig->url;
-    //url.append(L"?" + OMDBKEY + omdbConfig->apikey);
-    //url.append(L"&" + OMDBRET + omdbConfig->type);
-    //BUTIL::Convert::wstring2url(&_title);
-    //url.append(L"&" + OMDBTITLE + _title);
-    //if (_year != 0) {
-    //    url.append(L"&" + OMDBYEAR + std::to_wstring(_year));
-    //}
-
-
-    //url.append("&" + OMDBKEY + OmdbConfig->apikey);
-    //std::string urlFormat = BUTIL::Convert::string2url(url);
-
-    auto json = get_response(url);
-
-    return json.str();
-
-}
-#endif
-
-void Omdb::searchByName(MovieFile *file)
-{
-    //std::string _title;
-    //short _year;
-
-    using namespace std::string_literals;
-    std::string url = GETCM.getConfigStr(CONF_OMDB_URL);
-
-    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE) == false)
-        url.append("?" + OMDBKEY + GETCM.getConfigStr(CONF_OMDB_APIKEY));
-    else
-        url.append("?" + OMDBKEY + "");
-    url.append("&" + OMDBRET + GETCM.getConfigStr(CONF_OMDB_TYPE));
-    BUTIL::Convert::string2url(&file->title);
-    url.append("&" + OMDBTITLE + file->title);
-    if (file->year != 0) {
-        url.append("&" + OMDBYEAR + std::to_string(file->year));
-    }
-
-    if (GETCM.getConfigStr(CONF_OMDB_URL).empty())
+    if (url.empty() == false)
     {
-        wchar_t wmsg[256];
-        //char* msg = BUTIL::Util::GetLastErrorAsString(error);
-        _swprintf(wmsg, L"Wrong URL : %s\nCheck config file", BUTIL::Convert::charToWchar((LPSTR)url.c_str()));
-        MessageBox(NULL, wmsg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
-        exLOGERROR("Wrong url : %s", url.c_str());
-    } 
-    else
-    {
+        
+        BUTIL::Convert::string2url(&title);
+        url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_TITLE) + title);
+
+        if (file->year != 0) {
+            url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(file->year));
+        }
+
         auto omdb = get_response(url);
+
+        results = omdbXml.readTotalResults(omdb.str());
+
         file->setOmdbXml(omdb.str(), true);
         exLOGINFO("OmdbRequest:%s", url.c_str());
 
     }
+
+    return results;
+
 }
 
+#define MIN_WORD_SIZE 3
+#define MIN_WORDS 1
+
+int Omdb::searchByTitle(MovieFile * file)
+{
+    //using namespace std::string_literals;
+    std::string query;
+    std::string url = GETCM.getConfigStr(CONF_OMDB_QUERY_URL);
+    std::string key,year;
+    size_t minWordSz = MIN_WORD_SIZE;
+    size_t minWords = MIN_WORDS;
+    bool finished = false;
+    int results = 0;
+
+    std::vector<std::string> v_title;
+
+    if (url.empty())
+    {
+        file->setOmdbXml("", false);
+        exLOGERROR("Wrong url : %s", url.c_str());
+        MBOX("Wrong URL : " + url + "\nCheck config file", "Error", MB_ICONERROR | MB_OK);
+
+        return results;
+    }
+
+    if (GETCM.getConfigBool(CONF_OMDB_TESTMODE) == false)
+        key = URLFIRST + GETCM.getConfigStr(CONF_OMDB_QUERY_APIKEY) + GETCM.getConfigStr(CONF_OMDB_APIKEY);
+    else
+        key = URLFIRST + GETCM.getConfigStr(CONF_OMDB_QUERY_APIKEY) + "12345";
+
+    if (file->year != 0) {
+        year = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(file->year);
+    }
+
+    BUTIL::Convert::separateValues(&v_title, file->title, " ");
+
+    std::vector<std::string>::iterator it;
+
+    for (it = v_title.begin(); it != v_title.end(); it++)
+    {
+        if (it->size() < minWordSz)
+        {
+            v_title.erase(it);
+        }
+    }
+
+    int nbLoop = (int)exp2(v_title.size()) - 1 ;
+
+    for (; nbLoop > 0; nbLoop--)
+    {
+        if (finished == true)
+            break;
+        int wordInd = 1;
+        std::string titleSearch = "";
+        for (it = v_title.begin(); it != v_title.end(); it++)
+        {
+            int wordInLoop = (int)exp2(wordInd-1);
+            if (nbLoop & wordInLoop)
+            {
+                if (titleSearch.empty() == false)
+                    titleSearch += URLTITLEUNION;
+                titleSearch += *it;
+            }
+        }
+        query = url + key + titleSearch + year;
+        exLOGINFO("OmdbRequest:%s", query.c_str());
+        auto xml = get_response(query);
+
+        //omdbXml.setXML(xml.str());
+
+        int results = omdbXml.readTotalResults(xml.str());
+
+        finished = (results>0);
+
+        if (finished)
+            file->setOmdbXml(xml.str(), false);
+    }   
+    return results;
+}
+
+std::string Omdb::getRequest(MovieFile * _file)
+{
+    std::string url = getComonUrl();
+
+    if (url.empty() == false)
+    {
+        if (_file->isImdbId())
+        {
+            url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_IMDBID) + _file->imdbId);
+        }
+        else
+        {
+            std::string title = _file->title;
+            BUTIL::Convert::string2url(&title);
+            url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_TITLE) + title);
+
+            if (_file->year != 0) 
+            {
+                url.append(URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(_file->year));
+            }
+        }
+    }
+    return url;
+}
+
+int Omdb::getTotalResults()
+{
+    return totalResults;
+}
+
+int Omdb::getLimit()
+{
+    return limit;
+}
+
+void Omdb::setLimit(int _limit)
+{
+    if (_limit > 0 && _limit < 10)
+        _limit = 10;
+    limit = _limit;
+}
+
+void Omdb::setThreadRunning(bool _val)
+{
+    threadRunning = _val;
+}
+
+int Omdb::search(MovieFile * _file)
+{
+    std::string url = getComonUrl();
+    int partialResults = 0;
+    totalResults = 0;
+
+    if (url.empty() == false)
+    {
+        std::string query;
+        std::string year, pageRequest;
+        size_t minWordSz = MIN_WORD_SIZE;
+        size_t minWords = MIN_WORDS;
+        bool finished = false;
+
+
+        std::vector<std::string> v_title;
+
+        if (_file->year != 0) {
+            year = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(_file->year);
+        }
+
+        BUTIL::Convert::separateValues(&v_title, _file->title, " ");
+
+        std::string plusWords;
+
+        std::vector<std::string>::iterator it;
+
+        for (it = v_title.begin(); it != v_title.end(); )
+        {
+            if ((*it)[0] == '+')
+            {
+                plusWords += *it;
+                it = v_title.erase(it);
+            }
+            else
+            {
+                size_t sz = it->length();
+                if (sz < minWordSz)
+                {
+                    it = v_title.erase(it);
+                }
+                else
+                    it++;
+            }
+
+        }
+
+
+        omdbXml.clearSearchResults();
+
+        int page = 1;
+        bool nextPage = true;
+        while (nextPage)
+        {
+            nextPage = false;
+            int nbLoop = (int)exp2(v_title.size()) - 1;
+
+        for (; nbLoop > 0; nbLoop--)
+        {
+            if (finished == true)
+                break;
+            int wordInd = 1;
+            std::string titleSearch = "";
+            for (it = v_title.begin(); it != v_title.end(); it++)
+            {
+                int wordInLoop = (int)exp2(wordInd - 1);
+                if (nbLoop & wordInLoop)
+                {
+                    if (titleSearch.empty() == false)
+                        titleSearch += URLTITLEUNION;
+                    titleSearch += *it;
+                }
+                wordInd++;
+            }
+            titleSearch += plusWords;
+
+                pageRequest = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_PAGE) + std::to_string(page);
+                query = url + URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_SEARCH) + titleSearch + year + pageRequest;
+                exLOGINFO("OmdbRequest:%s", query.c_str());
+                auto omdbResp = get_response(query);
+                bool localOmdbRes = omdbXml.readResponse(omdbResp.str());
+                if (localOmdbRes == true)
+                {
+                    omdbRes = true;
+                    int localResults = omdbXml.readTotalResults();
+                    partialResults = omdbXml.parseSearchResults();
+                    totalResults += partialResults;
+                    if (localResults >= 10)
+                    {
+                        nextPage = true;
+                        page++;
+                    }
+
+                }
+
+                if (limit > 0 && totalResults > limit)
+                {
+                    nextPage = false;
+                    finished = true;
+                }
+            }
+
+        }
+    }
+
+    return totalResults;
+}
+
+//int Omdb::search2(MovieFile * _file)
+//{
+//    std::string url = getComonUrl();
+//    int partialResults = 0;
+//    totalResults = 0;
+//
+//    if (url.empty() == false)
+//    {
+//        std::string query;
+//        std::string year, pageRequest;
+//        size_t minWordSz = MIN_WORD_SIZE;
+//        size_t minWords = MIN_WORDS;
+//        bool finished = false;
+//
+//
+//        std::vector<std::string> v_title;
+//
+//        if (_file->year != 0) {
+//            year = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(_file->year);
+//        }
+//
+//        BUTIL::Convert::separateValues(&v_title, _file->title, " ");
+//
+//        std::vector<std::string>::iterator it;
+//
+//        for (it = v_title.begin(); it != v_title.end(); )
+//        {
+//            size_t sz = it->length();
+//            if (sz < minWordSz)
+//            {
+//                it = v_title.erase(it);
+//            }
+//            else
+//                it++;
+//        }
+//
+//
+//        omdbXml.clearSearchResults();
+//
+//        int nbLoop = (int)exp2(v_title.size()) - 1;
+//
+//        for (; nbLoop > 0; nbLoop--)
+//        {
+//            if (finished == true)
+//                break;
+//            int wordInd = 1;
+//            std::string titleSearch = "";
+//            for (it = v_title.begin(); it != v_title.end(); it++)
+//            {
+//                int wordInLoop = (int)exp2(wordInd - 1);
+//                if (nbLoop & wordInLoop)
+//                {
+//                    if (titleSearch.empty() == false)
+//                        titleSearch += URLTITLEUNION;
+//                    titleSearch += *it;
+//                }
+//                wordInd++;
+//            }
+//            int page = 1;
+//            bool nextPage = true;
+//            while (nextPage)
+//            {
+//                pageRequest = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_PAGE) + std::to_string(page);
+//                query = url + URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_SEARCH) + titleSearch + year + pageRequest;
+//                exLOGINFO("OmdbRequest:%s", query.c_str());
+//                auto omdbResp = get_response(query);
+//                bool localOmdbRes = omdbXml.readResponse(omdbResp.str());
+//                if (localOmdbRes == true)
+//                {
+//                    omdbRes = true;
+//                    int localResults = omdbXml.readTotalResults();
+//                    partialResults = omdbXml.parseSearchResults();
+//                    totalResults += partialResults;
+//                    if (localResults >= 10)
+//                    {
+//
+//                        page++;
+//                    }
+//                    else
+//                    {
+//                        nextPage = false;
+//                    }
+//
+//                }
+//                else
+//                    nextPage = false;
+//                if (limit > 0 && totalResults > limit)
+//                {
+//                    nextPage = false;
+//                    finished = true;
+//                }
+//            }
+//
+//        }
+//    }
+//
+//    return totalResults;
+//}

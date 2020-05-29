@@ -35,6 +35,7 @@
 #define MENU_RELOAD_SHORT               0x0310
 #define IDC_MENU_OPEN_EXPLORER          0x0320
 #define IDC_MENU_PLAY_MOVIE             0x0330
+#define IDC_BUTTON_OMDB_SEARCH          0x0340
 
 
 #define MENU_FOLDER             MF_STRING, IDM_CHANGE_FOLDER, L"&Add Folder", &omdbClientDlg::selectFolder
@@ -45,7 +46,8 @@
 #define MENU_EXIT               MF_STRING, IDM_EXIT, L"&Exit", &omdbClientDlg::onExit
 
 #define MENU_OMDBSETKEY         MF_STRING, IDM_DIALOG_SETKEY, L"&Change Omdb Key", &omdbClientDlg::changeOmdbKey
-#define MENU_OMDB1REQ           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SINGLE], L"Omdb Request:&Single", &omdbClientDlg::omdbSingleRequest
+#define MENU_OMDB1REQ           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SINGLE], L"Omdb Request", &omdbClientDlg::omdbSingleRequest
+#define MENU_OMDBSEARCH         MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SEARCH], L"Omdb Search", &omdbClientDlg::showSearchResult
 #define MENU_OMDBXREQ           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL], L"&All Request", &omdbClientDlg::omdbAllRequest
 #define MENU_OMDBSTOP           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL_STOP], L"&All Stop", &omdbClientDlg::omdbAllStop
 

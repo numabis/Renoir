@@ -32,8 +32,8 @@ public:
     ManageXML();
     ~ManageXML(void);
 //    void init(std::string*, std::string);
-    void init();
-    void init(std::string _path);
+    //void init();
+    //void init(std::string _path);
     bool loadOmdbStr(MovieFile *_file);
     bool readOmdbError(MovieFile *_file);
     HANDLE loadOmdbFile();
@@ -45,8 +45,6 @@ public:
     bool ifExistsUpdateMovieVector(Movie *_movie);
     void addToMovieVector(Movie *_movie);
     int loadDBfromVector();
-    //int *getCountXmlLoad();
-    //int *getCountXmlSave();
     bool isRunning(HANDLE  hThread);
     int loadOmdbFileStart();
     bool terminateThreads();
@@ -54,7 +52,12 @@ public:
     std::vector<MovieFile> *getV_load();
     BUTIL::Mutex* getMtx_vLoad();
     void setProgressCounter(size_t *);
-    //std::string getXmlLocalFullPath();
+    void setGenRootNode(std::string _xml);
+    int readTotalResults(TiXmlElement *_node);
+    int readTotalResults(std::string _xml);
+    bool readResponse(TiXmlElement *_node);
+    bool readResponse(std::string _xml);
+
 private:
 #ifdef USEJSON
     json j;
@@ -62,15 +65,15 @@ private:
     std::vector<MovieFile> v_load;
     BUTIL::Mutex mtx_vLoad;
     size_t *progressCounter;
-    //int countXmlLoad[CNT_MAX_READ];
-    //int countXmlSave[CNT_MAX_READ];
-    std::string xmlpath;
+    //std::string xmlpath;
     bool saveXmlCompress;
     int readOmdbXml(TiXmlElement *nodeRoot, MovieFile *_file, Movie *_movie);
     int readOmdbXml(TiXmlElement *nodeRoot, MovieFile *_file);
     bool readJSON(std::string _xml);
-//    XML_CONFIG *xmlConfig;
-//    std::string* xmlConfig;
+    int readOmdbSearch(std::string _omdbRes);
     std::string omdbSeparator;
     bool stopThreads;
+
+    TiXmlDocument genXmlDoc;
+    TiXmlElement *genRootNode;
 };

@@ -3,7 +3,6 @@
 // Usado por mainWindow.rc
 //
 #define IDM_ABOUTBOX                    0x0010
-
 #define IDD_ABOUTBOX                    100
 #define IDR_MENU1                       101
 #define IDS_ABOUTBOX                    101
@@ -16,7 +15,6 @@
 #define IDS_DIALOG_READFOLDER           107
 #define IDS_RESETFS                     108
 #define IDS_RESETMOVIES                 109
-
 #define IDR_MAINFRAME                   128
 #define IDD_IMDBID_EDIT                 133
 #define IDD_DIALOG_COLUMNSELECTOR       137
@@ -24,15 +22,18 @@
 #define IDD_DIALOG_COL                  141
 #define IDD_DIALOG_DBG                  146
 #define IDD_PATHS                       148
-
+#define IDD_SEARCH_DIALOG               150
 #define IDC_MOVIE_LIST                  1000
 #define IDC_BUTTON_READFOLDER           1001
 #define IDC_CLEARMOVIES                 1002
 #define IDC_EDIT_PLOT                   1005
 #define IDC_EDIT_FOLDER                 1006
 #define IDC_EDIT_RUNTIME                1007
+#define IDC_EDIT_FILE                   1007
 #define IDC_EDIT_GENRES                 1008
+#define IDC_EDIT_YEAR                   1008
 #define IDC_EDIT_TITLE                  1009
+#define IDC_EDIT_LIMIT                  1009
 #define IDC_EDIT_IMDB                   1011
 #define IDC_EDIT_ACTORS                 1012
 #define IDC_EDIT_DIRECTOR               1013
@@ -132,14 +133,22 @@
 #define IDC_LIST1                       1090
 #define IDC_EDIT_SEARCH                 1091
 #define IDC_FOLDER_LIST                 1092
+#define IDC_RADIO_AUTO                  1093
+#define IDC_RADIO_MANUAL                1094
+#define IDC_SEARCH_LIST                 1094
+#define ID_SEARCH_OK                    1095
+#define ID_SEARCH_CANCEL                1096
+#define ID_SEARCH_REQUEST               1097
+#define ID_OPEN_WEB                     1098
+#define IDC_TOTAL                       1099
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        150
+#define _APS_NEXT_RESOURCE_VALUE        152
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1093
+#define _APS_NEXT_CONTROL_VALUE         1101
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

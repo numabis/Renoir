@@ -16,7 +16,7 @@ public:
 	enum { IDD = IDD_DIALOG_DBG };
 #endif
     //void writeToConsole(std::string);
-    size_t writeToConsole(const wchar_t*, size_t pos = 0);
+    size_t writeToConsole(const char*, size_t pos = 0);
     size_t writeToConsole(std::string, size_t pos = 0);
 
 

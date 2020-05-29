@@ -8,7 +8,6 @@
 
 #include "omdbClient.h"
 #include "database\database.h"
-#include "omdb\omdb.h"
 #include "fileSystem\fileSystem.h"
 #include "utils\manageXML.h"
 #include "utils\log.h"

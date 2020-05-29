@@ -1,3 +1,5 @@
+#ifndef _CONFIG_MANAGER_H_
+#define _CONFIG_MANAGER_H_
 #include <string>
 #include "variables.h"
 #include "singleton.h"
@@ -38,6 +40,7 @@ public:
     bool getConfigBool(std::string);
     bool setConfigValue(std::string, std::string);
     bool setConfigValue(std::string, int);
+    bool setConfigValue(std::string, bool);
     bool setConfigValue(filterTypes _filter, std::string);
 
     std::string getFilter(filterTypes _var);
@@ -56,7 +59,7 @@ public:
 
 private:
 
-    std::string configMin[CONFIGMAX] = { CONF_LOG_LOGLEVEL, CONF_OMDB_URL, CONF_OMDB_APIREQUEST, CONF_OMDB_TYPE, CONF_OMDB_PLOT, CONF_OMDB_LISTSEPARATOR, CONF_FS_EXTENTIONS };
+    std::string configMin[CONFIGMAX] = { CONF_LOG_LOGLEVEL, CONF_OMDB_QUERY_URL, CONF_OMDB_QUERY_REQUEST, CONF_OMDB_RETURN_TYPE, CONF_OMDB_PLOT, CONF_OMDB_LISTSEPARATOR, CONF_FS_EXTENTIONS };
     bool configMinTest[CONFIGMAX];
 
     ReadConfig xmlConfig;
@@ -81,3 +84,4 @@ private:
     void separateValues(std::vector<std::string>* v_list, std::string _list, std::string _sep);
 
 };
+#endif //_CONFIG_MANAGER_H_

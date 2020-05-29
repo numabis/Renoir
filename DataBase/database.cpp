@@ -16,7 +16,6 @@
 #include <functional>   // std::greater
 #include <map>
 
-#define EXECPCIONMBOX(EXCEPCION)    MBOX(std::string(__FUNCTION__) + std::string(":") + std::string(EXCEPCION.ErrText()), "Error", MB_ICONERROR | MB_OK);
 
 using std::string;
 using std::vector;
@@ -272,6 +271,10 @@ double DataBase::DBVERSIONS_getVersion(void)
         askUpdateDB(ostr.str());
     }
 
+    return DBVersion;
+}
+double DataBase::getVersion(void)
+{
     return DBVersion;
 }
 void DataBase::askUpdateDB(std::string _msg)
@@ -605,9 +608,9 @@ std::string DataBase::PATHFS_getPath(int _id)
 
      isConnected();
 
-     request = SELECT(PATH_PATH, PATH_ADDEDDATE);
+     request = SELECT(PATH_PATH, PATH_DBADDED);
      request += FROM(TAB_PATHFS);
-     request += WHERE(EQUAL(PATH_ID, STR(_id))) + ORDERBY(PATH_ADDEDDATE, ORDERBYASC) + LIMIT(1);;
+     request += WHERE(EQUAL(PATH_ID, STR(_id))) + ORDERBY(2, ORDERBYASC) + LIMIT(1);;
 
      try
      {
@@ -654,7 +657,7 @@ std::string DataBase::PATHFS_getPath(int _id)
     }
     catch (SAException &e)
     {
-        __debugbreak();
+        //__debugbreak();
         EXECPCIONMBOX(e);
         exLOGERROR(e.ErrText());
         ret = false;
@@ -677,7 +680,7 @@ int  DataBase::PATHFS_existsPath(std::string _filePath)
 
     string request = SELECT(PATH_ID) +
         FROM(TAB_PATHFS) +
-        WHERE(LIKE(PATH_PATH, _filePath));
+        WHERE(LIKE(PATH_PATH, _filePath)) + NOCASE;;
 
     return execScalarUnlock(request);
 
@@ -764,7 +767,7 @@ int DataBase::PATHFS_update(MovieFolder *_folder)
     }
     else
     {
-        request += WHERE(EQUAL(PATH_PATH, path));
+        request += WHERE(EQUAL(PATH_PATH, path)) + NOCASE;;
     }
 
 //    if (countSets > 0)
@@ -1144,11 +1147,6 @@ bool   DataBase::MOVIESFS_selectFSId(MovieFile *_file)
     {
         __debugbreak();
         EXECPCIONMBOX(e); 
-        //wchar_t msg[256];
-        //std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-        //wsprintf(msg, L"selectMoviesFSId : %s", sqlError.c_str());
-        //MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
-        
         exLOGERROR(e.ErrText());
         ret = false;
     }
@@ -1441,12 +1439,6 @@ int DataBase::MOVIES_iniAll(std::string _separator)
     {
         __debugbreak();
         EXECPCIONMBOX(e);
-
-//        wchar_t msg[256];
-//        std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//        wsprintf(msg, L"iniAllMovies : %s", sqlError.c_str());
-//        __debugbreak();
-//        MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
         exLOGERROR("SQL ko : %s", request.c_str());
         exLOGERROR(e.ErrText());
         SQLGENCLOSE;
@@ -1493,13 +1485,6 @@ bool DataBase::MOVIES_getAll(Movie *_movie)
     {
         __debugbreak();
         EXECPCIONMBOX(e);
-
-//        wchar_t msg[256];
-//        std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//        wsprintf(msg, L"getAllMovies : %s", sqlError.c_str());
-//        __debugbreak();
-//        MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
-
         exLOGERROR(e.ErrText());
         SQLGENCLOSE;
         return false;
@@ -1624,12 +1609,6 @@ bool DataBase::MOVIES_selectId(Movie *_movie)
     {
         __debugbreak();
         EXECPCIONMBOX(e);
-//        wchar_t msg[256];
-//        std::wstring wstr_sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//        const wchar_t *wchar_sqlError = BUTIL::Convert::charToWchar((LPSTR)wstr_sqlError.c_str());
-//        wsprintf(msg, L"selectMovieId : %s", BUTIL::Convert::charToWchar((LPSTR)wstr_sqlError.c_str()));
-//        MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
-
         exLOGERROR(e.ErrText());
         ret = false;
     }
@@ -1715,11 +1694,6 @@ bool DataBase::MOVIES_get(Movie *_movie)
         {
             __debugbreak();
             EXECPCIONMBOX(e);
-//            wchar_t msg[256];
-//            std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//            wsprintf(msg, L"getMovie : %s", BUTIL::Convert::charToWchar((LPSTR)sqlError.c_str()));
-//            __debugbreak();
-//            MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
             exLOGERROR("SQL ko : %s", request.c_str());
             exLOGERROR(e.ErrText());
             return false;
@@ -1997,15 +1971,7 @@ int  DataBase::loadFilter(filterTypes _filterby)
     catch (SAException &e)
     {
         __debugbreak();
-        //EXECPCIONMBOX(e);
         ERRORMBOX(TABLE(TABID(fTabCol)) + std::string(":") + std::string(e.ErrText()));
-        //SQLCLOSE;
-        //wchar_t msg[256];
-        //std::string sqlError = (std::string)e.ErrText();
-        //const char* c_sqlError = sqlError.c_str();
-        //wsprintf(msg, L"loadFilter %s : %s", BUTIL::Convert::charToWchar((LPSTR)TABLE(TABID(fTabCol))), BUTIL::Convert::charToWchar((LPSTR)c_sqlError));
-        //__debugbreak();
-        //MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
         exLOGERROR("SQL ko : %s", request.c_str());
         exLOGERROR(e.ErrText());
         return -1;
@@ -2056,12 +2022,6 @@ int DataBase::getDefTableId(int _table, std::string _value)
     {
         __debugbreak();
         EXECPCIONMBOX(e);
-//        ERRORMBOX(TABLE(TABID(fTabCol)) + std::string(":") + std::string(e.ErrText()));
-//        wchar_t msg[256];
-//        std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//        wsprintf(msg, L"getDefTableId : %s", BUTIL::Convert::charToWchar((LPSTR)sqlError.c_str()));
-//        __debugbreak();
-//        MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
         exLOGERROR("SQL ko : %s", request.c_str());
         exLOGERROR(e.ErrText());
         return false;
@@ -2094,12 +2054,6 @@ std::string DataBase::getDefTableValue(int _table, int _id)
     {
         __debugbreak();
         EXECPCIONMBOX(e);
-//        ERRORMBOX(TABLE(TABID(fTabCol)) + std::string(":") + std::string(e.ErrText()));
-//        wchar_t msg[256];
-//        std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//        wsprintf(msg, L"getDefTableId : %s", BUTIL::Convert::charToWchar((LPSTR)sqlError.c_str()));
-//        __debugbreak();
-//        MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
         exLOGERROR("SQL ko : %s", request.c_str());
         exLOGERROR(e.ErrText());
         return value;
@@ -2141,13 +2095,6 @@ bool DataBase::GENRES_getGenre(Movie *_movie)
         {
             __debugbreak();
             EXECPCIONMBOX(e);
-//            ERRORMBOX(TABLE(TABID(fTabCol)) + std::string(":") + std::string(e.ErrText()));
-//            wchar_t msg[256];
-//            std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//            std::wstring wRequest = BUTIL::Convert::string2wstring(request);
-//            wsprintf(msg, L"getGenres : %s (%s)", (LPCWSTR)sqlError.c_str(), (LPCWSTR)wRequest.c_str());
-//            __debugbreak();
-//            MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
             exLOGERROR("SQL ko : %s", request.c_str());
             exLOGERROR(e.ErrText());
             return false;
@@ -2190,12 +2137,6 @@ bool DataBase::PERSONS_getPerson(Movie *_movie)
             {
                 __debugbreak();
                 EXECPCIONMBOX(e);
-//                ERRORMBOX(TABLE(TABID(fTabCol)) + std::string(":") + std::string(e.ErrText()));
-//                wchar_t msg[256];
-//                std::wstring sqlError = BUTIL::Convert::string2wstring((std::string)e.ErrText());
-//                wsprintf(msg, L"getPersons : %s", BUTIL::Convert::charToWchar((LPSTR)sqlError.c_str()));
-//                __debugbreak();
-//                MessageBox(NULL, (LPCWSTR)msg, (LPCWSTR)L"Error", MB_ICONERROR | MB_OK);
                 exLOGERROR("SQL ko : %s", request.c_str());
                 exLOGERROR(e.ErrText());
                 return false;

@@ -17,16 +17,17 @@
     { "value",       E_DEF_STRING, "" }, \
     { "multi",       E_DEF_BOOL,   "" }, \
     { "description", E_DEF_STRING, "" }, \
+    { "DBAdded",     E_DEF_STRING,   "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",            E_END_TABLE,  "CONSTRAINT [CONF_VARIABLE] UNIQUE ([variable] COLLATE NOCASE)" }
 
 #define DBTABPATHFS     \
-    { "idPath",   E_DEF_INT,      "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" }, \
-    { "path",     E_DEF_STRING,   "NOT NULL" }, \
-    { "dateAdded",E_DEF_STRING,   "DEFAULT CURRENT_TIMESTAMP " }, \
-    { "isRead",   E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
-    { "isSub",    E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
-    { "hide",     E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
-    { "",         E_END_TABLE,    "CONSTRAINT[PATH] UNIQUE([path] COLLATE NOCASE)" }
+    { "idPath",     E_DEF_INT,      "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" }, \
+    { "path",       E_DEF_STRING,   "NOT NULL" }, \
+    { "isRead",     E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
+    { "isSub",      E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
+    { "hide",       E_DEF_BOOL,     "NOT NULL DEFAULT '0'" }, \
+    { "DBAdded",    E_DEF_STRING,   "DEFAULT CURRENT_TIMESTAMP " }, \
+    { "",           E_END_TABLE,    "CONSTRAINT[PATH] UNIQUE([path] COLLATE NOCASE)" }
 
 #define DBTABMOVIESFS    \
     { "idMovieFS",   E_DEF_INT,             "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" },  \
@@ -41,21 +42,7 @@
     { "animation",   E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
     { "documentary", E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
     { "short",       E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
-    { "",            E_END_TABLE,           "CONSTRAINT [FS_PATH_FILE] UNIQUE ([filepath] COLLATE NOCASE,[filename] COLLATE NOCASE), FOREIGN KEY(idPath) REFERENCES paths(idPath) ON DELETE CASCADE" }
-
-#define DBTABMOVIESFS \
-    { "idMovieFS",   E_DEF_INT,             "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" }, \
-    { "idPath",      E_DEF_STRING,          "NOT NULL" }, \
-    { "filepath",    E_DEF_STRING,          "NOT NULL" }, \
-    { "filename",    E_DEF_STRING,          "NOT NULL" }, \
-    { "physical",    E_DEF_BOOL,            "DEFAULT '1'" }, \
-    { "imdbid",      E_DEF_STRING,          "" }, \
-    { "dateAdded",   E_DEF_STRING,          "NOT NULL" }, \
-    { "filesize",    E_DEF_INT,             "NOT NULL" }, \
-    { "serie",       E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
-    { "animation",   E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
-    { "documentary", E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
-    { "short",       E_DEFILTERS_SHORT,     "DEFAULT '1'" }, \
+    { "DBAdded",     E_DEF_STRING,          "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",            E_END_TABLE,           "CONSTRAINT [FS_PATH_FILE] UNIQUE ([filepath] COLLATE NOCASE,[filename] COLLATE NOCASE), FOREIGN KEY(idPath) REFERENCES paths(idPath) ON DELETE CASCADE" }
 
 #define DBTABMOVIES \
@@ -76,6 +63,7 @@
     { "imdbid",     E_DEF_STRING,      "NOT NULL" }, \
     { "type",       E_DEF_STRING,      "NOT NULL" }, \
     { "vue",        E_DEF_BOOL,        "" }, \
+    { "DBAdded",    E_DEF_STRING,     "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",           E_END_TABLE,       "CONSTRAINT [MOVIES_IMDBID] UNIQUE ([imdbid] COLLATE NOCASE)" }
 
 #define DBTABPERSONS \
@@ -83,31 +71,33 @@
     { "name",       E_DEF_STRING,   "NOT NULL" }, \
     { "FirstName",  E_DEF_STRING,   "" }, \
     { "LastName",   E_DEF_STRING,   "" }, \
+    { "DBAdded",    E_DEF_STRING,  "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",           E_END_TABLE,    "CONSTRAINT [PERSONS_NAME] UNIQUE ([name] COLLATE NOCASE)" }
-
 
 #define DBTABGENRES \
     { "idGenre",    E_DEF_INT,      "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" }, \
     { "genre",      E_DEF_STRING,   "NOT NULL" }, \
+    { "DBAdded",    E_DEF_STRING,   "DEFAULT CURRENT_TIMESTAMP " }, \
     { "", E_END_TABLE,              "CONSTRAINT [GENRES_GENRE] UNIQUE ([genre] COLLATE NOCASE)" }
 
 #define DBTABROLES \
     { "idRole",    E_DEF_INT,       "DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT" }, \
     { "role",      E_DEF_STRING,    "NOT NULL" }, \
+    { "DBAdded",   E_DEF_STRING,   "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",          E_END_TABLE,     "CONSTRAINT [ROLES_ROLE] UNIQUE ([role] COLLATE NOCASE)" }
 
 #define DBTABPERSONINMOVIE \
     { "idMovie",    E_DEFILTERS_SHORT,  "" }, \
     { "idPerson",   E_DEFILTERS_SHORT,  "" }, \
     { "idRole",     E_DEFILTERS_SHORT,  "" }, \
+    { "DBAdded",    E_DEF_STRING,       "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",           E_END_TABLE,        "CONSTRAINT [PERSONS_IN_MOVIES] UNIQUE ([idMovie],[idPerson],[idRole]), FOREIGN KEY(idMovie) REFERENCES movies(idMovie) ON DELETE CASCADE, FOREIGN KEY(idPerson) REFERENCES persons(idPerson) ON DELETE CASCADE, FOREIGN KEY(idRole) REFERENCES roles(idRole) ON DELETE CASCADE" }
 
 #define DBTABGENREINMOVIE \
     { "idMovie",    E_DEFILTERS_SHORT,  "" }, \
     { "idGenre",    E_DEFILTERS_SHORT,  "" }, \
+    { "DBAdded",    E_DEF_STRING,       "DEFAULT CURRENT_TIMESTAMP " }, \
     { "",           E_END_TABLE,        "CONSTRAINT [GENRES_IN_MOVIES] UNIQUE ([idMovie],[idGenre]), FOREIGN KEY(idMovie) REFERENCES movies(idMovie) ON DELETE CASCADE, FOREIGN KEY(idGenre) REFERENCES genres(idGenre) ON DELETE CASCADE" }
-
-
 
 #define DBCHANGELOG \
     { 0.1f,     "2020-03-14", "test" }, \

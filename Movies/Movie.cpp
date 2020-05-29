@@ -333,7 +333,6 @@ void Movie::separateValues(std::vector<std::string> *v_list, std::string _list) 
             list_end = list_sz;
         else
             list_end -= 1;
-        //std::string str = _list.substr(next + 1, list_end - next - 1);
         v_list->push_back(_list.substr(next + 1, list_end - next - 1));
         list_sz = found;
         _list.resize(found);
@@ -649,6 +648,11 @@ bool Movie::getJpeg()
     if (poster == "N/A")
     {
 //        consoleLOG->push_back("Poster N/A");
+        return false;
+    }
+    if (poster == "")
+    {
+        //        consoleLOG->push_back("Poster N/A");
         return false;
     }
     string fileName = url2fileName(poster);

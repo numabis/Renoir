@@ -1,9 +1,10 @@
+#ifndef _MOVIE_H_
+#define _MOVIE_H_
 #pragma once
 
 #include <vector>
 #include "variables.h"
 #include "databaselite.h"
-//#include "database.h"
 #include "omdbClientInfo.h"
 
 #define SERIES      "series"
@@ -139,3 +140,5 @@ private:
     bool typeIs[TYPE_MAX];
 
 };
+
+#endif // _MOVIE_H_

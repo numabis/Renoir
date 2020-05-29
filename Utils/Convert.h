@@ -2,6 +2,7 @@
 #define CONVERT_H
 #pragma once
 #include <string>
+#include <vector>
 
 namespace BUTIL
 {
@@ -20,6 +21,7 @@ namespace BUTIL
         static void wcharToChar(LPCWSTR _src, LPSTR *_dest);
         static void toLower(std::string *_str);
         static bool stob(std::string s, bool throw_on_error = true);
+        static void separateValues(std::vector<std::string>* v_list, std::string _list, std::string _sep);
         //static CString string2CString(std::string);
         //static std::string toString(int);
 	};
