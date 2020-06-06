@@ -12,12 +12,12 @@
 #include "curl_ios.h"
 #include "curl_exception.h"
 
-#include "omdb.h"
+#include "omdbApi.h"
 #include "Convert.h"
 #include "Util.h"
 #include "configManager.h"
 #include "movieFile.h"
-//#include "omdbXML.h"
+//#include "ApiXML.h"
 
 #define URLFIRST   "?"
 #define URLNEXT    "&"
@@ -25,25 +25,25 @@
 
 using namespace std::string_literals;
 
-Omdb::Omdb()
+ApiXML::ApiXML()
 {
     limit = 15;
 }
 
-Omdb::~Omdb(void)
+ApiXML::~ApiXML(void)
 {
 }
 
-bool Omdb::readOmdbResult(MovieFile *_file)
+bool ApiXML::parseOmdbXml(MovieFile *_file)
 {
-    return omdbXml.readOmdbXml(_file);
+    return omdbXml.readXml(_file);
 }
 
 /// Return URL 
 /// + APIKEY
 /// + RETURN TYPE (json/xml)
 /// + PLOT TYPE (short/full)
-std::string Omdb::getComonUrl()
+std::string ApiXML::getComonUrl()
 {
     std::string url = GETCM.getConfigStr(CONF_OMDB_QUERY_URL);
 
@@ -75,12 +75,7 @@ std::string Omdb::getComonUrl()
     return url;
 }
 
-std::stringstream Omdb::get_response(std::wstring url)
-{
-    return get_response(WS2S(url));
-}
-
-std::stringstream Omdb::get_response(std::string url)
+std::stringstream ApiXML::get_response(std::string url)
 {
     std::stringstream str;
     curl::curl_ios<std::stringstream> writer(str);
@@ -102,26 +97,26 @@ std::stringstream Omdb::get_response(std::string url)
     return str;
 }
 
-int Omdb::searchRequest(MovieFile *_file)
+int ApiXML::searchRequest(MovieFile *_file)
 {
     int results = search(_file);
-    std::vector <omdbSearchValues> * v_search = _file->getOmdbSearchResults();
+    std::vector <apiSearchValues> * v_search = omdbXml.getSearchResults();
+    /*else*/ if (omdbRes == true)
+    {
+        _file->addSearchResults(v_search);
+    }
     if (results == 1 && v_search->size()>0)
     {
-        omdbSearchValues movie = v_search->back();
+        apiSearchValues movie = v_search->back();
         v_search->pop_back();
-        _file->imdbId = movie.values[XMLS_IMDBID];
+        _file->imdbId = movie.values[API_OMDBID];
         results = getByImdb(_file);
-    }
-    else if (omdbRes == true)
-    {
-        _file->setSearchResults(omdbXml.getSearchResults());
     }
 
     return results;
 }
 
-int Omdb::request(MovieFile *_file)
+int ApiXML::request(MovieFile *_file)
 {
     int results = 0;
     omdbRes = false;
@@ -137,29 +132,16 @@ int Omdb::request(MovieFile *_file)
         if (omdbRes == true)
         {
             doSearchRequest = false;
-            _file->setOmdbXml(omdbResp.str(), true);
+            _file->setXmlStr(omdbResp.str(), true);
             exLOGINFO("OmdbRequest:%s", request.c_str());
             results = 1;
         }
     }
-
-    //if (doSearchRequest == true)
-    //{
-    //    results = searchRequest(_file);
-    //    if (results == 1)
-    //    {
-    //        std::vector <omdbSearchValues> * v_search = _file->getOmdbSearchResults();
-    //        omdbSearchValues movie = v_search->back();
-    //        v_search->pop_back();
-    //        _file->imdbId = movie.values[XMLS_IMDBID];
-    //        results = getByImdb(_file);
-    //    }
-    //}
-
+   
     return results;
 }
 
-int Omdb::getByImdb(MovieFile* _file)
+int ApiXML::getByImdb(MovieFile* _file)
 {
     int results = 0;
 
@@ -175,7 +157,7 @@ int Omdb::getByImdb(MovieFile* _file)
     else
     {
         auto omdb = get_response(url);
-        _file->setOmdbXml(omdb.str(), true);
+        _file->setXmlStr(omdb.str(), true);
         exLOGINFO("OmdbRequest:%s", url.c_str());
         results = 1;
 
@@ -183,9 +165,8 @@ int Omdb::getByImdb(MovieFile* _file)
     return results;
 }
 
-int Omdb::getByTitle(MovieFile *file)
+int ApiXML::getByTitle(MovieFile *file)
 {
-    //using namespace std::string_literals;
     std::string url = getComonUrl();
     std::string title = file->title;
     int results = 0;
@@ -204,7 +185,7 @@ int Omdb::getByTitle(MovieFile *file)
 
         results = omdbXml.readTotalResults(omdb.str());
 
-        file->setOmdbXml(omdb.str(), true);
+        file->setXmlStr(omdb.str(), true);
         exLOGINFO("OmdbRequest:%s", url.c_str());
 
     }
@@ -216,9 +197,8 @@ int Omdb::getByTitle(MovieFile *file)
 #define MIN_WORD_SIZE 3
 #define MIN_WORDS 1
 
-int Omdb::searchByTitle(MovieFile * file)
+int ApiXML::searchByTitle(MovieFile * file)
 {
-    //using namespace std::string_literals;
     std::string query;
     std::string url = GETCM.getConfigStr(CONF_OMDB_QUERY_URL);
     std::string key,year;
@@ -231,7 +211,7 @@ int Omdb::searchByTitle(MovieFile * file)
 
     if (url.empty())
     {
-        file->setOmdbXml("", false);
+        file->setXmlStr("", false);
         exLOGERROR("Wrong url : %s", url.c_str());
         MBOX("Wrong URL : " + url + "\nCheck config file", "Error", MB_ICONERROR | MB_OK);
 
@@ -288,12 +268,12 @@ int Omdb::searchByTitle(MovieFile * file)
         finished = (results>0);
 
         if (finished)
-            file->setOmdbXml(xml.str(), false);
+            file->setXmlStr(xml.str(), false);
     }   
     return results;
 }
 
-std::string Omdb::getRequest(MovieFile * _file)
+std::string ApiXML::getRequest(MovieFile * _file)
 {
     std::string url = getComonUrl();
 
@@ -318,29 +298,29 @@ std::string Omdb::getRequest(MovieFile * _file)
     return url;
 }
 
-int Omdb::getTotalResults()
+int ApiXML::getTotalResults()
 {
     return totalResults;
 }
 
-int Omdb::getLimit()
+int ApiXML::getLimit()
 {
     return limit;
 }
 
-void Omdb::setLimit(int _limit)
+void ApiXML::setLimit(int _limit)
 {
     if (_limit > 0 && _limit < 10)
         _limit = 10;
     limit = _limit;
 }
 
-void Omdb::setThreadRunning(bool _val)
+void ApiXML::setThreadRunning(bool _val)
 {
     threadRunning = _val;
 }
 
-int Omdb::search(MovieFile * _file)
+int ApiXML::search(MovieFile * _file)
 {
     std::string url = getComonUrl();
     int partialResults = 0;
@@ -448,101 +428,3 @@ int Omdb::search(MovieFile * _file)
     return totalResults;
 }
 
-//int Omdb::search2(MovieFile * _file)
-//{
-//    std::string url = getComonUrl();
-//    int partialResults = 0;
-//    totalResults = 0;
-//
-//    if (url.empty() == false)
-//    {
-//        std::string query;
-//        std::string year, pageRequest;
-//        size_t minWordSz = MIN_WORD_SIZE;
-//        size_t minWords = MIN_WORDS;
-//        bool finished = false;
-//
-//
-//        std::vector<std::string> v_title;
-//
-//        if (_file->year != 0) {
-//            year = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_YEAR) + std::to_string(_file->year);
-//        }
-//
-//        BUTIL::Convert::separateValues(&v_title, _file->title, " ");
-//
-//        std::vector<std::string>::iterator it;
-//
-//        for (it = v_title.begin(); it != v_title.end(); )
-//        {
-//            size_t sz = it->length();
-//            if (sz < minWordSz)
-//            {
-//                it = v_title.erase(it);
-//            }
-//            else
-//                it++;
-//        }
-//
-//
-//        omdbXml.clearSearchResults();
-//
-//        int nbLoop = (int)exp2(v_title.size()) - 1;
-//
-//        for (; nbLoop > 0; nbLoop--)
-//        {
-//            if (finished == true)
-//                break;
-//            int wordInd = 1;
-//            std::string titleSearch = "";
-//            for (it = v_title.begin(); it != v_title.end(); it++)
-//            {
-//                int wordInLoop = (int)exp2(wordInd - 1);
-//                if (nbLoop & wordInLoop)
-//                {
-//                    if (titleSearch.empty() == false)
-//                        titleSearch += URLTITLEUNION;
-//                    titleSearch += *it;
-//                }
-//                wordInd++;
-//            }
-//            int page = 1;
-//            bool nextPage = true;
-//            while (nextPage)
-//            {
-//                pageRequest = URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_PAGE) + std::to_string(page);
-//                query = url + URLNEXT + GETCM.getConfigStr(CONF_OMDB_QUERY_SEARCH) + titleSearch + year + pageRequest;
-//                exLOGINFO("OmdbRequest:%s", query.c_str());
-//                auto omdbResp = get_response(query);
-//                bool localOmdbRes = omdbXml.readResponse(omdbResp.str());
-//                if (localOmdbRes == true)
-//                {
-//                    omdbRes = true;
-//                    int localResults = omdbXml.readTotalResults();
-//                    partialResults = omdbXml.parseSearchResults();
-//                    totalResults += partialResults;
-//                    if (localResults >= 10)
-//                    {
-//
-//                        page++;
-//                    }
-//                    else
-//                    {
-//                        nextPage = false;
-//                    }
-//
-//                }
-//                else
-//                    nextPage = false;
-//                if (limit > 0 && totalResults > limit)
-//                {
-//                    nextPage = false;
-//                    finished = true;
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    return totalResults;
-//}

@@ -2,6 +2,8 @@
 #define _DEFINICIONES_H_
 #pragma once
 
+#define APIATRTIBUTES       "title", "year", "imdbID", "id", "type", "poster", "image", "description"
+
 #define NEWLINE             "\r\n"
 
 #define DEFAULTSEP ","

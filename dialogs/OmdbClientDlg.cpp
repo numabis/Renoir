@@ -640,7 +640,7 @@ bool omdbClientDlg::OnInitDialogConfig()
         {
             saveXmlfile();
             GETDB.initDB(true);
-            hThreadReadXML = xmlFiles.loadOmdbFile();
+            hThreadReadXML = xmlFiles.loadXmlFile();
         }
     }
 
@@ -1162,7 +1162,7 @@ void omdbClientDlg::loadXmlfile(void)
         GETCM.setConfigValue(CONF_XML_FILENAME, name);
         GETCM.setConfigValue(CONF_XML_FILENAMEEXT, extention);
 //        xmlConfig.saveLocalConfigFile(false);
-        hThreadReadXML = xmlFiles.loadOmdbFile();
+        hThreadReadXML = xmlFiles.loadXmlFile();
         threadLoadXmlIsRunning = true;
     }
 }
@@ -1335,7 +1335,7 @@ void omdbClientDlg::getFile(int _position)
     }
 
     selectedFile.resetMovie();
-    selectedFile.setOmdbXml("", false);
+    selectedFile.setXmlStr("", false);
     selectedFile.clearSearchResults();
     
 }
@@ -2022,37 +2022,48 @@ void omdbClientDlg::editFileName(void)
     dlgEditFileName.setValue(&tmpFileName);
     dlgEditFileName.setTexts(texts);
 
-    if (dlgEditFileName.DoModal() == IDOK)
+    bool exitEdit = true;
+    while (exitEdit)
     {
-        if (tmpFileName != selectedFile.getFilename())
+        if (dlgEditFileName.DoModal() == IDOK)
         {
-            string s_oldName = selectedFile.getFullPath().c_str();
-            string s_newName = selectedFile.getFullPath(tmpFileName).c_str();
-
-            int res = rename(s_oldName.c_str(), s_newName.c_str());
-            int error = ::GetLastError();
-            if (error == ERROR_SUCCESS) {
-                selectedFile.setFilename(tmpFileName);
-
-                bool fields[FS_MAX_FIELDS - FS_ID];
-                for (short i = 0; i < FS_MAX_FIELDS - FS_ID; i++)
-                    fields[i] = false;
-                fields[FS_FILENAME - FS_ID] = true;
-
-                if (GETDB.MOVIESFS_update(&selectedFile, fields) == true)
-                {
-                    lstMovies->SetItemText(selectedFile.LstPosition, DataBase::COL_FILENAME, CString(selectedFile.getFilename().c_str()));
-                    UpdateDisplay();
-                }
-                string text = Util::format("Filename set to [%s]", selectedFile.getFilename().c_str());
-                LOGINFO(text.c_str());
-                setStaticText(STATIC_DESC, text.c_str());
-            }
-            else
+            if (tmpFileName != selectedFile.getFilename())
             {
-                MBOX(std::string(Util::GetLastErrorAsString(error)) + " - file [" + selectedFile.getFilename() + "]->[" + tmpFileName + "]", "Error", MB_ICONERROR | MB_OK);
-                LOGERROR("Error renaming file [%s]->[%s]", selectedFile.getFilename().c_str(), tmpFileName.c_str());
+                string s_oldName = selectedFile.getFullPath().c_str();
+                string s_newName = selectedFile.getFullPath(tmpFileName).c_str();
+
+                int res = rename(s_oldName.c_str(), s_newName.c_str());
+                int error = ::GetLastError();
+                if (error == ERROR_SUCCESS) 
+                {
+                    selectedFile.setFilename(tmpFileName);
+
+                    bool fields[FS_MAX_FIELDS - FS_ID];
+                    for (short i = 0; i < FS_MAX_FIELDS - FS_ID; i++)
+                        fields[i] = false;
+                    fields[FS_FILENAME - FS_ID] = true;
+
+                    if (GETDB.MOVIESFS_update(&selectedFile, fields) == true)
+                    {
+                        lstMovies->SetItemText(selectedFile.LstPosition, DataBase::COL_FILENAME, CString(selectedFile.getFilename().c_str()));
+                        UpdateDisplay();
+                    }
+                    string text = Util::format("Filename set to [%s]", selectedFile.getFilename().c_str());
+                    LOGINFO(text.c_str());
+                    setStaticText(STATIC_DESC, text.c_str());
+                    exitEdit = false;
+                }
+                else
+                {
+                    MBOX(std::string(Util::GetLastErrorAsString(error)) + " - file [" + selectedFile.getFilename() + "]->[" + tmpFileName + "]", "Error", MB_ICONERROR | MB_OK);
+                    LOGERROR("Error renaming file [%s]->[%s]", selectedFile.getFilename().c_str(), tmpFileName.c_str());
+                    exitEdit = true;
+                }
             }
+        }
+        else
+        {
+            exitEdit = false;
         }
     }
 }
@@ -2075,6 +2086,33 @@ void omdbClientDlg::showSearchResult(void)
 
     }
 
+}
+void omdbClientDlg::showImdbApiSearchResult(void)
+{
+    int result = selectedFile.imdbApiSearch();
+    if (result == 1)
+    {
+        omdbRequest();
+        displayMovieInfos(&selectedFile);
+    }
+    else
+        showSearchResult();
+    //SearchResults dlgMovieSearch;
+    //dlgMovieSearch.setFile(&selectedFile);
+    //if (dlgMovieSearch.DoModal() == IDOK)
+    //{
+    //    selectedFile.resetMovie();
+    //    bool force = GETCM.getConfigBool(CONF_APP_FORCEREQUEST);
+    //    GETCM.setConfigValue(CONF_APP_FORCEREQUEST, true);
+    //    selectedFile.omdbRequest();
+    //    GETCM.setConfigValue(CONF_APP_FORCEREQUEST, force);
+    //    updateLstMovies(&selectedFile);
+    //    displayMovieInfos(&selectedFile);
+    //}
+    //else
+    //{
+    //
+    //}
 }
 void omdbClientDlg::playMovie(void)
 {
@@ -2224,10 +2262,15 @@ bool omdbClientDlg::omdbRequest()
         if (omdbSuccess == false && isRunning(hThreadOmdbAll) == false)
         {
 //            size_t searchSz = selectedFile.getOmdbSearchResults()->size();
-            showSearchResult();
+            int res = selectedFile.imdbApiSearch();
+            if (res == 1)
+                selectedFile.omdbRequest();
+            else
+                showSearchResult();
         }
 
-        ret = xmlFiles.loadOmdbStr(&selectedFile);
+        if (selectedFile.getXmlStr().empty() == false)
+            ret = xmlFiles.loadOmdbStr(&selectedFile);
         //omdbCountTotal++;
         if (selectedFile.isImdbId())
         {
@@ -2249,9 +2292,9 @@ bool omdbClientDlg::omdbRequest()
             textDebugWindow("OmdbRequest: KO", selectedFile.title);
             progressCounter[CNT_ERROR]++;
             //xmlFiles.readOmdbError(&selectedFile);
-            //selectedFile.getMovie()->setPlot(selectedFile.getOmdbXml());
+            //selectedFile.getMovie()->setPlot(selectedFile.getXmlStr());
             exLOGINFO("ERROR Downloading %s", selectedFile.getFilename().c_str());
-            if (selectedFile.getOmdbXml() == "Invalid API key!")
+            if (selectedFile.getXmlStr() == "Invalid API key!")
             {
                 isApiKeySet = false;
                 showApiKey();
@@ -2295,7 +2338,7 @@ void omdbClientDlg::omdbSingleRequest()
         if (omdbRequest())
             setStaticText(STATIC_DESC, "1 found");
         else
-            setStaticText(STATIC_DESC, selectedFile.getOmdbXml());
+            setStaticText(STATIC_DESC, selectedFile.getXmlStr());
         UpdateDisplay(&selectedFile);
     } else
         setStaticText(STATIC_DESC, "noApiKey");

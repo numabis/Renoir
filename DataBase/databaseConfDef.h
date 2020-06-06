@@ -29,8 +29,8 @@
 #define CONF_APP_REQUESTTYPEMANUAL      "APP_requesttypemanual"
 #define CONF_APP_JPGNOTFOUND            "APP_jpgnotfound"
 
-#define CONF_OMDB_QUERY_URL             "OMDB_QURL"
-#define CONF_OMDB_QUERY_REQUEST	        "OMDB_QURLAPI"
+#define CONF_OMDB_QUERY_URL             "OMDB_urlQ"
+#define CONF_OMDB_QUERY_REQUEST	        "OMDB_urlreqQ"
 #define CONF_OMDB_LISTSEPARATOR	        "OMDB_listseparator"
 #define CONF_OMDB_TESTMODE	            "OMDB_testmode"
 #define CONF_OMDB_QUERY_SEARCH          "OMDB_searchQ"
@@ -48,6 +48,21 @@
 #define CONF_OMDB_PLOT	                "OMDB_plot"
 #define CONF_OMDB_QUERY_RETURN_TYPE     "OMDB_returntypeQ"
 #define CONF_OMDB_RETURN_TYPE           "OMDB_returntype"
+
+#define CONF_IMDBAPI_QUERY_URL              "IMDBAPI_urlQ" // https://imdb-api.com/
+#define CONF_IMDBAPI_QUERY_REQUEST	        "IMDBAPI_urlreqQ" // API/
+#define CONF_IMDBAPI_QUERY_SEARCH           "IMDBAPI_searchQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_TITLE     "IMDBAPI_searchtitleQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_MOVIE     "IMDBAPI_searchmovieQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_SERIES    "IMDBAPI_searchSeriesQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_NAME      "IMDBAPI_searchnameQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_EPISODE   "IMDBAPI_searchepisodeQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_COMPANY   "IMDBAPI_searchcompanyQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_KEYWORD   "IMDBAPI_searchkeywordQ" // Search/
+#define CONF_IMDBAPI_QUERY_SEARCH_ALL       "IMDBAPI_searchallQ" // Search/
+#define CONF_IMDBAPI_QUERY_GETMOVIE         "IMDBAPI_getMovieQ" 
+
+#define CONF_IMDBAPI_APIKEY	            "IMDBAPI_apikey" // k_12345678
 
 #define CONF_IMDB_URL	                "IMDB_url"
 #define CONF_IMDB_TITLE	                "IMDB_title"
@@ -125,6 +140,17 @@
 { CONF_OMDB_PLOT,                   { "full", "plot:full or short"} }, \
 { CONF_OMDB_LISTSEPARATOR,          { ",", "Actual Folder"} }, \
 { CONF_OMDB_TESTMODE,               { "false", "Actual Folder"} }, \
+{ CONF_IMDBAPI_QUERY_URL,           { "https://imdb-api.com/", "ImdbAPI web URL"} }, \
+{ CONF_IMDBAPI_QUERY_REQUEST,	    { "API" , ""} }, \
+{ CONF_IMDBAPI_QUERY_SEARCH,        { "Search", ""} }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_TITLE,  { "Searchtitle", "Search"} }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_MOVIE,  { "SearchMovie", "Recommended for searching Movies" } }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_SERIES, { "SearchSeries", "Recommended for searching Series TVs" } }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_NAME,   { "SearchName", "Search into all people." } }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_EPISODE,{ "SearchEpisode", "Search into all TV Episode titles."} }, \
+{ CONF_IMDBAPI_QUERY_SEARCH_ALL,    { "SearchAll", "Search into all items" } }, \
+{ CONF_IMDBAPI_QUERY_GETMOVIE,      { "Title", "Get Movies or Series TV information." } }, \
+{ CONF_IMDBAPI_APIKEY,	            { "k_9ZnN7HB8", "A valid OMDB API KEY" } }, \
 { CONF_IMDB_URL,                    { "https://www.imdb.com/", "Imdb URL"} }, \
 { CONF_IMDB_TITLE,                  { "title", "IMDB page"} }, \
 { CONF_IMDB_FIND,                   { "find?q=", "find sintax"} }, \

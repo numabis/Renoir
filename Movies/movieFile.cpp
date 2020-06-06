@@ -289,29 +289,53 @@ bool MovieFile::isImdbId()
     return false;
 }
 
-std::string MovieFile::getOmdbXml()
+std::string MovieFile::getJsonStr(void)
 {
-    return omdbXml;
+    if (isJsonSet)
+        return jsonStr;
+    return std::string();
 }
 
-void MovieFile::setOmdbXml(std::string _omdb, bool _value)
+std::string MovieFile::getXmlStr()
 {
-    omdbXml = _omdb;
-    isOmdbXml = _value;
+    if (isXmlSet)
+        return xmlStr;
+    return xmlStr;
+}
+
+void MovieFile::setXmlStr(std::string _xml, bool _value)
+{
+    xmlStr = _xml;
+    isXmlSet = _value;
+}
+void MovieFile::setJsonStr(std::string _json, bool _value)
+{
+    jsonStr = _json;
+    isJsonSet = _value;
 }
 void MovieFile::clearSearchResults()
 {
-    omdbSearchResults.clear();
+    apiSearchResults.clear();
 }
-void MovieFile::setSearchResults(std::vector <omdbSearchValues> *_results)
+void MovieFile::setSearchResults(std::vector <apiSearchValues> *_results)
 {
-    omdbSearchResults.clear();
-    omdbSearchResults = *_results;
+    apiSearchResults.clear();
+    apiSearchResults = *_results;
 }
 
-bool MovieFile::isOmdbXmlSetted()
+void MovieFile::addSearchResults(std::vector<apiSearchValues>* _results)
 {
-    return isOmdbXml;
+    apiSearchResults.insert(apiSearchResults.end(), _results->begin(), _results->end());
+}
+
+bool MovieFile::isXmlSetted()
+{
+    return isXmlSet;
+}
+
+bool MovieFile::isJsonSetted()
+{
+    return isJsonSet;
 }
 
 bool MovieFile::omdbRequest()
@@ -326,14 +350,14 @@ bool MovieFile::omdbRequest()
     else
     {
         //textDebugWindow("OmdbRequest: %s", selectedFile.title.c_str());
-        int nbRes = omdb.request(this);
+        int nbRes = omdbClient.request(this);
 
         if (nbRes > 1)
             return false;
 
         if (nbRes == 1)
         {
-            omdb.readOmdbResult(this);
+            omdbClient.parseOmdbXml(this);
             GETDB.MOVIES_insert(&movie);
         }
 
@@ -352,9 +376,9 @@ bool MovieFile::omdbRequest()
             //textDebugWindow("OmdbRequest: KO", selectedFile.title);
             //progressCounter[CNT_ERROR]++;
             //xmlFiles.readOmdbError(&selectedFile);
-            getMovie()->setPlot(getOmdbXml());
+            getMovie()->setPlot(getXmlStr());
             exLOGINFO("ERROR Downloading %s", getFilename().c_str());
-            //if (selectedFile.getOmdbXml() == "Invalid API key!")
+            //if (selectedFile.getXmlStr() == "Invalid API key!")
             //{
             //    isApiKeySet = false;
             //    showApiKey();
@@ -377,39 +401,34 @@ bool MovieFile::omdbRequest()
 int MovieFile::omdbSearch()
 {
     exLOGDEBUG("");
-    return omdb.searchRequest(this);
+    return omdbClient.searchRequest(this);
+}
+
+int MovieFile::imdbApiSearch()
+{
+    exLOGDEBUG("");
+    return imdbClient.searchRequest(this);
 }
 
 void MovieFile::omdbSetLimit(int _limit)
 {
-    omdb.setLimit(_limit);
+    omdbClient.setLimit(_limit);
 }
 
 int MovieFile::omdbGetLimit()
 {
-    return omdb.getLimit();
+    return omdbClient.getLimit();
 }
 
 int MovieFile::omdbGetTotalResults()
 {
-    return omdb.getTotalResults();
+    return omdbClient.getTotalResults();
 }
 
-std::vector <omdbSearchValues> * MovieFile::getOmdbSearchResults()
+std::vector <apiSearchValues> * MovieFile::getApiSearchResults()
 {
-    return &omdbSearchResults;
+    return &apiSearchResults;
 }
-
-#ifdef USEJSON
-std::string getOmdbJson()
-{
-    return omdbJSON;
-}
-void setOmdbJson(std::string _json)
-{
-    omdbJSON = _json;
-}
-#endif
 
 #pragma endregion MovieFile
 

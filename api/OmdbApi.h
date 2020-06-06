@@ -3,16 +3,16 @@
 #pragma once
 
 #include "Movie.h"
-#include "omdbXML.h"
+#include "ApiXML.h"
 
-class Omdb
+class ApiXML
 {
 
 public:
-    Omdb();
-    ~Omdb(void);
+    ApiXML();
+    ~ApiXML(void);
     int request(MovieFile *file);
-    bool readOmdbResult(MovieFile *_file);
+    bool parseOmdbXml(MovieFile *_file);
     int searchRequest(MovieFile *_file);
     int getTotalResults();
     int getLimit();
@@ -20,7 +20,6 @@ public:
     void setThreadRunning(bool _val);
 
 private:
-    std::stringstream get_response(std::wstring url);
     std::stringstream get_response(std::string url);
 
     int getByImdb(MovieFile *file);
@@ -34,7 +33,7 @@ private:
     bool threadRunning;
 
     bool omdbRes;
-    omdbXML omdbXml;
+    ApiXml omdbXml;
     int totalResults ;
     int limit;
 

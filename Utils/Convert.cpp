@@ -81,7 +81,9 @@ namespace BUTIL
             case '_':
             case '.':
             case ',':
-                (*_str)[i] = '+';
+            case '+':
+                //(*_str)[i] = '+';
+                _str->replace(i, 1, "%20");
                 break;
             case 'é':
             case 'è':

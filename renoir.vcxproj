@@ -126,7 +126,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN32;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\api;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -196,7 +196,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\api;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -256,7 +256,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_DEMO;WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;.\sources;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\sources;.\api;.\movies;.\DataBase;.\Utils;.\dialogs;.\libs\tinyxml\2.6.2\vs2010;.\libs\sqlapi\3.8.3\include;.\libs\zlib\1.2.7\vs2010\include;.\Libs\curl\include;.\Libs\curlcpp\include;.\Libs\json\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -324,6 +324,10 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="api\ApiJson.h" />
+    <ClInclude Include="api\ApiXml.h" />
+    <ClInclude Include="api\ImdbApi.h" />
+    <ClInclude Include="api\OmdbApi.h" />
     <ClInclude Include="DataBase\database.h" />
     <ClInclude Include="DataBase\databaseConfDef.h" />
     <ClInclude Include="DataBase\databaseSQL.h" />
@@ -348,8 +352,6 @@
     <ClInclude Include="sources\fileSystem.h" />
     <ClInclude Include="sources\manageXML.h" />
     <ClInclude Include="sources\menus.h" />
-    <ClInclude Include="sources\omdb.h" />
-    <ClInclude Include="sources\omdbXML.h" />
     <ClInclude Include="sources\renoir.h" />
     <ClInclude Include="sources\readConfig.h" />
     <ClInclude Include="sources\variables.h" />
@@ -367,6 +369,10 @@
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="api\ApiJson.cpp" />
+    <ClCompile Include="api\ApiXml.cpp" />
+    <ClCompile Include="api\ImdbApi.cpp" />
+    <ClCompile Include="api\OmdbApi.cpp" />
     <ClCompile Include="DataBase\database.cpp" />
     <ClCompile Include="debugWindow.cpp" />
     <ClCompile Include="dialogs\CAboutDlg.cpp" />
@@ -383,8 +389,6 @@
     <ClCompile Include="sources\configManager.cpp" />
     <ClCompile Include="sources\fileSystem.cpp" />
     <ClCompile Include="sources\manageXML.cpp" />
-    <ClCompile Include="sources\omdb.cpp" />
-    <ClCompile Include="sources\omdbXML.cpp" />
     <ClCompile Include="sources\renoir.cpp" />
     <ClCompile Include="sources\readConfig.cpp" />
     <ClCompile Include="stdafx.cpp" />

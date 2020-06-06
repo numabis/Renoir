@@ -31,13 +31,9 @@ public:
 
     ManageXML();
     ~ManageXML(void);
-//    void init(std::string*, std::string);
-    //void init();
-    //void init(std::string _path);
     bool loadOmdbStr(MovieFile *_file);
     bool readOmdbError(MovieFile *_file);
-    HANDLE loadOmdbFile();
-    std::wstring movieToWxml(Movie _movie);
+    HANDLE loadXmlFile();
     std::string movieToXml(Movie _movie);
     HANDLE saveMoviesToXml(std::string _path, bool _compress);
     bool loadMoviesFromDB(void);

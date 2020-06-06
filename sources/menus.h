@@ -36,6 +36,7 @@
 #define IDC_MENU_OPEN_EXPLORER          0x0320
 #define IDC_MENU_PLAY_MOVIE             0x0330
 #define IDC_BUTTON_OMDB_SEARCH          0x0340
+#define IDC_BUTTON_IMDBAPI_SEARCH       0x0350
 
 
 #define MENU_FOLDER             MF_STRING, IDM_CHANGE_FOLDER, L"&Add Folder", &omdbClientDlg::selectFolder
@@ -50,6 +51,8 @@
 #define MENU_OMDBSEARCH         MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_SEARCH], L"Omdb Search", &omdbClientDlg::showSearchResult
 #define MENU_OMDBXREQ           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL], L"&All Request", &omdbClientDlg::omdbAllRequest
 #define MENU_OMDBSTOP           MF_STRING, (UINT_PTR)idcOmdb[BTN_OMDB_ALL_STOP], L"&All Stop", &omdbClientDlg::omdbAllStop
+
+#define MENU_IMDBAPISEARCH      MF_STRING, (UINT_PTR)idcImdbApi[BTN_IMDBAPI_SEARCH], L"ImdbApi Search", &omdbClientDlg::showImdbApiSearchResult
 
 #define MENU_EDIT_IMDBID        MF_STRING, IDC_BUTTON_EDIT_IMDBID, L"&Edit ImdbId", &omdbClientDlg::editImdbId
 #define MENU_EDIT_FILENAME      MF_STRING, IDC_BUTTON_EDIT_FNAME, L"&Edit File Name", &omdbClientDlg::editFileName

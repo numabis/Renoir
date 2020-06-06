@@ -90,7 +90,7 @@ int ManageXML::loadDBfromVector()
 bool ManageXML::readOmdbError(MovieFile *_file)
 { // //<root response="False"><error>Movie not found!</error></root>
     TiXmlDocument docOmdbXml;
-    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getOmdbXml());
+    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getXmlStr());
 
     if (nodeRoot && std::string(nodeRoot->Value()) == NODE_ROOT)
     {
@@ -100,7 +100,7 @@ bool ManageXML::readOmdbError(MovieFile *_file)
             TiXmlElement *nodeError = nodeRoot->FirstChildElement(NODE_ERROR);
             if (nodeError)
             {
-                _file->setOmdbXml(nodeError->GetText(), false);
+                _file->setXmlStr(nodeError->GetText(), false);
                 _file->imdbId = OMDBNOTFOUND;
             }
             return true;
@@ -365,11 +365,11 @@ bool  ManageXML::readJSON(std::string _xml)
 bool ManageXML::loadOmdbStr(MovieFile *_file)
 {
     TiXmlDocument docOmdbXml;
-    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getOmdbXml());
+    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getXmlStr());
     return (readOmdbXml(nodeRoot, _file)>0);
 }
 
-HANDLE ManageXML::loadOmdbFile()
+HANDLE ManageXML::loadXmlFile()
 {
     DWORD  hThreadIdArray;
     stopThreads = false;

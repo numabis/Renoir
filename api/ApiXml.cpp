@@ -1,8 +1,8 @@
-#include "omdbXML.h"
+#include "ApiXML.h"
 #include "Convert.h"
 #include "definitions.h"
 #include "database.h"
-#include "omdb.h"
+#include "omdbApi.h"
 #include "Util.h"
 #include "configManager.h"
 
@@ -16,42 +16,42 @@
 #define ATTR_TOTALRESULTS "totalResults"
 
 std::string movieXmlAttr[] = { "title", "year", "rated", "released", "runtime", "genre", "director", "writer", "actors", "plot", "language", "country", "awards", "poster", "metascore", "imdbRating", "imdbVotes", "imdbID", "type" };
-std::string omdbSearchAttr[] = { "title", "year", "imdbID", "type", "poster" };
+std::string omdbSearchAttr[API_NBATTRIBUTES] = { APIATRTIBUTES };
 //std::vector<Movie> vectorMovies;
 
-omdbXML::omdbXML()
+ApiXml::ApiXml()
 {
     init();
 }
 
-omdbXML::omdbXML(std::string _xml)
+ApiXml::ApiXml(std::string _xml)
 {
     init();
     omdbXml = _xml;
     setRootNode();
 }
 
-void omdbXML::init(void)
+void ApiXml::init(void)
 {
     response = false;
     totalResults = 0;
 }
 
 
-void omdbXML::setXML(std::string _xml)
+void ApiXml::setXML(std::string _xml)
 {
     omdbXml = _xml;
     setRootNode();
 }
 
-omdbXML::~omdbXML(void)
+ApiXml::~ApiXml(void)
 {
 }
 
-bool omdbXML::readOmdbError(MovieFile *_file)
+bool ApiXml::readOmdbError(MovieFile *_file)
 { // //<root response="False"><error>Movie not found!</error></root>
     TiXmlDocument docOmdbXml;
-    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getOmdbXml());
+    TiXmlElement *nodeRoot = BUTIL::Xml::parse(docOmdbXml, _file->getXmlStr());
 
     if (nodeRoot && std::string(nodeRoot->Value()) == NODE_ROOT)
     {
@@ -61,7 +61,7 @@ bool omdbXML::readOmdbError(MovieFile *_file)
             TiXmlElement *nodeError = nodeRoot->FirstChildElement(NODE_ERROR);
             if (nodeError)
             {
-                _file->setOmdbXml(nodeError->GetText(), false);
+                _file->setXmlStr(nodeError->GetText(), false);
                 _file->imdbId = OMDBNOTFOUND;
             }
             return true;
@@ -70,7 +70,7 @@ bool omdbXML::readOmdbError(MovieFile *_file)
     return false;
 }
 
-bool omdbXML::parseXml()
+bool ApiXml::parseXml()
 {
     bool ret = false;
     if (rootNode && std::string(rootNode->Value()) == NODE_ROOT)
@@ -96,11 +96,11 @@ bool omdbXML::parseXml()
     return ret;
 
 }
-void omdbXML::clearSearchResults(void)
+void ApiXml::clearSearchResults(void)
 {
     searchResults.clear();
 }
-int omdbXML::parseSearchResults()
+int ApiXml::parseSearchResults()
 {
     int parcialResults = 0;
     if (rootNode && std::string(rootNode->Value()) == NODE_ROOT)
@@ -114,18 +114,22 @@ int omdbXML::parseSearchResults()
                 //searchResults.clear();
                 for (TiXmlElement* e = rootNode->FirstChildElement(NODE_RESULT); e != NULL; e = e->NextSiblingElement(NODE_RESULT))
                 {
-                    //std::string tmpResults[XMLS_NBATTRIBUTES];
-                    omdbSearchValues tmpResults;
-                    for (int attr = 0; attr < XMLS_NBATTRIBUTES; attr++)
+                    //std::string tmpResults[API_NBATTRIBUTES];
+                    apiSearchValues tmpResults;
+                    for (int attr = 0; attr < API_NBATTRIBUTES; attr++)
                     {
                         tmpResults.values[attr] = BUTIL::Xml::XML_ATTR_string(e, omdbSearchAttr[attr]);
+                        tmpResults.isFromJson = false;
                     }
                     bool addResult = true;
-                    std::vector<omdbSearchValues>::iterator it;
+                    std::vector<apiSearchValues>::iterator it;
                     for (it = searchResults.begin(); it != searchResults.end(); it++)
                     {
-                        if (it->values[XMLS_IMDBID] == tmpResults.values[XMLS_IMDBID])
+                        if (it->values[API_OMDBID] == tmpResults.values[API_OMDBID])
+                        {
                             addResult = false;
+                            break;
+                        }
                     }
                     if (addResult)
                     {
@@ -139,18 +143,18 @@ int omdbXML::parseSearchResults()
     return parcialResults;
 }
 
-void omdbXML::setRootNode(std::string _xml)
+void ApiXml::setRootNode(std::string _xml)
 {
     omdbXml = _xml;
     rootNode = BUTIL::Xml::parse(genXmlDoc, omdbXml);
 }
 
-void omdbXML::setRootNode()
+void ApiXml::setRootNode()
 {
     rootNode = BUTIL::Xml::parse(genXmlDoc, omdbXml);
 }
 
-int omdbXML::readTotalResults(std::string _xml)
+int ApiXml::readTotalResults(std::string _xml)
 {
     omdbXml = _xml;
     setRootNode();
@@ -158,7 +162,7 @@ int omdbXML::readTotalResults(std::string _xml)
     return readTotalResults();
 }
 
-int omdbXML::readTotalResults()
+int ApiXml::readTotalResults()
 {
     totalResults = 0;
 
@@ -169,7 +173,7 @@ int omdbXML::readTotalResults()
     return totalResults;
 }
 
-bool omdbXML::readResponse(std::string _xml)
+bool ApiXml::readResponse(std::string _xml)
 {
     omdbXml = _xml;
     setRootNode();
@@ -177,7 +181,7 @@ bool omdbXML::readResponse(std::string _xml)
     return readResponse();
 }
 
-bool omdbXML::readResponse()
+bool ApiXml::readResponse()
 {
     response = false;
     if (rootNode && std::string(rootNode->Value()) == NODE_ROOT)
@@ -187,22 +191,22 @@ bool omdbXML::readResponse()
     return response;
 }
 
-bool omdbXML::getResponse()
+bool ApiXml::getResponse()
 {
     return response;
 }
 
-int omdbXML::getTotalResults()
+int ApiXml::getTotalResults()
 {
     return totalResults;
 }
 
-std::vector <omdbSearchValues> * omdbXML::getSearchResults()
+std::vector <apiSearchValues> * ApiXml::getSearchResults()
 {
     return &searchResults;
 }
 
-std::string omdbXML::movieToXml(Movie _movie)
+std::string ApiXml::movieToXml(Movie _movie)
 {
     std::stringstream str;
     std::string xmlValues[XML_NBATTRIBUTES];
@@ -217,22 +221,16 @@ std::string omdbXML::movieToXml(Movie _movie)
     return str.str();
 }
 
-bool omdbXML::loadMoviesFromDB()
+bool ApiXml::loadMoviesFromDB()
 {
     MovieFile file;
     return false;
 }
 
-bool  omdbXML::readJSON(std::string _xml)
-{
-    exLOGERROR("JSON not implemented");
-    return false;
-}
-
-bool omdbXML::readOmdbXml(MovieFile *_file)
+bool ApiXml::readXml(MovieFile *_file)
 {
     bool ret = false;
-    rootNode = BUTIL::Xml::parse(genXmlDoc, _file->getOmdbXml());
+    rootNode = BUTIL::Xml::parse(genXmlDoc, _file->getXmlStr());
     if (parseXml())
     {
         _file->initMovieValue(xmlValues, omdbSeparator);
@@ -241,7 +239,7 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
     return ret;
 }
 
-//bool omdbXML::isRunning(HANDLE  _hThread)
+//bool ApiXml::isRunning(HANDLE  _hThread)
 //{
 //    DWORD exitCode = 0;
 //    if (_hThread)
@@ -250,15 +248,15 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //        return true;
 //    return false;
 //}
-//std::string omdbXML::getXmlFilePath()
+//std::string ApiXml::getXmlFilePath()
 //{
 //    return GETCM.getConfigStr(CONF_XML_PATH) + "\\" + GETCM.getConfigStr(CONF_XML_FILENAME) + "." + GETCM.getConfigStr(CONF_XML_FILENAMEEXT) ;
 //}
-//void omdbXML::clearMovieVector()
+//void ApiXml::clearMovieVector()
 //{
 //    v_movies.clear();
 //}
-//bool omdbXML::ifExistsUpdateMovieVector(Movie *_movie)
+//bool ApiXml::ifExistsUpdateMovieVector(Movie *_movie)
 //{
 //    for (std::vector<Movie>::iterator it = v_movies.begin(); it != v_movies.end(); ++it)
 //    {
@@ -270,11 +268,11 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    }
 //    return false;
 //}
-//void omdbXML::addToMovieVector(Movie *_movie)
+//void ApiXml::addToMovieVector(Movie *_movie)
 //{
 //    v_movies.push_back(*_movie);
 //}
-//int omdbXML::loadDBfromVector()
+//int ApiXml::loadDBfromVector()
 //{
 //    int count = 0;
 //    GETDB.TRANSACTION_begin();
@@ -286,14 +284,14 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    GETDB.TRANSACTION_commit();
 //    return count;
 //}
-//std::vector<MovieFile> *omdbXML::getV_load() {
+//std::vector<MovieFile> *ApiXml::getV_load() {
 //    return &v_movieFiles;
 //}
-//BUTIL::Mutex* omdbXML::getMtx_vLoad()
+//BUTIL::Mutex* ApiXml::getMtx_vLoad()
 //{
 //    return &mtx_vLoad;
 //}
-//int omdbXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file)
+//int ApiXml::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file)
 //{
 //    //ST_SAVE(ST_READING_FILE);
 //    if (_nodeRoot && std::string(_nodeRoot->Value()) == NODE_ROOT)
@@ -347,7 +345,7 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    return 0;
 //
 //}
-//int omdbXML::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file, Movie *_movie)
+//int ApiXml::readOmdbXml(TiXmlElement *_nodeRoot, MovieFile *_file, Movie *_movie)
 //{ //<root response="False"><error>Movie not found!</error></root>
 //    progressCounter[CNT_TOTAL] = 0;
 //    progressCounter[CNT_READ] = 0;
@@ -387,7 +385,7 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    return progressCounter[CNT_READ];
 //
 //}
-//int omdbXML::readXml(MovieFile *_file, Movie *_movie)
+//int ApiXml::readXml(MovieFile *_file, Movie *_movie)
 //{ //<root response="False"><error>Movie not found!</error></root>
 //    if (rootNode && std::string(rootNode->Value()) == NODE_ROOT)
 //    {
@@ -417,7 +415,7 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    return 1;
 //
 //}
-//HANDLE omdbXML::saveMoviesToXml(bool _compress)
+//HANDLE ApiXml::saveMoviesToXml(bool _compress)
 //{
 //    saveXmlCompress = _compress;
 //    DWORD  hThreadIdArray;
@@ -425,10 +423,10 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //}
 //static DWORD WINAPI saveMoviesToXmlThread(void* Param)
 //{
-//    omdbXML* This = (omdbXML*)Param;
+//    ApiXml* This = (ApiXml*)Param;
 //    return This->saveMoviesToXmlStart();
 //}
-//bool omdbXML::saveMoviesToXmlStart()
+//bool ApiXml::saveMoviesToXmlStart()
 //{
 //    bool ret = false;
 //    if (saveXmlCompress)
@@ -466,7 +464,7 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    }
 //    return ret;
 //}
-//HANDLE omdbXML::loadOmdbFile()
+//HANDLE ApiXml::loadOmdbFile()
 //{
 //    DWORD  hThreadIdArray;
 //    stopThreads = false;
@@ -474,10 +472,10 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //}
 //static DWORD WINAPI loadOmdbFileThread(void* Param)
 //{
-//    omdbXML* This = (omdbXML*)Param;
+//    ApiXml* This = (ApiXml*)Param;
 //    return This->loadOmdbFileStart();
 //}
-//int omdbXML::loadOmdbFileStart()
+//int ApiXml::loadOmdbFileStart()
 //{
 //    
 //    MovieFile file;
@@ -497,12 +495,12 @@ bool omdbXML::readOmdbXml(MovieFile *_file)
 //    progressCounter[CNT_TOTAL] = 0;
 //    return -1;
 //}
-//bool omdbXML::terminateThreads()
+//bool ApiXml::terminateThreads()
 //{
 //    stopThreads = true;
 //    return true;
 //}
-//void omdbXML::setProgressCounter(size_t * _progressCounter)
+//void ApiXml::setProgressCounter(size_t * _progressCounter)
 //{
 //    progressCounter = _progressCounter;
 //}

@@ -96,8 +96,11 @@ BOOL SearchResults::OnInitDialog()
 
     OnCbnSelchangeComboType();
 
-    if (file->getOmdbSearchResults()->size() == 0)
+    if (file->getApiSearchResults()->size() == 0)
+    {
         file->omdbSearch();
+        file->imdbApiSearch();
+    }
 
     //std::vector<omdbSearchValues>::iterator it;
 
@@ -116,9 +119,10 @@ BOOL SearchResults::OnInitDialog()
 
 void SearchResults::populateList()
 {
-    std::vector<omdbSearchValues>::iterator it;
+    std::vector<apiSearchValues>::iterator it;
     lstSearch->DeleteAllItems();
-    for (it = file->getOmdbSearchResults()->end(); it != file->getOmdbSearchResults()->begin(); )
+    std::vector <apiSearchValues> * results = file->getApiSearchResults();
+    for (it = results->end(); it != results->begin(); )
     {
         it--;
         CString strItem;
@@ -179,18 +183,17 @@ void SearchResults::getUrlFromSelection()
     short lstPosition =  lstSearch->GetNextSelectedItem(pos);
     CString imdbIdSelected = lstSearch->GetItemText(lstPosition, COL_IMDBID);
 
-    std::vector<omdbSearchValues>::iterator it;
+    std::vector<apiSearchValues>::iterator it;
     //posterURL = "";
     file->getMovie()->setPoster(std::string());
-    for (it = file->getOmdbSearchResults()->begin(); it != file->getOmdbSearchResults()->end(); it++)
+    std::vector <apiSearchValues> * results = file->getApiSearchResults();
+    for (it = results->begin(); it != results->end(); it++)
     {
-        CString imdbId = CString(it->values[XMLS_IMDBID].c_str());
+        CString imdbId = CString(it->values[API_OMDBID].c_str());
         if (imdbId.Compare(imdbIdSelected) == 0)
         {
-            file->getMovie()->setPoster(it->values[XMLS_POSTER]);
-            file->imdbId = it->values[XMLS_IMDBID];
-            //posterURL = it->values[XMLS_POSTER];
-            //tmpImdbId = it->values[XMLS_IMDBID];
+            file->getMovie()->setPoster(it->values[API_POSTER]);
+            file->imdbId = it->values[API_OMDBID];
             break;
         }
     }
@@ -215,8 +218,9 @@ void SearchResults::OnBnClickedSearchRequest()
     limit = tmpLimit;
     CEditLimit->SetWindowTextW(CString(std::to_string(limit).c_str()));
     file->omdbSetLimit(limit);
-
-    totalResults = file->omdbSearch();
+    file->clearSearchResults();
+    totalResults = file->imdbApiSearch();
+    totalResults += file->omdbSearch();
     CString txt;
     txt.Format(L"/ %d of total results", totalResults);
     CtotalResults->SetWindowTextW(txt);

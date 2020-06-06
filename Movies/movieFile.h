@@ -5,7 +5,8 @@
 #include <string>
 #include "Movie.h"
 #include "MovieFolder.h"
-#include "omdb.h"
+#include "omdbApi.h"
+#include "ImdbApi.h"
 
 
 class MovieFile: /*public Omdb, */public MovieFolder
@@ -48,11 +49,7 @@ public:
     bool isImdbId(void);
 
     /* OMDB */
-    std::string getOmdbXml(void);
-    void setOmdbXml(std::string, bool);
     void clearSearchResults();
-    void setSearchResults(std::vector <omdbSearchValues> *_results);
-    bool isOmdbXmlSetted(void);
 
     void initMovieValue();
     void initMovieValue(std::string*, std::string);
@@ -64,27 +61,31 @@ public:
     void omdbSetLimit(int _limit);
     int omdbGetLimit();
     int omdbGetTotalResults();
+    /* OMDB END */
 
-    std::vector <omdbSearchValues> * getOmdbSearchResults();
+    /* IMDB API */
+    int imdbApiSearch();
+    /* IMDB API END */
 
-    /*FOLDER*/
-    //void setPath(std::string);
-    //void setIsSub(bool);
-    //int pathCompare(std::string);
-    //void setIsRead(bool);
-    //bool guessType(std::string);
-    //std::string getPath(void);
-    //void setIdPath(short);
+    /* JSON INIT */
+    void setSearchResults(std::vector <apiSearchValues> *_results);
+    void addSearchResults(std::vector <apiSearchValues> *_results);
+    void setJsonStr(std::string, bool);
+    std::string getJsonStr(void);
+    bool isJsonSetted(void);
+    /* JSON END */
+    /* XML INIT */
+    void setXmlStr(std::string, bool);
+    bool isXmlSetted(void);
+    std::string getXmlStr(void);
+    /* XML END */
 
-#ifdef USEJSON
-    std::string getOmdbJson();
-    void setOmdbJson(std::string, bool);
-    bool isOmdbJson();
-#endif
+    std::vector <apiSearchValues> * getApiSearchResults();
 
 private:
 
-    Omdb omdb;
+    ApiXML omdbClient;
+    ImdbApi imdbClient;
     MovieFolder folder;
 
     FS_CONFIG *fsConfig;
@@ -92,19 +93,11 @@ private:
     std::string ext;
     std::string filename;
 
-    //friend class MovieFolder;
-    //friend class Omdb;
-
     Movie movie;
-    std::string omdbXml;
-    std::vector <omdbSearchValues> omdbSearchResults;
-    bool isOmdbXml;
-    bool omdbResponse;
-    int omdbResult;
-#ifdef USEJSON
-    std::string omdbJson;
-    bool isOmdbJson;
-#endif
+    std::string xmlStr,jsonStr;
+    std::vector <apiSearchValues> apiSearchResults;
+    //std::vector <jsonSearchValues> jsonSearchResults;
+    bool isXmlSet, isJsonSet;
     int findYear(const std::string str, short* year);
     void normalize(std::string *str);
   

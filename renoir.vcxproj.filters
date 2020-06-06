@@ -23,11 +23,11 @@
     <Filter Include="DataBase">
       <UniqueIdentifier>{49e32899-ad9d-446f-9000-095357716a3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="omdb">
-      <UniqueIdentifier>{0d970cff-cd86-4546-b9d8-6b178c0633e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="movies">
       <UniqueIdentifier>{74cdaf49-8d1b-4d95-aa10-ee23d389d902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{4b121b4a-2dc7-47c0-8ac6-74363ed466fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,12 +132,6 @@
     <ClInclude Include="dialogs\FolderManager.h">
       <Filter>dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="sources\omdbXML.h">
-      <Filter>omdb</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\omdb.h">
-      <Filter>omdb</Filter>
-    </ClInclude>
     <ClInclude Include="Movies\Movie.h">
       <Filter>movies</Filter>
     </ClInclude>
@@ -148,6 +142,18 @@
       <Filter>movies</Filter>
     </ClInclude>
     <ClInclude Include="SearchResults.h" />
+    <ClInclude Include="api\ApiJson.h">
+      <Filter>API</Filter>
+    </ClInclude>
+    <ClInclude Include="api\ApiXml.h">
+      <Filter>API</Filter>
+    </ClInclude>
+    <ClInclude Include="api\ImdbApi.h">
+      <Filter>API</Filter>
+    </ClInclude>
+    <ClInclude Include="api\OmdbApi.h">
+      <Filter>API</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -220,12 +226,6 @@
     <ClCompile Include="dialogs\FolderManager.cpp">
       <Filter>dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="sources\omdbXML.cpp">
-      <Filter>omdb</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\omdb.cpp">
-      <Filter>omdb</Filter>
-    </ClCompile>
     <ClCompile Include="Movies\Movie.cpp">
       <Filter>movies</Filter>
     </ClCompile>
@@ -236,6 +236,18 @@
       <Filter>movies</Filter>
     </ClCompile>
     <ClCompile Include="SearchResults.cpp" />
+    <ClCompile Include="api\ApiJson.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="api\ApiXml.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="api\ImdbApi.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="api\OmdbApi.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dialogs\mainWindow.rc">
