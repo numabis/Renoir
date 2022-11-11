@@ -1161,7 +1161,7 @@ void omdbClientDlg::loadXmlfile(void)
         GETCM.setConfigValue(CONF_XML_PATH, path);
         GETCM.setConfigValue(CONF_XML_FILENAME, name);
         GETCM.setConfigValue(CONF_XML_FILENAMEEXT, extention);
-//        xmlConfig.saveLocalConfigFile(false);
+/*        xmlConfig.saveLocalConfigFile(false);*/
         hThreadReadXML = xmlFiles.loadXmlFile();
         threadLoadXmlIsRunning = true;
     }
